@@ -21,6 +21,7 @@ export default function StagePage() {
   const [tab, setTab] = useState<'live'|'tasks'|'social'>('live');
   const [serverNow, setServerNow] = useState<number>(Date.now());
   const [activeAgent, setActiveAgent] = useState<Agent | null>(null);
+  const [affinityRows, setAffinityRows] = useState<Array<{from_agent_id:string;to_agent_id:string;score:number;interactions:number;updated_at:string}>>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -58,6 +59,17 @@ export default function StagePage() {
     if (!activeAgent) return [];
     return events.filter(e => e.actor === activeAgent.id).slice(0, 20);
   }, [events, activeAgent]);
+
+  useEffect(() => {
+    if (!activeAgent) {
+      setAffinityRows([]);
+      return;
+    }
+    fetch(`/api/stage/affinity?agent=${encodeURIComponent(activeAgent.id)}&limit=12`)
+      .then(r => r.json())
+      .then(j => setAffinityRows(j.ok ? j.data : []))
+      .catch(() => setAffinityRows([]));
+  }, [activeAgent]);
 
   return (
     <main className="stage-wrap" style={{padding:24,fontFamily:'Inter,system-ui,sans-serif'}}>
@@ -149,8 +161,14 @@ export default function StagePage() {
                 <div>{e.summary}</div>
               </div>
             ))}
-            <h4>Relationship hints</h4>
-            <div className="muted">From relations in event payloads (A → B). Expand with dedicated affinity table in next phase.</div>
+            <h4>Affinity graph</h4>
+            {affinityRows.length === 0 && <div className="muted">No affinity edges yet. Run `npm run affinity:update` after events exist.</div>}
+            {affinityRows.map((r, i) => (
+              <div key={`${r.from_agent_id}-${r.to_agent_id}-${i}`} style={{borderTop:'1px solid #24305a',padding:'8px 0'}}>
+                <div><strong>{r.from_agent_id}</strong> → {r.to_agent_id}</div>
+                <div className="muted">score {r.score} · interactions {r.interactions} · updated {new Date(r.updated_at).toLocaleString()}</div>
+              </div>
+            ))}
           </aside>
         </>
       )}

@@ -12,7 +12,8 @@
     "stage:summary": "node dist/scripts/stage-summary.js",
     "dev": "next dev",
     "start": "next start",
-    "build:web": "next build"
+    "build:web": "next build",
+    "affinity:update": "node dist/scripts/update-affinity.js"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

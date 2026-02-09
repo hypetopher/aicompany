@@ -19,6 +19,7 @@ Closed-loop AI company runtime inspired by VoxYZ architecture:
 - Supabase DB adapter wiring
 - OpenClaw cron payload examples
 - Frontend stage reference notes (from voxyz stage)
+- Affinity graph model (`ops_agent_affinities`) + upsert function + stage affinity API
 
 ## Quick start
 ```bash
@@ -32,6 +33,7 @@ npm run build
 npm run proposal:test
 npm run heartbeat:run
 npm run worker:once
+npm run affinity:update
 ```
 
 ## Required env
