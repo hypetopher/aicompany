@@ -16,8 +16,9 @@
     "affinity:update": "node dist/scripts/update-affinity.js",
     "affinity:decay": "node dist/scripts/affinity-decay.js",
     "test:unit": "vitest run tests/unit",
-    "test:integration": "echo \"Run checklist: tests/integration/closed-loop.checklist.md\"",
-    "test:e2e": "echo \"Run checklist: tests/e2e/stage-ui.checklist.md\""
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "echo \"Run checklist: tests/e2e/stage-ui.checklist.md\"",
+    "test:all": "vitest run tests/unit tests/integration"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
