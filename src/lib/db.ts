@@ -137,20 +137,65 @@ export const db = {
     });
   },
 
-  async findViralTweetCandidates(_limit: number): Promise<any[]> {
-    return [];
+  async savePostedTweet(row: { stepId: number; text: string; tweetId: string }): Promise<void> {
+    const { error } = await sb.from('ops_social_posts').insert({
+      platform: 'x',
+      external_post_id: row.tweetId,
+      content: row.text,
+      status: 'posted',
+      author_agent_id: 'xalt',
+      step_id: row.stepId,
+      metrics: {},
+      posted_at: new Date().toISOString(),
+    });
+    if (error) throw error;
   },
 
-  async findRecentFailedMissions(_limit: number): Promise<any[]> {
-    return [];
+  async findViralTweetCandidates(limit: number): Promise<any[]> {
+    const { data, error } = await sb
+      .from('ops_social_posts')
+      .select('id, external_post_id, metrics')
+      .eq('status', 'posted')
+      .order('posted_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+
+    return (data ?? [])
+      .map((r: any) => ({
+        tweet_id: r.external_post_id ?? String(r.id),
+        views: Number(r.metrics?.views ?? 0),
+      }))
+      .filter((r: any) => r.views >= 5000);
   },
 
-  async fetchPendingReactions(_batch: number): Promise<any[]> {
-    return [];
+  async findRecentFailedMissions(limit: number): Promise<any[]> {
+    const { data, error } = await sb
+      .from('ops_missions')
+      .select('id, title, updated_at')
+      .eq('status', 'failed')
+      .order('updated_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return (data ?? []).map((m: any) => ({ mission_id: m.id, reason: m.title }));
   },
 
-  async markReactionDone(_id: number, _status: string): Promise<void> {
-    return;
+  async fetchPendingReactions(batch: number): Promise<any[]> {
+    const { data, error } = await sb
+      .from('ops_reaction_queue')
+      .select('id, kind, payload, attempts')
+      .eq('status', 'pending')
+      .order('id', { ascending: true })
+      .limit(batch);
+    if (error) throw error;
+    return (data ?? []).map((r: any) => ({ id: r.id, kind: r.kind, ...(r.payload ?? {}), attempts: r.attempts }));
+  },
+
+  async markReactionDone(id: number, status: string): Promise<void> {
+    const { error } = await sb
+      .from('ops_reaction_queue')
+      .update({ status, processed_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) throw error;
   },
 
   async logActionRun(row: { actor: string; action: string; success: boolean; result: unknown }): Promise<void> {

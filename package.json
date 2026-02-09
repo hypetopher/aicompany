@@ -8,7 +8,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "proposal:test": "node dist/scripts/create-proposal.js",
     "heartbeat:run": "node dist/scripts/run-heartbeat.js",
-    "worker:once": "node dist/scripts/run-worker-once.js"
+    "worker:once": "node dist/scripts/run-worker-once.js",
+    "stage:summary": "node dist/scripts/stage-summary.js"
   },
   "devDependencies": {
     "typescript": "^5.9.2",

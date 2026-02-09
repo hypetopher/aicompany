@@ -46,6 +46,7 @@ async function execPostTweet(step: any, deps: any) {
   const text = String(step.payload.text ?? '');
   if (!text) throw new Error('post_tweet payload.text is required');
   const out = await deps.social.postTweet(text);
+  await deps.db.savePostedTweet({ stepId: step.id, text, tweetId: out.tweetId });
   await deps.db.insertEvent({
     agent_id: 'xalt',
     kind: 'tweet.posted',
