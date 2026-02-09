@@ -30,8 +30,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          npm run test:integration:ci
+        run: npm run test:integration:ci
 
       - name: Upload DB integration reports
         if: always()
@@ -47,3 +46,50 @@ jobs:
         with:
           files: |
             reports/integration-junit.xml
+
+      - name: Notify Discord on failure
+        if: failure() && secrets.DISCORD_WEBHOOK_URL != ''
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          payload=$(jq -n \
+            --arg repo "${{ github.repository }}" \
+            --arg run_id "${{ github.run_id }}" \
+            --arg sha "${{ github.sha }}" \
+            --arg ref "${{ github.ref_name }}" \
+            '{content: ("❌ Nightly DB harness failed for " + $repo + "\nBranch: " + $ref + "\nSHA: " + $sha + "\nRun: https://github.com/" + $repo + "/actions/runs/" + $run_id)}')
+          curl -sS -X POST -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
+
+      - name: Create issue on failure
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `Nightly DB harness failed: ${new Date().toISOString().slice(0,10)}`;
+            const body = [
+              'Nightly DB harness workflow failed.',
+              '',
+              `- Workflow: ${context.workflow}`,
+              `- Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              `- SHA: ${context.sha}`,
+              `- Ref: ${context.ref}`,
+            ].join('\n');
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'nightly-failure',
+              per_page: 50,
+            });
+
+            const exists = issues.find(i => i.title === title);
+            if (!exists) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['nightly-failure', 'ci'],
+              });
+            }

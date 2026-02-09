@@ -18,6 +18,9 @@ Runs daily (and manual dispatch) with Supabase secrets:
 - `npm run test:integration:ci`
 - focuses on DB-backed integration checks (claim concurrency / cron affinity harness)
 - uploads junit artifact and publishes summary
+- on failure:
+  - sends Discord alert if `DISCORD_WEBHOOK_URL` secret is set
+  - opens a GitHub issue (scheduled runs) with `nightly-failure, ci` labels
 
 ## Reports generated
 - `reports/unit-junit.xml`
@@ -36,6 +39,7 @@ If below threshold, CI fails.
 ## Secrets required for DB-backed tests
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- Optional notifications: `DISCORD_WEBHOOK_URL`
 
 ## Local parity
 ```bash
