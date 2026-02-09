@@ -9,14 +9,16 @@ Closed-loop AI company runtime inspired by VoxYZ architecture:
 - Supabase/Postgres (system of record)
 - Node.js workers (deterministic execution)
 
-## Implemented (phase 1 + 2)
+## Implemented (phase 1 + 2 + 3)
 - Supabase schema migration for core ops tables
 - Proposal intake service (`createProposalAndMaybeAutoApprove`)
 - Cap-gates (quota/policy checks at entry)
-- Heartbeat runner
-- Worker claim/execute skeleton
+- Heartbeat runner with trigger + reaction integration
+- Worker claim/execute with retry/backoff and dead-letter threshold
+- Step executors: `draft_tweet`, `analyze`, `write_content`, `post_tweet` (adapter stubs)
 - Supabase DB adapter wiring
 - OpenClaw cron payload examples
+- Frontend stage reference notes (from voxyz stage)
 
 ## Quick start
 ```bash

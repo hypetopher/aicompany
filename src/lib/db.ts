@@ -96,6 +96,63 @@ export const db = {
     if (error) throw error;
   },
 
+  async requeueStep(stepId: number, msg: string, runAfterIso: string): Promise<void> {
+    const { error } = await sb
+      .from('ops_mission_steps')
+      .update({ status: 'queued', last_error: msg, run_after: runAfterIso, updated_at: new Date().toISOString() })
+      .eq('id', stepId);
+    if (error) throw error;
+  },
+
+  async saveTweetDraft(row: { stepId: number; text: string }): Promise<void> {
+    await this.insertEvent({
+      agent_id: 'quill',
+      step_id: row.stepId,
+      kind: 'tweet.drafted',
+      title: 'Tweet drafted',
+      summary: row.text.slice(0, 180),
+      payload: { text: row.text },
+    });
+  },
+
+  async saveInsight(row: { stepId: number; report: string }): Promise<void> {
+    await this.insertEvent({
+      agent_id: 'observer',
+      step_id: row.stepId,
+      kind: 'insight.generated',
+      title: 'Insight generated',
+      summary: row.report.slice(0, 180),
+      payload: { report: row.report },
+    });
+  },
+
+  async saveContentDraft(row: { stepId: number; body: string }): Promise<void> {
+    await this.insertEvent({
+      agent_id: 'quill',
+      step_id: row.stepId,
+      kind: 'content.drafted',
+      title: 'Content drafted',
+      summary: row.body.slice(0, 180),
+      payload: { body: row.body },
+    });
+  },
+
+  async findViralTweetCandidates(_limit: number): Promise<any[]> {
+    return [];
+  },
+
+  async findRecentFailedMissions(_limit: number): Promise<any[]> {
+    return [];
+  },
+
+  async fetchPendingReactions(_batch: number): Promise<any[]> {
+    return [];
+  },
+
+  async markReactionDone(_id: number, _status: string): Promise<void> {
+    return;
+  },
+
   async logActionRun(row: { actor: string; action: string; success: boolean; result: unknown }): Promise<void> {
     const { error } = await sb.from('ops_action_runs').insert({
       actor: row.actor,
