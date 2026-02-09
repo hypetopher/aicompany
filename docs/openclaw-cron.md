@@ -1,15 +1,46 @@
-# OpenClaw cron examples
+# OpenClaw cron examples (ready payloads)
 
 ## 1) Heartbeat every 5 minutes
-Payload text suggestion:
 
-"Reminder: run the aicompany heartbeat now (evaluate triggers, process reactions, promote insights, learn outcomes, recover stale steps/roundtables), then log ops_action_runs."
+```json
+{
+  "sessionTarget": "main",
+  "schedule": { "kind": "every", "everyMs": 300000 },
+  "payload": {
+    "kind": "systemEvent",
+    "text": "Reminder: run aicompany heartbeat now. Execute: cd /home/ax/.openclaw/workspace/aicompany && npm run heartbeat:run"
+  },
+  "enabled": true,
+  "name": "aicompany-heartbeat-5m"
+}
+```
 
-## 2) Worker tick every 1 minute
-"Reminder: run aicompany worker claim+execute tick now and emit step events for success/failure."
+## 2) Worker tick every minute
 
-## 3) Daily summary (09:00)
-"Reminder: generate aicompany daily summary: runs, failures, queue size, quota blocks, and top lessons."
+```json
+{
+  "sessionTarget": "main",
+  "schedule": { "kind": "every", "everyMs": 60000 },
+  "payload": {
+    "kind": "systemEvent",
+    "text": "Reminder: run aicompany worker tick now. Execute: cd /home/ax/.openclaw/workspace/aicompany && npm run worker:once"
+  },
+  "enabled": true,
+  "name": "aicompany-worker-1m"
+}
+```
 
-Use sessionTarget=main + systemEvent if you want this session to orchestrate.
-Use isolated + agentTurn if you want autonomous background runs.
+## 3) Daily summary at 09:00 Europe/Berlin
+
+```json
+{
+  "sessionTarget": "main",
+  "schedule": { "kind": "cron", "expr": "0 9 * * *", "tz": "Europe/Berlin" },
+  "payload": {
+    "kind": "systemEvent",
+    "text": "Reminder: produce aicompany daily summary (runs, failures, queue size, quota blocks, lessons)."
+  },
+  "enabled": true,
+  "name": "aicompany-daily-summary"
+}
+```

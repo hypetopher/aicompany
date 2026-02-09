@@ -9,13 +9,14 @@ Closed-loop AI company runtime inspired by VoxYZ architecture:
 - Supabase/Postgres (system of record)
 - Node.js workers (deterministic execution)
 
-## What is implemented
+## Implemented (phase 1 + 2)
 - Supabase schema migration for core ops tables
 - Proposal intake service (`createProposalAndMaybeAutoApprove`)
 - Cap-gates (quota/policy checks at entry)
-- Heartbeat runner skeleton
-- Worker claim/execute skeleton with idempotent claim query
-- OpenClaw cron examples
+- Heartbeat runner
+- Worker claim/execute skeleton
+- Supabase DB adapter wiring
+- OpenClaw cron payload examples
 
 ## Quick start
 ```bash
@@ -24,10 +25,18 @@ cp .env.example .env
 npm run build
 ```
 
-## Suggested cron in OpenClaw
-Use OpenClaw `cron` jobs (preferred) to trigger:
-- heartbeat every 5m
-- worker loop every 1m
-- daily summary once/day
+## Commands
+```bash
+npm run proposal:test
+npm run heartbeat:run
+npm run worker:once
+```
 
-See `docs/openclaw-cron.md`.
+## Required env
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `CRON_SECRET` (optional)
+
+## Notes
+- Worker claiming uses `claim_one_step(p_worker_id)` Postgres function (`002_claim_one_step_fn.sql`) for race-safe `FOR UPDATE SKIP LOCKED` behavior.
+- Expand step executors in `src/workers/mission-worker.ts` per your step kinds.
