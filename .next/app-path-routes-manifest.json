@@ -1,9 +1,0 @@
-{
-  "/_not-found/page": "/_not-found",
-  "/api/stage/agents/route": "/api/stage/agents",
-  "/api/stage/events/route": "/api/stage/events",
-  "/api/stage/tasks/route": "/api/stage/tasks",
-  "/api/stage/summary/route": "/api/stage/summary",
-  "/page": "/",
-  "/stage/page": "/stage"
-}
