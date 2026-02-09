@@ -18,7 +18,8 @@
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "echo \"Run checklist: tests/e2e/stage-ui.checklist.md\"",
-    "test:all": "vitest run tests/unit tests/integration"
+    "test:all": "vitest run tests/unit tests/integration",
+    "test:ci": "npm run build && npm run build:web && npm run test:all && npm run test:integration"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
