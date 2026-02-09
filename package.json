@@ -14,12 +14,16 @@
     "start": "next start",
     "build:web": "next build",
     "affinity:update": "node dist/scripts/update-affinity.js",
-    "affinity:decay": "node dist/scripts/affinity-decay.js"
+    "affinity:decay": "node dist/scripts/affinity-decay.js",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "echo \"Run checklist: tests/integration/closed-loop.checklist.md\"",
+    "test:e2e": "echo \"Run checklist: tests/e2e/stage-ui.checklist.md\""
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@types/react": "19.2.13",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

@@ -1,0 +1,4 @@
+[
+  { "agent_id": "sage", "kind": "dialog.reply", "summary": "great collaboration with quill", "payload": { "fromAgent": "sage", "toAgent": "quill" } },
+  { "agent_id": "observer", "kind": "step.failed", "summary": "conflict during handoff to xalt", "payload": { "fromAgent": "observer", "toAgent": "xalt" } }
+]
