@@ -1,13 +1,13 @@
-import { sb } from '../lib/supabase.js';
+import { getSupabase } from '../lib/supabase.js';
 
 export async function getStageSummary() {
-  const { data, error } = await sb.rpc('stage_summary');
+  const { data, error } = await (getSupabase() as any).rpc('stage_summary');
   if (error) throw error;
   return data;
 }
 
 export async function getStageAgents() {
-  const { data, error } = await sb
+  const { data, error } = await (getSupabase() as any)
     .from('ops_agent_events')
     .select('agent_id, kind, summary, created_at')
     .order('created_at', { ascending: false })
@@ -30,7 +30,7 @@ export async function getStageAgents() {
 }
 
 export async function getStageEvents(limit = 100, before?: string) {
-  let q = sb
+  let q = (getSupabase() as any)
     .from('ops_agent_events')
     .select('id, agent_id, kind, title, summary, payload, created_at')
     .order('id', { ascending: false })
@@ -39,7 +39,7 @@ export async function getStageEvents(limit = 100, before?: string) {
 
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []).map((r) => ({
+  return (data ?? []).map((r: any) => ({
     id: r.id,
     timestamp: r.created_at,
     actor: r.agent_id,
@@ -51,17 +51,17 @@ export async function getStageEvents(limit = 100, before?: string) {
 }
 
 export async function getStageTasks(limit = 100) {
-  const { data: missions, error: e1 } = await sb
+  const { data: missions, error: e1 } = await (getSupabase() as any)
     .from('ops_missions')
     .select('id, title, status, updated_at')
     .order('updated_at', { ascending: false })
     .limit(limit);
   if (e1) throw e1;
 
-  const missionIds = (missions ?? []).map((m) => m.id);
+  const missionIds = (missions ?? []).map((m: any) => m.id);
   if (missionIds.length === 0) return [];
 
-  const { data: steps, error: e2 } = await sb
+  const { data: steps, error: e2 } = await (getSupabase() as any)
     .from('ops_mission_steps')
     .select('mission_id, status')
     .in('mission_id', missionIds);
@@ -74,7 +74,7 @@ export async function getStageTasks(limit = 100) {
     grouped.set(s.mission_id, g);
   }
 
-  return (missions ?? []).map((m) => ({
+  return (missions ?? []).map((m: any) => ({
     id: m.id,
     title: m.title,
     status: m.status,

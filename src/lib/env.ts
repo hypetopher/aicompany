@@ -1,11 +1,5 @@
-function required(name: string): string {
+export function getEnv(name: string, required = true): string {
   const v = process.env[name];
-  if (!v) throw new Error(`Missing required env var: ${name}`);
-  return v;
+  if (!v && required) throw new Error(`Missing required env var: ${name}`);
+  return v ?? '';
 }
-
-export const env = {
-  supabaseUrl: required('SUPABASE_URL'),
-  supabaseServiceRoleKey: required('SUPABASE_SERVICE_ROLE_KEY'),
-  cronSecret: process.env.CRON_SECRET ?? '',
-};

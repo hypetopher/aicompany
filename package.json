@@ -4,18 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.node.json",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit",
     "proposal:test": "node dist/scripts/create-proposal.js",
     "heartbeat:run": "node dist/scripts/run-heartbeat.js",
     "worker:once": "node dist/scripts/run-worker-once.js",
-    "stage:summary": "node dist/scripts/stage-summary.js"
+    "stage:summary": "node dist/scripts/stage-summary.js",
+    "dev": "next dev",
+    "start": "next start",
+    "build:web": "next build"
   },
   "devDependencies": {
-    "typescript": "^5.9.2",
-    "@types/node": "^24.3.0"
+    "@types/node": "^24.3.0",
+    "@types/react": "19.2.13",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.4"
+    "@supabase/supabase-js": "^2.57.4",
+    "next": "^15.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   }
 }
