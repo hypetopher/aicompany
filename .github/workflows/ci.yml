@@ -28,16 +28,33 @@ jobs:
       - name: Build (web)
         run: npm run build:web
 
-      - name: Unit tests
-        run: npm run test:unit
+      - name: Unit tests (coverage + junit)
+        run: npm run test:unit:ci
 
       - name: Integration tests (no DB)
         if: ${{ !secrets.SUPABASE_URL || !secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: npm run test:integration
+        run: npm run test:integration:ci
 
       - name: Integration tests (with DB harness)
         if: ${{ secrets.SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: npm run test:integration
+        run: npm run test:integration:ci
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            reports/**/*.xml
+            reports/coverage/**
+
+      - name: Publish Unit Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            reports/unit-junit.xml
+            reports/integration-junit.xml

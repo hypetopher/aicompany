@@ -7,8 +7,14 @@ Runs on push/PR:
 - install
 - build (node)
 - build (web)
-- unit tests
-- integration tests
+- unit tests (JUnit + coverage)
+- integration tests (JUnit)
+- upload artifacts + publish test summary
+
+## Reports generated
+- `reports/unit-junit.xml`
+- `reports/integration-junit.xml`
+- `reports/coverage/unit/` (lcov + json-summary + text)
 
 ## DB-backed integration tests
 Some integration tests are auto-skipped without DB env.
@@ -24,6 +30,6 @@ With both secrets present, CI runs DB-backed claim-concurrency + cron-affinity h
 npm ci
 npm run build
 npm run build:web
-npm run test:all
-npm run test:integration
+npm run test:unit:ci
+npm run test:integration:ci
 ```
