@@ -60,24 +60,50 @@ jobs:
             '{content: ("❌ Nightly DB harness failed for " + $repo + "\nBranch: " + $ref + "\nSHA: " + $sha + "\nRun: https://github.com/" + $repo + "/actions/runs/" + $run_id)}')
           curl -sS -X POST -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
 
-      - name: Create issue on failure
+      - name: Create issue after 2 consecutive failures
         if: failure() && github.event_name == 'schedule'
         uses: actions/github-script@v7
         with:
           script: |
-            const title = `Nightly DB harness failed: ${new Date().toISOString().slice(0,10)}`;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const runsResp = await github.rest.actions.listWorkflowRunsForRepo({
+              owner,
+              repo,
+              event: 'schedule',
+              status: 'completed',
+              per_page: 5,
+            });
+
+            const runs = runsResp.data.workflow_runs
+              .filter(r => r.name === 'nightly-db-harness')
+              .slice(0, 3);
+
+            if (runs.length < 2) {
+              core.info('Not enough historical scheduled runs; skip issue creation gate.');
+              return;
+            }
+
+            const latestTwoFailed = runs[0].conclusion === 'failure' && runs[1].conclusion === 'failure';
+            if (!latestTwoFailed) {
+              core.info('Failure is not consecutive (2x); skip issue creation.');
+              return;
+            }
+
+            const title = `Nightly DB harness failed (2x): ${new Date().toISOString().slice(0,10)}`;
             const body = [
-              'Nightly DB harness workflow failed.',
+              'Nightly DB harness failed in 2 consecutive scheduled runs.',
               '',
-              `- Workflow: ${context.workflow}`,
-              `- Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              `- Current run: https://github.com/${owner}/${repo}/actions/runs/${context.runId}`,
+              `- Previous run: ${runs[1].html_url}`,
               `- SHA: ${context.sha}`,
               `- Ref: ${context.ref}`,
             ].join('\n');
 
             const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner,
+              repo,
               state: 'open',
               labels: 'nightly-failure',
               per_page: 100,
@@ -86,8 +112,8 @@ jobs:
             const exists = issues.find(i => i.title === title);
             if (!exists) {
               await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                owner,
+                repo,
                 title,
                 body,
                 labels: ['nightly-failure', 'ci'],

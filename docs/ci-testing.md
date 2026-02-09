@@ -20,7 +20,7 @@ Runs daily (and manual dispatch) with Supabase secrets:
 - uploads junit artifact and publishes summary
 - on failure:
   - sends Discord alert if `DISCORD_WEBHOOK_URL` secret is set
-  - opens a GitHub issue (scheduled runs) with `nightly-failure, ci` labels
+  - opens a GitHub issue only after **2 consecutive scheduled failures** (`nightly-failure, ci`)
 - on success (scheduled runs):
   - auto-closes any open `nightly-failure` issues with a recovery comment
 
