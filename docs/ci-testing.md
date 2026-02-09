@@ -1,15 +1,23 @@
 # CI Testing
 
-## Workflow
-GitHub Actions workflow: `.github/workflows/ci.yml`
+## Workflows
+- Main CI: `.github/workflows/ci.yml`
+- Nightly DB harness: `.github/workflows/nightly-db.yml`
 
-Runs on push/PR:
+## Main CI (push/PR)
+Runs:
 - install
 - build (node)
 - build (web)
 - unit tests (JUnit + coverage)
 - integration tests (JUnit)
 - upload artifacts + publish test summary
+
+## Nightly DB harness
+Runs daily (and manual dispatch) with Supabase secrets:
+- `npm run test:integration:ci`
+- focuses on DB-backed integration checks (claim concurrency / cron affinity harness)
+- uploads junit artifact and publishes summary
 
 ## Reports generated
 - `reports/unit-junit.xml`
@@ -18,21 +26,16 @@ Runs on push/PR:
 
 ## Coverage gate
 Unit CI run enforces minimum thresholds (configured in `vitest.config.ts`):
-- lines >= 10%
-- statements >= 10%
-- functions >= 10%
-- branches >= 10%
+- lines >= 72%
+- statements >= 72%
+- functions >= 72%
+- branches >= 62%
 
 If below threshold, CI fails.
 
-## DB-backed integration tests
-Some integration tests are auto-skipped without DB env.
-
-To enable full integration coverage in CI, set repo secrets:
+## Secrets required for DB-backed tests
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
-
-With both secrets present, CI runs DB-backed claim-concurrency + cron-affinity harness tests.
 
 ## Local parity
 ```bash
