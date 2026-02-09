@@ -21,6 +21,8 @@ Runs daily (and manual dispatch) with Supabase secrets:
 - on failure:
   - sends Discord alert if `DISCORD_WEBHOOK_URL` secret is set
   - opens a GitHub issue (scheduled runs) with `nightly-failure, ci` labels
+- on success (scheduled runs):
+  - auto-closes any open `nightly-failure` issues with a recovery comment
 
 ## Reports generated
 - `reports/unit-junit.xml`
