@@ -13,7 +13,8 @@
     "dev": "next dev",
     "start": "next start",
     "build:web": "next build",
-    "affinity:update": "node dist/scripts/update-affinity.js"
+    "affinity:update": "node dist/scripts/update-affinity.js",
+    "affinity:decay": "node dist/scripts/affinity-decay.js"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

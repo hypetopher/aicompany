@@ -1,4 +1,5 @@
 import { getSupabase } from '../lib/supabase.js';
+import { classifySentiment, sentimentDelta } from './sentiment.js';
 
 export async function updateAffinityFromRecentEvents(limit = 200) {
   const sb = getSupabase() as any;
@@ -30,10 +31,14 @@ export async function updateAffinityFromRecentEvents(limit = 200) {
 
 function scoreDelta(kind: string, summary: string): number {
   const s = `${kind} ${summary}`.toLowerCase();
-  if (s.includes('failed') || s.includes('conflict') || s.includes('disagree')) return -2;
-  if (s.includes('help') || s.includes('collab') || s.includes('mentor')) return 3;
-  if (s.includes('dialog') || s.includes('reply')) return 1;
-  return 1;
+  const sentiment = classifySentiment(s);
+  let delta = sentimentDelta(sentiment);
+
+  if (s.includes('failed') || s.includes('conflict') || s.includes('disagree')) delta -= 1;
+  if (s.includes('help') || s.includes('collab') || s.includes('mentor')) delta += 1;
+  if (s.includes('dialog') || s.includes('reply')) delta += 0;
+
+  return Math.max(-5, Math.min(5, delta));
 }
 
 function inferToFromSummary(summary: string): string | null {

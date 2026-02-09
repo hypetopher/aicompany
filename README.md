@@ -34,6 +34,7 @@ npm run proposal:test
 npm run heartbeat:run
 npm run worker:once
 npm run affinity:update
+npm run affinity:decay
 ```
 
 ## Required env
