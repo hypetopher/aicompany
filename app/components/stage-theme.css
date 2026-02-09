@@ -1,0 +1,77 @@
+:root {
+  --bg: #070b1a;
+  --panel: rgba(13, 20, 40, 0.75);
+  --line: #25335f;
+  --text: #e8eeff;
+  --muted: #97a6cf;
+  --cyan: #22d3ee;
+  --blue: #3b82f6;
+  --pink: #f472b6;
+  --green: #22c55e;
+}
+
+.stage-wrap {
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(59,130,246,.18), transparent 60%),
+    radial-gradient(900px 500px at -10% 120%, rgba(236,72,153,.15), transparent 60%),
+    var(--bg);
+}
+
+.glass {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+}
+
+.neon {
+  text-shadow: 0 0 10px rgba(34,211,238,.4);
+}
+
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #86efac;
+}
+
+.badge-live::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+.agent-row {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid #1a2446;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #2a3b72;
+  object-fit: cover;
+  background: #0f172a;
+}
+
+.timeline {
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.timeline-card {
+  border: 1px solid #24305a;
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(8, 13, 30, 0.7);
+}
