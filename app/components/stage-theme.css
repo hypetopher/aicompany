@@ -8,6 +8,8 @@
   --blue: #3b82f6;
   --pink: #f472b6;
   --green: #22c55e;
+  --yellow: #f59e0b;
+  --red: #ef4444;
 }
 
 .stage-wrap {
@@ -26,52 +28,44 @@
   backdrop-filter: blur(6px);
 }
 
-.neon {
-  text-shadow: 0 0 10px rgba(34,211,238,.4);
-}
+.neon { text-shadow: 0 0 10px rgba(34,211,238,.4); }
 
 .badge-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #86efac;
+  display: inline-flex; align-items: center; gap: 6px; color: #86efac;
 }
-
 .badge-live::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 10px #22c55e;
+  content: ''; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e;
 }
 
 .agent-row {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 10px;
-  padding: 10px 0;
-  border-top: 1px solid #1a2446;
+  display: grid; grid-template-columns: 40px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid #1a2446; cursor: pointer;
 }
+.agent-row:hover { background: rgba(37, 51, 95, 0.2); border-radius: 10px; }
 
 .avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid #2a3b72;
-  object-fit: cover;
-  background: #0f172a;
+  width: 40px; height: 40px; border-radius: 10px; border: 1px solid #2a3b72; object-fit: cover; background: #0f172a;
 }
 
-.timeline {
-  margin-top: 10px;
-  display: grid;
-  gap: 10px;
-}
-
+.timeline { margin-top: 10px; display: grid; gap: 10px; }
 .timeline-card {
-  border: 1px solid #24305a;
-  border-radius: 12px;
-  padding: 10px;
-  background: rgba(8, 13, 30, 0.7);
+  border: 1px solid #24305a; border-radius: 12px; padding: 10px; background: rgba(8, 13, 30, 0.7);
 }
+
+.status-lane { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+.status-chip {
+  text-align: center; font-size: 11px; border: 1px solid #2a3b72; border-radius: 999px; padding: 4px 6px;
+}
+.status-queued { color: #cbd5e1; }
+.status-running { color: var(--yellow); box-shadow: 0 0 8px rgba(245,158,11,.25) inset; }
+.status-succeeded { color: var(--green); box-shadow: 0 0 8px rgba(34,197,94,.25) inset; }
+.status-failed { color: var(--red); box-shadow: 0 0 8px rgba(239,68,68,.25) inset; }
+
+.drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(2, 6, 23, 0.55); backdrop-filter: blur(2px);
+}
+.drawer {
+  position: fixed; top: 0; right: 0; width: min(460px, 92vw); height: 100vh;
+  background: #0b1226; border-left: 1px solid #2a3b72; padding: 16px; overflow: auto;
+}
+.drawer h3 { margin-top: 0; }
+.muted { color: var(--muted); font-size: 12px; }

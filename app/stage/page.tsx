@@ -9,12 +9,8 @@ type EventRow = { id:number; timestamp:string; actor:string; type:'pulse'|'dialo
 type Task = { id:number; title:string; status:string; updatedAt:string; progress:{ queued:number; running:number; succeeded:number; failed:number } };
 
 const avatars: Record<string, string> = {
-  minion: '/agents/minion.png',
-  sage: '/agents/sage.png',
-  scout: '/agents/scout.png',
-  quill: '/agents/quill.png',
-  xalt: '/agents/xalt.png',
-  observer: '/agents/observer.png',
+  minion: '/agents/minion.png', sage: '/agents/sage.png', scout: '/agents/scout.png',
+  quill: '/agents/quill.png', xalt: '/agents/xalt.png', observer: '/agents/observer.png',
 };
 
 export default function StagePage() {
@@ -24,13 +20,14 @@ export default function StagePage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tab, setTab] = useState<'live'|'tasks'|'social'>('live');
   const [serverNow, setServerNow] = useState<number>(Date.now());
+  const [activeAgent, setActiveAgent] = useState<Agent | null>(null);
 
   useEffect(() => {
     const load = async () => {
       const [s,a,e,t] = await Promise.all([
         fetch('/api/stage/summary').then(r=>r.json()),
         fetch('/api/stage/agents').then(r=>r.json()),
-        fetch('/api/stage/events?limit=120').then(r=>r.json()),
+        fetch('/api/stage/events?limit=180').then(r=>r.json()),
         fetch('/api/stage/tasks?limit=100').then(r=>r.json()),
       ]);
       if (s.ok) setSummary(s.data);
@@ -43,10 +40,7 @@ export default function StagePage() {
     const es = new EventSource('/api/stage/stream');
     es.addEventListener('summary', ev => setSummary(JSON.parse((ev as MessageEvent).data)));
     es.addEventListener('events', ev => setEvents(JSON.parse((ev as MessageEvent).data)));
-    es.addEventListener('heartbeat', ev => {
-      const data = JSON.parse((ev as MessageEvent).data);
-      setServerNow(data.ts ?? Date.now());
-    });
+    es.addEventListener('heartbeat', ev => setServerNow(JSON.parse((ev as MessageEvent).data).ts ?? Date.now()));
 
     const pull = setInterval(load, 45000);
     const clock = setInterval(() => setServerNow(x => x + 1000), 1000);
@@ -60,6 +54,10 @@ export default function StagePage() {
 
   const grouped = useMemo(() => groupEvents(events), [events]);
   const timeline = useMemo(() => buildTimeline(tasks), [tasks]);
+  const agentEvents = useMemo(() => {
+    if (!activeAgent) return [];
+    return events.filter(e => e.actor === activeAgent.id).slice(0, 20);
+  }, [events, activeAgent]);
 
   return (
     <main className="stage-wrap" style={{padding:24,fontFamily:'Inter,system-ui,sans-serif'}}>
@@ -88,7 +86,7 @@ export default function StagePage() {
         <div className="glass" style={{padding:12}}>
           <h3 style={{margin:'0 0 6px 0'}}>Agent Roster</h3>
           {agents.map(a => (
-            <div key={a.id} className="agent-row">
+            <div key={a.id} className="agent-row" onClick={() => setActiveAgent(a)}>
               <img className="avatar" src={avatars[a.id] ?? '/favicon.ico'} alt={a.id} />
               <div>
                 <strong>{a.id}</strong> · {a.role}
@@ -111,9 +109,15 @@ export default function StagePage() {
               {timeline.map(t => (
                 <div className="timeline-card" key={t.id}>
                   <div><strong>{t.title}</strong> · {t.status}</div>
-                  <div style={{fontSize:12,color:'#9fb0da'}}>queued {t.progress.queued} · running {t.progress.running} · done {t.progress.succeeded} · failed {t.progress.failed}</div>
+                  <div style={{fontSize:12,color:'#9fb0da'}}>updated {new Date(t.updatedAt).toLocaleString()}</div>
+                  <div className="status-lane">
+                    <div className="status-chip status-queued">Q {t.progress.queued}</div>
+                    <div className="status-chip status-running">R {t.progress.running}</div>
+                    <div className="status-chip status-succeeded">S {t.progress.succeeded}</div>
+                    <div className="status-chip status-failed">F {t.progress.failed}</div>
+                  </div>
                   <div style={{height:8,background:'#111a35',borderRadius:999,marginTop:8}}>
-                    <div style={{height:8,width:`${progressPct(t.progress)}%`,borderRadius:999,background:'linear-gradient(90deg,#22c55e,#14b8a6)'}}/>
+                    <div style={{height:8,width:`${progressPct(t.progress)}%`,borderRadius:999,background:'linear-gradient(90deg,#22c55e,#14b8a6)',transition:'width .5s ease'}}/>
                   </div>
                 </div>
               ))}
@@ -128,6 +132,28 @@ export default function StagePage() {
           </>}
         </div>
       </section>
+
+      {activeAgent && (
+        <>
+          <div className="drawer-backdrop" onClick={() => setActiveAgent(null)} />
+          <aside className="drawer">
+            <button onClick={() => setActiveAgent(null)} style={{float:'right'}}>Close</button>
+            <h3>{activeAgent.id}</h3>
+            <div className="muted">{activeAgent.role} · {activeAgent.model}</div>
+            <p>{activeAgent.statusLine}</p>
+            <h4>Recent activity</h4>
+            {agentEvents.map(e => (
+              <div key={e.id} style={{borderTop:'1px solid #24305a',padding:'8px 0'}}>
+                <div className="muted">{new Date(e.timestamp).toLocaleString()} · {e.type}</div>
+                <strong>{e.title}</strong>
+                <div>{e.summary}</div>
+              </div>
+            ))}
+            <h4>Relationship hints</h4>
+            <div className="muted">From relations in event payloads (A → B). Expand with dedicated affinity table in next phase.</div>
+          </aside>
+        </>
+      )}
     </main>
   );
 }
