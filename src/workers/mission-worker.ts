@@ -1,3 +1,7 @@
+import { executeStepByKind } from '../executors/step-executors.js';
+import { runtimeDeps } from '../lib/runtime-deps.js';
+import { computeNextRunAfter, shouldDeadLetter } from './retry-policy.js';
+
 export type ClaimedStep = {
   id: number;
   mission_id: number;
@@ -30,16 +34,12 @@ where s.id = pick.id
 returning s.id, s.mission_id, s.kind, s.payload, s.attempts;
 `;
 
-import { executeStepByKind } from '../executors/step-executors.js';
-import { runtimeDeps } from '../lib/runtime-deps.js';
-import { computeNextRunAfter, shouldDeadLetter } from './retry-policy.js';
-
-export async function runWorkerOnce(db: any, workerId: string) {
+export async function runWorkerOnce(db: any, workerId: string, deps = runtimeDeps) {
   const step: ClaimedStep | null = await db.claimOneStep(workerId);
   if (!step) return { claimed: false };
 
   try {
-    const result = await executeStepByKind(step, { db, ...runtimeDeps });
+    const result = await executeStepByKind(step, { db, ...deps });
     await db.markStepSucceeded(step.id);
     await db.insertEvent({
       kind: 'step.succeeded',
