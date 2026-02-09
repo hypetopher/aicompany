@@ -20,7 +20,7 @@
     "test:e2e": "echo \"Run checklist: tests/e2e/stage-ui.checklist.md\"",
     "test:all": "vitest run tests/unit tests/integration",
     "test:ci": "npm run build && npm run build:web && npm run test:all && npm run test:integration",
-    "test:unit:ci": "vitest run tests/unit --reporter=default --reporter=junit --outputFile.junit=reports/unit-junit.xml --coverage.enabled --coverage.provider=v8 --coverage.reporter=text --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.reportsDirectory=reports/coverage/unit",
+    "test:unit:ci": "vitest run tests/unit --reporter=default --reporter=junit --outputFile.junit=reports/unit-junit.xml --coverage.enabled",
     "test:integration:ci": "vitest run tests/integration --reporter=default --reporter=junit --outputFile.junit=reports/integration-junit.xml"
   },
   "devDependencies": {

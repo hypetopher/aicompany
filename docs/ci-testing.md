@@ -16,6 +16,15 @@ Runs on push/PR:
 - `reports/integration-junit.xml`
 - `reports/coverage/unit/` (lcov + json-summary + text)
 
+## Coverage gate
+Unit CI run enforces minimum thresholds (configured in `vitest.config.ts`):
+- lines >= 10%
+- statements >= 10%
+- functions >= 10%
+- branches >= 10%
+
+If below threshold, CI fails.
+
 ## DB-backed integration tests
 Some integration tests are auto-skipped without DB env.
 
