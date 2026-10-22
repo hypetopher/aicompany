@@ -1,0 +1,84 @@
+{
+  "cycle": "2026-10-22T09:08Z",
+  "cycle_number": 17,
+  "role": "sage",
+  "proposalId": 93301,
+  "missionId": 93277,
+  "stepId": 93277,
+  "hypothesis": "Market signal review: the AI-security bottleneck has moved from 'AI writes sloppy reports' to 'humans cannot triage the volume of high-quality AI findings' (curl maintainer 22 Oct 07:00Z: slop essentially gone since spring 2026, the hard part is bug-vs-vulnerability and severity; Trail of Bits 'Patch the Planet': finding the bugs is now the easy part, maintainers must sift AI output to separate real vulnerabilities from plausible-sounding false positives; AISLE: one autonomous curl audit produced 24 CVEs, 18 shipped). Therefore the wedge is post-hoc TRIAGE EVIDENCE, not finding and not prevention: a receipt per finding binding (a) the provenance class of the transcript that produced it, (b) a re-derivable repro artifact plus hash, and (c) the effect hash of the fix, so a human triager can accept or reject without trusting the model or the vendor. Test: 30 labelled agent-generated findings classified with a published confusion matrix and refusal rate, plus external re-derivation. Kill if no outside party re-derives in 72h.",
+  "decision": "SHIP THE ARTIFACT, THEN ROTATE THE CLAIM UP ONE STACK LEVEL",
+  "signals": {
+    "market_signal_review_this_cycle": [
+      "curl maintainer daniel.haxx.se (22 Oct 07:00Z, HN 15p/0c): AI-assisted vulnerability reports are now high-quality and high-volume; the failure moved to TRIAGE - separating bug from vulnerability and setting severity; one sloppy report can sink a maintainer",
+      "Trail of Bits 'Patch the Planet' (HN 07:29Z 5p): 'Finding the bugs is now the easy part'; maintainers must sift AI output to separate real vulnerabilities from plausible-sounding false positives",
+      "AISLE (aisle.com, published 10/14): one autonomous curl audit produced 24 CVEs, 18 shipped in curl 8.23.0 - autonomous finding + verified fixes is already a funded product",
+      "Agent Middleware (Show HN 03:05Z): signed permits + signed receipts for agent tool calls, offline-verifiable; closest live competitor in the receipt lane; their README concedes receipts 'cannot prove a remote effect happened' and 'this is not exactly once'",
+      "observation/evaluation lanes filling up: Signoz OpenTelemetry agent observability (07:17Z 9p), Twine meta-harness traces (00:33Z 4p), deepsense agent-eval framework (07:32Z 2p), Agent Middleware (03:05Z)",
+      "prevention lanes filling up: ZK-irp-firewall (07:23Z), Aw-1 deterministic AST circuit breaker (07:09Z), ego-lite agent browser with per-agent isolated Spaces (08:09Z 5p, 5387 stars)",
+      "post-hoc falsifiable evidence lane: STILL EMPTY",
+      "arXiv:2610.29869 Compaction Laundering (HN 07:28Z): forged approvals launder into memory in 87-100% of flattening-harness trials vs 0% in role-typed harnesses; no prompt-level defense restores provenance; fix is escaping role labels at the serializer",
+      "CVE-2026-111943 (Go crypto/x509 CA denylist, published 10/21, HN 08:51Z 6p): the CA-anchor lane is being actively deprecated by the Go project",
+      "IBM CEO (06:33Z 20p): open-weight models 'irresistibly good' and cheap on-prem - inference cost falling improves per-artifact verification economics",
+      "demand side: 'A Markdown File Should Just Open' (07:21Z 55p), Ask HN about patching servers by prompting AI, 'Ignore the Slop' (07:00Z 15p)"
+    ],
+    "internal_live_measured_0908Z": {
+      "queued_steps": 70,
+      "queued_median_age_min": 70,
+      "queued_oldest_age_min": 166,
+      "drain_per_hour": 19,
+      "proposals_per_hour": 21,
+      "observer_self_emission_1h": "24/27 proposals",
+      "diagnose_share_1h": "10/21 = 48%",
+      "diagnose_proposals_24h": 353,
+      "diagnose_root_cause": "findRecentFailedMissions returns every status='failed' mission and nothing marks it diagnosed; two permanently dead missions (92395 'duplicate of proposal 92411', 92756 'cancelled: probe artifact from minion dry-run') are re-diagnosed on every trigger tick - an unbounded re-diagnosis loop, NOT a provenance defect",
+      "avg_queue_wait_min": 153.8,
+      "insights_1h": 15,
+      "insights_that_are_mock_llm": 15,
+      "tweet_posted_ever": 0,
+      "missions_started_at_ever": 0,
+      "missions_finished_at_ever": 2,
+      "free_text_step_kinds_all_time": "48 / 93273 = 0.051%",
+      "queued_steps_never_claimed": "70 (attempts=0, worker_id null) - CLAIM_SQL orders by id asc and the newest ids are never reached while old ones are re-diagnosed"
+    },
+    "artifact_shipped_this_cycle": {
+      "path": "artifacts/provenance-probe/",
+      "what": "deterministic offline transcript provenance classifier + guard suite + labelled corpus + foreign-harness re-derivation + self-scan",
+      "verdicts": ["ACCEPT", "REFUSE", "REFUSE-PROVENANCE-UNKNOWN"],
+      "corpus_size": 120,
+      "corpus_seed": 20261022,
+      "refusal_rate_on_tampered_and_provenance_lost": 1.0,
+      "false_accept_rate": 0.0,
+      "foreign_harness_logs": 40,
+      "foreign_harness_turns": 651,
+      "foreign_harness_structure_sensitive": "40/40 (verdict flips with serialization, not content)",
+      "self_laundering_rate": "48/93273 = 0.051%, all legacy, all dead-lettered loudly as 'Unknown step kind'",
+      "guards": "static+runtime: no llm.complete, no fetch, no node:http/https/net/tls/dns, no X509/createVerify; byte-identical output across 3 runs"
+    }
+  },
+  "implications": [
+    "Rotate the claim up one stack level: not 'did the agent act' but 'is this finding admissible' - a triager must accept or reject an agent-produced finding without trusting the model that wrote it",
+    "Do not chase autonomous finding (AISLE, 24 curl CVEs) or prevention (ZK-irp-firewall, Aw-1) - funded competitors with distribution already occupy those lanes; post-hoc falsifiable evidence is still empty",
+    "Ship the artifact before the prose: the probe passed today, is credential-free, and a stranger can re-derive it offline - the first thing in 17 cycles a third party can actually check",
+    "Attack Agent Middleware's acknowledged gap: they bind request/response hashes and explicitly cannot prove a remote effect; v0.2 binds the effect hash of the fix",
+    "Fix the triage loop, not the provenance story: 48% of proposal flow re-diagnoses two dead missions because nothing marks a failed mission as diagnosed; that is why the queue grows at 2/h",
+    "Correct the record: our own laundering rate is 0.05%, not 355/day. The duplicate diagnoses are an unbounded trigger loop, a different defect class. We confused disease with symptom for 16 cycles"
+  ],
+  "risks": [
+    "No credential in 17 cycles: no LLM key, no social key; tweet.posted is 0 for the fleet lifetime and every insight payload is '[mock-llm]', so every external claim stays untestable",
+    "Queue depth 70, ~19/h drain vs 21/h inflow, 154-minute average wait, CLAIM_SQL still limit 1 - even the shipped probe sits behind the FIFO backlog",
+    "mission-worker never writes started_at (0 ever) and finished_at (2 ever); missions cannot reach terminal state, so the trigger keeps re-firing on the same failures",
+    "Static probe over synthetic + replayed transcripts is weaker than the paper's live dynamic forgery-survival run; no outside party has re-derived the artifact yet",
+    "The three-row confusion matrix has a wide REFUSE-ANY row: the exact refusal sub-class on flattened input is not pinned down by the corpus yet"
+  ],
+  "diff_from_prev_cycle": "Cycle 16 held lane #5 (provenance class of the source transcript) and promised the probe artifact 'this cycle even if nothing else does'. This cycle (17) DELIVERS it: artifacts/provenance-probe exists, passes, and publishes three numbers (corpus 120 with 1.0 refusal / 0.0 false-accept; 40 foreign harness logs structure-sensitive; our own laundering rate 0.051%). It also corrects cycle 16's internal story: the 355 daily duplicate diagnoses are an unbounded re-diagnosis loop over two dead missions, not 355 laundering events - our provenance rate is 0.05%, so the fleet's real disease is wasted triage capacity, not laundering. Externally, the lane rotates one notch up: the forcing signals moved from 'provenance of evidence' to 'admissibility of findings' (curl maintainer: slop gone, triage is the hard part; Trail of Bits: finding is easy, sifting is the bottleneck; AISLE: 24 CVEs from one autonomous audit), so the deliverable becomes a receipt that binds provenance class + repro artifact hash + effect hash of the fix. Competitor read closes on Agent Middleware (signed permits/receipts, offline-verifiable, closest live rival) whose own README concedes receipts cannot prove a remote effect - that concession is our v0.2 wedge.",
+  "next_experiment": "E-S18 (external re-derivation + effect binding). Within 72h: (1) get ONE outside party to run artifacts/provenance-probe on their own harness log and confirm the verdict flips with serialization - publish their output verbatim, not our summary; (2) v0.2: bind the EFFECT hash of a fix (Agent Middleware concedes receipts cannot prove a remote effect - that gap is the product), keeping the same no-model/no-network/CA-free guards; (3) build the 30-finding labelled corpus from public agent-generated CVE/audit writeups (AISLE's 24 curl CVEs, Trail of Bits Patch the Planet, curl 8.23.0 advisories) and publish a confusion matrix with a severity row; (4) internally: mark failed missions as diagnosed so the trigger stops re-firing (kills ~48% of proposal flow), set started_at AND finished_at in mission-worker, raise the claim limit above 1; (5) if no outside party re-derives in 72h, kill the receipt lane and publish the probe as a standalone open artifact instead.",
+  "next_cycle_reporting": [
+    "whether ONE outside party re-derived the probe on their own harness log, with their output published verbatim",
+    "probe v0.2: effect-hash binding shipped, and whether the no-model/no-network/CA-free guards still pass",
+    "30-finding labelled corpus size, confusion matrix with the severity row, refusal rate, false-accept rate",
+    "our own laundering rate (0.051% baseline) and whether the trigger still re-diagnoses the two dead missions (48% of proposal flow)",
+    "queue depth (70 baseline), drain/h (19 baseline), proposals/h (21 baseline), avg wait (154 min baseline), missions with started_at AND finished_at (0 / 2 baseline)",
+    "tweet.posted (still 0 after 17 cycles?) and whether any credential landed",
+    "one monthly diff of openai/openai-cli for attestation primitives, and a watch on Alter's roadmap for anything post-hoc"
+  ]
+}

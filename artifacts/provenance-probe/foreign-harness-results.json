@@ -1,0 +1,1085 @@
+{
+  "pass": true,
+  "harnesses": [
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/0accc8b9-8ae0-4930-9d46-5a41372c3821.jsonl",
+      "turns": 186,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/099a3d2f-d18c-4cfd-b6de-301e7aa4a59b.jsonl",
+      "turns": 20,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/e6b37f46-26d5-471d-b23e-60b4e79fa223.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/419124b6-9b7f-40d8-b060-4b2306c5891e.jsonl",
+      "turns": 14,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/a6d5edf2-61b6-43b0-9052-da199fe21ec4.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/2764f8e8-4a42-4f02-893a-1104223ec790.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/541f5528-fa85-4f14-acdf-5500d69e564f.jsonl",
+      "turns": 35,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/f23486d2-c4e4-4dc5-8028-653915a01ac4.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/7f2963ab-cc9d-40b5-b8ec-b4a6a8064410.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/70b2b413-3864-4336-b36e-5a5841587b3a.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/48f5c686-bef1-4d0a-a1ad-1e1849ebadc4.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/6879f7b3-155f-4f3b-82df-e10b4fcb584b.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/d0f7c441-81ab-4906-92ac-20d247f1d5b9.jsonl",
+      "turns": 16,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/31381750-41a9-4ebe-b790-d996948a5920.jsonl",
+      "turns": 5,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/aaacb5f2-f55d-400d-8c59-e53361f27b78.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/8c2d3fb9-f54b-4e3d-bdf4-947682d255e5.jsonl",
+      "turns": 56,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/47c72bd1-d10d-4a87-a130-00cf5aee72c2.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/1b07c414-1b3c-47cd-8e3b-78ea954c18fe.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/414d1447-2555-4b74-b063-a3ee6175b3ea.jsonl",
+      "turns": 46,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/ff477f87-c4b8-43b2-817b-2daf48595ac6.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/9480c80e-9bf0-4912-b7d4-8aabfd226dfc.jsonl",
+      "turns": 17,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/0af18675-6ee8-4efd-9547-6ced7e7c8c2c.jsonl",
+      "turns": 6,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/c3f85d99-7713-4709-bea3-d108b7c01bad.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/69c73ddf-7b1b-4885-aac9-c6449d3b4b51.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/368d090d-d2de-4242-8ad5-249f4523bffe.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/b7c05ade-628a-464c-a263-87975001adb8.jsonl",
+      "turns": 65,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/587b4856-4d67-4be7-a1c1-355e7e454b9a.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/a42e54b4-6cca-4f34-b2b2-08944a7ec534.jsonl",
+      "turns": 19,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/de08b7f2-fe10-4b53-8fa1-0aae292da112.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/b70cd804-b433-4712-a649-3895c885b23d.jsonl",
+      "turns": 37,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/bbd5dd60-6294-4774-8761-4a4290e2756b.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/1d5b53fe-300f-4a6c-8c9f-9c0457bd4279.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/36e43825-ae63-4718-ae71-c454be4569b1.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/b368f353-fbd6-44bf-8f3d-6b13af506b3f.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/a170f5ed-2d7f-4973-b7d1-6e5277735b79.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/04c48ac7-5ceb-4b1a-9b4d-55ddd586d56c.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/aae82b42-0d76-4e47-90ee-897e32bfe4d5.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/d5535ea0-691d-4f9d-84e5-0f3da1ac7032.jsonl",
+      "turns": 6,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/6d972b13-0562-4935-a33c-e416404380e3.jsonl",
+      "turns": 23,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    },
+    {
+      "file": "/home/ax/.openclaw/agents/main/sessions/aea67a48-2ad8-40a7-8106-1906b99e68a9.jsonl",
+      "turns": 4,
+      "role_typed": {
+        "verdict": "ACCEPT",
+        "provenance_class": "ROLE_TYPED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_ROLE_TYPED"
+        ]
+      },
+      "flattened_no_labels": {
+        "verdict": "REFUSE-PROVENANCE-UNKNOWN",
+        "provenance_class": "UNKNOWN",
+        "reason_codes": [
+          "PROVENANCE_CLASS_UNKNOWN"
+        ]
+      },
+      "flattened_text_labels": {
+        "verdict": "REFUSE",
+        "provenance_class": "FLATTENED",
+        "reason_codes": [
+          "PROVENANCE_CLASS_FLATTENED"
+        ]
+      },
+      "structure_sensitive": true,
+      "pass": true
+    }
+  ]
+}

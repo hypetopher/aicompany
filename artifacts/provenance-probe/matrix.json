@@ -1,0 +1,38 @@
+{
+  "corpus_size": 120,
+  "seed": 20261022,
+  "matrix": {
+    "ACCEPT": {
+      "ACCEPT": 40,
+      "REFUSE": 0,
+      "REFUSE-PROVENANCE-UNKNOWN": 0
+    },
+    "REFUSE": {
+      "ACCEPT": 0,
+      "REFUSE": 40,
+      "REFUSE-PROVENANCE-UNKNOWN": 0
+    },
+    "REFUSE-ANY": {
+      "ACCEPT": 0,
+      "REFUSE": 40,
+      "REFUSE-PROVENANCE-UNKNOWN": 0
+    }
+  },
+  "by_label": {
+    "clean": {
+      "n": 40,
+      "pass": 40
+    },
+    "tampered": {
+      "n": 40,
+      "pass": 40
+    },
+    "provenance_lost": {
+      "n": 40,
+      "pass": 40
+    }
+  },
+  "refusal_rate_on_tampered_and_provenance_lost": 1,
+  "false_accept_rate": 0,
+  "all_pass": true
+}
