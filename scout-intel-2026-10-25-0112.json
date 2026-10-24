@@ -1,0 +1,72 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-25T01:12+01:00",
+  "proposalId": 94399,
+  "missionId": 94363,
+  "missionStatus": "succeeded",
+  "focus": "Fix the distribution surface that was silently broken: the repo was undiscoverable as a skill source",
+  "signals": {
+    "skills_discoverable_before": 1,
+    "skills_discoverable_after": 2,
+    "skills_installable_before": 1,
+    "skills_installable_after": 2,
+    "skills_sh_indexed": false,
+    "repo_stars": 0,
+    "social_posts_lifetime": 0,
+    "social_adapter": "mock (runtime-deps.ts postTweet -> mock_<ts>)",
+    "npm_published": false,
+    "npm_auth": "none (ENEEDAUTH)",
+    "draft_tweet_steps_succeeded_lifetime": 126,
+    "write_content_steps_succeeded_lifetime": 95,
+    "upstream_pr": "davepoon/buildwithclaude#546 OPEN"
+  },
+  "root_cause": "vercel-labs/skills discoverSkills() returns early when a repo root contains SKILL.md, so skills/growth-intel was never discoverable via `npx skills add hypetopher/aicompany`. The marketplace.json declared both skills, but the CLI saw one. The previous cycle's 'skills_installable: 2' claim was wrong.",
+  "shipped": {
+    "commit": "6d0166f",
+    "branch": "main",
+    "change": "SKILL.md -> skills/ai-company-loop/SKILL.md; .claude-plugin/marketplace.json now points at ./skills/ai-company-loop and ./skills/growth-intel",
+    "verification": [
+      "`npx skills add hypetopher/aicompany --list` -> 'Found 2 skills' (ai-company-loop, growth-intel)",
+      "`npx skills add hypetopher/aicompany --skill growth-intel -a claude-code -y` -> installed to ./.claude/skills/growth-intel"
+    ]
+  },
+  "experiment": {
+    "hypothesis": "Discovery is the binding constraint, not content volume: fixing skill layout doubles the installable surface and unblocks registry indexing.",
+    "metric": "skills_discoverable (npx skills --list count)",
+    "baseline": 1,
+    "result": 2,
+    "verdict": "pass"
+  },
+  "risks": [
+    {
+      "risk": "Social growth channel is a mock: post_tweet would write false publish records into ops_social_posts (the exact table that measures the publish path).",
+      "severity": "high",
+      "action": "Do not enable post_tweet until a real adapter exists. Any 'publish' number from ops_social_posts today is fake."
+    },
+    {
+      "risk": "Content output is unpublishable: 16/21 content bodies in 24h had no link, 6/21 carried internal IDs.",
+      "severity": "medium",
+      "action": "Add a publish-readiness gate to write_content (link + no internal IDs) before it enters the queue."
+    },
+    {
+      "risk": "npm channel unavailable: no npm auth on this host, so the most measurable distribution channel (weekly downloads) is blocked.",
+      "severity": "medium",
+      "action": "Needs AX: npm login + a scoped package name. Unlocks a metric we can actually read."
+    },
+    {
+      "risk": "skills.sh still shows 0 results for ai-company-loop; registry indexing is now unblocked but not yet observed.",
+      "severity": "medium",
+      "action": "Re-check skills.sh/api/search next cycle; indexing is the multiplier on the fix just shipped."
+    },
+    {
+      "risk": "Upstream PR #546 still OPEN and unreviewed; third-party PRs are slow, non-deterministic distribution.",
+      "severity": "low",
+      "action": "Treat GitHub PR distribution as a side channel, not the main plan."
+    }
+  ],
+  "next_experiments": [
+    "Re-measure skills.sh indexing for hypetopher/aicompany (installs > 0 is the success metric).",
+    "Add a write_content publish-readiness gate so drafts carry a link and no internal IDs.",
+    "AX decision needed: npm auth so the skill can ship as a package with a downloadable metric."
+  ]
+}
