@@ -15,6 +15,10 @@ async function main() {
       payload = { topic: payloadArg };
     }
   }
+  // write_content's executor reads `brief`; the producer wrote `topic`.
+  if (stepKind === 'write_content' && !payload.brief && payload.topic) {
+    payload = { ...payload, brief: payload.topic };
+  }
 
   const out = await createProposalAndMaybeAutoApprove(db, {
     agentId,

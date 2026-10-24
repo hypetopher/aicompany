@@ -35,12 +35,14 @@ returning s.id, s.mission_id, s.kind, s.payload, s.attempts;
 `;
 
 export async function runWorkerOnce(db: any, workerId: string, deps = runtimeDeps) {
-  const step: ClaimedStep | null = await db.claimOneStep(workerId);
+  const claim = db.claimOneStepByPriority ? await db.claimOneStepByPriority(workerId) : await db.claimOneStep(workerId);
+  const step: ClaimedStep | null = claim;
   if (!step) return { claimed: false };
 
   try {
     const result = await executeStepByKind(step, { db, ...deps });
     await db.markStepSucceeded(step.id);
+    await db.closeMissionIfComplete?.(step.mission_id);
     await db.insertEvent({
       kind: 'step.succeeded',
       title: `Step ${step.id} succeeded`,
@@ -55,6 +57,7 @@ export async function runWorkerOnce(db: any, workerId: string, deps = runtimeDep
 
     if (shouldDeadLetter(attempts)) {
       await db.markStepFailed(step.id, `[dead-letter] ${msg}`);
+      await db.closeMissionIfComplete?.(step.mission_id);
     } else {
       await db.requeueStep(step.id, msg, computeNextRunAfter(attempts));
     }

@@ -65,8 +65,16 @@ async function isAutoApproveAllowed(_db: any, _kinds: string[]): Promise<boolean
 
 type GateResult = { ok: true } | { ok: false; reason: string };
 
+/** Kinds the worker can actually execute (see executors/step-executors.ts). */
+export const EXECUTABLE_STEP_KINDS = ['analyze', 'draft_tweet', 'write_content', 'post_tweet'] as const;
+
 async function checkStepKindGates(db: any, steps: StepInput[]): Promise<GateResult> {
   for (const step of steps) {
+    // Fail closed at intake: a kind the executor cannot run would otherwise be
+    // retried 7 times and then dead-lettered, burning ~68 minutes of wall clock.
+    if (!EXECUTABLE_STEP_KINDS.includes(step.kind as any)) {
+      return { ok: false, reason: `Unknown step kind: ${step.kind}` };
+    }
     if (step.kind === 'post_tweet') {
       const quota = await db.getPolicy('x_daily_quota');
       if (quota?.enabled === false) return { ok: false, reason: 'x autopost disabled' };

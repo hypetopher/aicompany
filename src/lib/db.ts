@@ -2,6 +2,30 @@ import { getSupabase } from './supabase.js';
 
 type Json = Record<string, unknown>;
 
+/**
+ * A failure we caused on purpose is a resolution, not an incident.
+ * Diagnosing resolutions forever is what produced the queue backlog.
+ */
+export function classifyFailure(lastError: string): 'resolution' | 'unknown_kind' | 'transient' {
+  const e = lastError.toLowerCase();
+  if (e.includes('duplicate') || e.includes('cancelled') || e.includes('probe artifact') || e.includes('superseded')) {
+    return 'resolution';
+  }
+  if (e.includes('unknown step kind') || e.includes('dead-letter')) return 'unknown_kind';
+  return 'transient';
+}
+
+/** Lower number = claimed first. Real work beats bulk analysis. */
+export function stepPriority(step: { kind: string; payload?: unknown }): number {
+  const payload = (step.payload ?? {}) as Record<string, unknown>;
+  if (payload.mode === 'postmortem') return 90; // redundant diagnosis work
+  if (step.kind === 'post_tweet') return 0;
+  if (step.kind === 'write_content') return 10;
+  if (step.kind === 'draft_tweet') return 20;
+  if (step.kind === 'analyze') return 50;
+  return 40;
+}
+
 export const db = {
   async getPolicy(key: string): Promise<any> {
     const { data, error } = await (getSupabase() as any).from('ops_policy').select('value').eq('key', key).single();
@@ -168,15 +192,119 @@ export const db = {
       .filter((r: any) => r.views >= 5000);
   },
 
+  /**
+   * Classify a failure so that "resolutions" never enter the diagnose feed.
+   * A resolution is a failure we caused on purpose (duplicate, cancelled, probe
+   * artifact). Diagnosing it forever is the loop that filled the queue.
+   */
   async findRecentFailedMissions(limit: number): Promise<any[]> {
-    const { data, error } = await (getSupabase() as any)
+    const sb = getSupabase() as any;
+    const { data: missions, error } = await sb
       .from('ops_missions')
       .select('id, title, updated_at')
       .eq('status', 'failed')
       .order('updated_at', { ascending: false })
       .limit(limit);
     if (error) throw error;
-    return (data ?? []).map((m: any) => ({ mission_id: m.id, reason: m.title }));
+
+    const out: any[] = [];
+    for (const m of missions ?? []) {
+      const { data: failing } = await sb
+        .from('ops_mission_steps')
+        .select('id, kind, last_error, status')
+        .eq('mission_id', m.id)
+        .eq('status', 'failed')
+        .limit(1);
+      const step = (failing ?? [])[0];
+      const lastError = String(step?.last_error ?? '');
+      const failureClass = classifyFailure(lastError);
+
+      // Resolutions (duplicate / cancelled / probe artifact) are not incidents.
+      if (failureClass === 'resolution') continue;
+
+      // Dedupe: one open postmortem per failed mission. The postmortem step
+      // lives on a *different* mission, so it must be matched by payload.
+      const { data: open } = await sb
+        .from('ops_mission_steps')
+        .select('id, mission_id')
+        .eq('kind', 'analyze')
+        .eq('payload->>mode', 'postmortem')
+        .eq('payload->>missionId', String(m.id))
+        .in('status', ['queued', 'running']);
+      if (open && open.length > 0) continue;
+
+      out.push({
+        mission_id: m.id,
+        reason: lastError || m.title,
+        failure_class: failureClass,
+        failing_step_kind: step?.kind ?? null,
+        failing_step_id: step?.id ?? null,
+      });
+    }
+    return out;
+  },
+
+  /**
+   * Priority-aware, race-safe claim. Picks the highest-priority queued step
+   * (value work before bulk analysis) and flips it to running with a
+   * compare-and-set so two workers cannot take the same row.
+   */
+  async claimOneStepByPriority(workerId: string): Promise<any | null> {
+    const sb = getSupabase() as any;
+    const { data: candidates, error } = await sb
+      .from('ops_mission_steps')
+      .select('id, kind, payload, attempts')
+      .eq('status', 'queued')
+      .lte('run_after', new Date().toISOString())
+      .order('id', { ascending: true })
+      .limit(50);
+    if (error) throw error;
+
+    const ranked = (candidates ?? []).slice().sort((a: any, b: any) => stepPriority(a) - stepPriority(b));
+    for (const cand of ranked) {
+      const { data: claimed } = await sb
+        .from('ops_mission_steps')
+        .update({
+          status: 'running',
+          attempts: Number(cand.attempts ?? 0) + 1,
+          started_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          worker_id: workerId,
+        })
+        .eq('id', cand.id)
+        .eq('status', 'queued')
+        .select('id, mission_id, kind, payload, attempts')
+        .maybeSingle();
+      if (claimed) return claimed;
+    }
+    return null;
+  },
+
+  /**
+   * Close a mission once all of its steps are terminal.
+   * Without this, ops_missions is a graveyard of 'approved' rows.
+   */
+  async closeMissionIfComplete(missionId: number): Promise<void> {
+    const sb = getSupabase() as any;
+    const { data: steps } = await sb
+      .from('ops_mission_steps')
+      .select('id, status')
+      .eq('mission_id', missionId);
+    const list = steps ?? [];
+    if (list.length === 0) return;
+    const allTerminal = list.every((s: any) => s.status === 'succeeded' || s.status === 'failed');
+    if (!allTerminal) return;
+    const anyFailed = list.some((s: any) => s.status === 'failed');
+    const now = new Date().toISOString();
+    await sb
+      .from('ops_missions')
+      .update({
+        status: anyFailed ? 'failed' : 'succeeded',
+        started_at: now,
+        finished_at: now,
+        updated_at: now,
+      })
+      .eq('id', missionId);
   },
 
   async fetchPendingReactions(batch: number): Promise<any[]> {

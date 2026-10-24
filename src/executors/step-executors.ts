@@ -36,7 +36,9 @@ async function execAnalyze(step: any, deps: any) {
 }
 
 async function execWriteContent(step: any, deps: any) {
-  const brief = String(step.payload.brief ?? 'Write a short ops update.');
+  // Producer writes payload.topic, executor used to read only payload.brief,
+  // so ~99.9% of articles were the hardcoded default sentence.
+  const brief = String(step.payload.brief ?? step.payload.topic ?? 'Write a short ops update.');
   const article = await deps.llm.complete(`Write a structured post (title + 5 sections): ${brief}`);
   await deps.db.saveContentDraft({ stepId: step.id, body: article });
   return { kind: step.kind };

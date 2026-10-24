@@ -28,6 +28,8 @@ export async function evaluateTriggers(db: any, limit = 20): Promise<TriggerOutc
   }
 
   // Trigger 2: failed mission -> diagnosis
+  // findRecentFailedMissions already drops "resolutions" (duplicate/cancelled/probe)
+  // and de-duplicates open postmortems, so this fires once per real incident.
   const failed = await db.findRecentFailedMissions(limit);
   for (const item of failed) {
     outcomes.push({
@@ -37,7 +39,18 @@ export async function evaluateTriggers(db: any, limit = 20): Promise<TriggerOutc
         agentId: 'observer',
         title: `Diagnose mission failure ${item.mission_id}`,
         rationale: item.reason ?? 'Mission failed',
-        proposedSteps: [{ kind: 'analyze', payload: { missionId: item.mission_id, mode: 'postmortem' } }],
+        proposedSteps: [
+          {
+            kind: 'analyze',
+            payload: {
+              missionId: item.mission_id,
+              mode: 'postmortem',
+              failureClass: item.failure_class ?? 'transient',
+              failingStepKind: item.failing_step_kind ?? null,
+              error: item.reason ?? null,
+            },
+          },
+        ],
       },
     });
   }
