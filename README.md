@@ -1,6 +1,8 @@
 # aicompany
 
-Closed-loop AI company runtime inspired by VoxYZ architecture:
+Closed-loop AI company runtime - proposal -> mission -> steps -> execution -> verified outcome. Runnable as a Claude Code skill (`ai-company-loop`).
+
+Architecture inspired by VoxYZ:
 
 `Proposal -> Approval -> Mission -> Steps -> Execution -> Event -> Trigger/Reaction -> Proposal`
 
