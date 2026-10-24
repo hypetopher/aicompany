@@ -10,11 +10,12 @@
   "plugins": [
     {
       "name": "ai-company-loop",
-      "description": "Turns a request into a proposal, a mission with measurable steps, executed worker steps and verified outcomes, with an append-only event trail.",
+      "description": "Turns a request into a proposal, a mission with measurable steps, executed worker steps and verified outcomes, with an append-only event trail. Includes the growth-intel skill for running measurable growth experiments.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./"
+        "./",
+        "./skills/growth-intel"
       ]
     }
   ]
