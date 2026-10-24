@@ -47,6 +47,37 @@ describe('step executors', () => {
     expect(d.state.events).toBe(1);
   });
 
+  it('executes publish_skill through the github adapter and emits an event', async () => {
+    const d = mkDeps();
+    let received: any = null;
+    const deps = {
+      ...d,
+      github: {
+        async publishPullRequest(req: any) {
+          received = req;
+          return { url: 'https://github.com/hypetopher/aicompany/pull/1', number: 1, branch: 'skill-publish/x', files: ['SKILL.md'] };
+        },
+      },
+    } as any;
+
+    const out = await executeStepByKind(
+      { id: 6, kind: 'publish_skill', payload: { repo: 'hypetopher/aicompany', title: 'Ship skill', files: [{ path: 'SKILL.md', content: '# hi' }] } },
+      deps,
+    );
+
+    expect(out.kind).toBe('publish_skill');
+    expect(received.repo).toBe('hypetopher/aicompany');
+    expect(received.files[0].path).toBe('SKILL.md');
+    expect(d.state.events).toBe(1);
+  });
+
+  it('fails publish_skill when no github adapter is configured', async () => {
+    const d = mkDeps();
+    await expect(
+      executeStepByKind({ id: 7, kind: 'publish_skill', payload: { repo: 'x/y', files: [{ path: 'SKILL.md', content: 'x' }] } }, d as any),
+    ).rejects.toThrow(/github adapter/);
+  });
+
   it('throws on unknown kind', async () => {
     const d = mkDeps();
     await expect(executeStepByKind({ id: 5, kind: 'unknown', payload: {} }, d as any)).rejects.toThrow(/Unknown step kind/);

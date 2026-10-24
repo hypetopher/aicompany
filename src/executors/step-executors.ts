@@ -6,6 +6,7 @@ export async function executeStepByKind(step: {
   db: any;
   llm: { complete: (prompt: string) => Promise<string> };
   social: { postTweet: (text: string) => Promise<{ tweetId: string }> };
+  github?: { publishPullRequest: (req: any) => Promise<{ url: string; number: number; branch: string; files: string[] }> };
 }) {
   switch (step.kind) {
     case 'draft_tweet':
@@ -16,9 +17,41 @@ export async function executeStepByKind(step: {
       return execWriteContent(step, deps);
     case 'post_tweet':
       return execPostTweet(step, deps);
+    case 'publish_skill':
+      return execPublishSkill(step, deps);
     default:
       throw new Error(`Unknown step kind: ${step.kind}`);
   }
+}
+
+/**
+ * Ship a skill artifact as a pull request.
+ *
+ * Publishing is the step kind the pipeline was missing: until now every
+ * proposal could only analyse or draft, so no proposal could ever produce a
+ * shipped artifact. This step is deliberately branch+PR only (never a push to
+ * a default branch) and is gated by the `publish_gate` policy at intake, so
+ * an unattended proposal cannot publish to an arbitrary repo.
+ */
+async function execPublishSkill(step: any, deps: any) {
+  if (!deps.github?.publishPullRequest) {
+    throw new Error('publish_skill: github adapter is not configured');
+  }
+  const repo = String(step.payload.repo ?? '');
+  const title = String(step.payload.title ?? 'Publish skill');
+  const body = String(step.payload.body ?? '');
+  const files = Array.isArray(step.payload.files) ? step.payload.files : [];
+
+  const out = await deps.github.publishPullRequest({ repo, files, title, body });
+
+  await deps.db.insertEvent({
+    agent_id: 'scout',
+    kind: 'skill.published',
+    title: `Published ${repo}`,
+    summary: out.url,
+    payload: { repo, url: out.url, number: out.number, branch: out.branch, files: out.files },
+  });
+  return { kind: step.kind, url: out.url, number: out.number, files: out.files };
 }
 
 async function execDraftTweet(step: any, deps: any) {

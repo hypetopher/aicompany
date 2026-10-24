@@ -7,8 +7,10 @@
     "build": "tsc -p tsconfig.node.json",
     "typecheck": "tsc -p tsconfig.node.json --noEmit",
     "proposal:test": "node dist/scripts/create-proposal.js",
+    "proposal:approve": "node dist/scripts/approve-proposal.js",
     "heartbeat:run": "node dist/scripts/run-heartbeat.js",
     "worker:once": "node dist/scripts/run-worker-once.js",
+    "worker:batch": "node dist/scripts/run-worker-batch.js",
     "stage:summary": "node dist/scripts/stage-summary.js",
     "dev": "next dev",
     "start": "next start",
@@ -26,12 +28,19 @@
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@types/react": "19.2.13",
+    "@vitest/coverage-v8": "^2.1.9",
+    "dotenv": "^17.4.2",
     "typescript": "^5.9.2",
-    "vitest": "^2.1.8",
-    "@vitest/coverage-v8": "^2.1.9"
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
+    "@tiptap/pm": "^3.20.4",
+    "@tiptap/react": "^3.20.4",
+    "@tiptap/starter-kit": "^3.20.4",
+    "better-sqlite3": "^12.9.0",
+    "convex": "^1.34.0",
+    "lucide-react": "^0.577.0",
     "next": "^15.5.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

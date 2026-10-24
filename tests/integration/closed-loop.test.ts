@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createProposalAndMaybeAutoApprove } from '../../src/services/proposal-service.js';
 
-function makeFakeDb(opts?: { tweetCount?: number; autoApprove?: boolean }) {
+function makeFakeDb(opts?: { tweetCount?: number; autoApprove?: boolean; allowedStepKinds?: string[] }) {
   let proposalId = 100;
   let missionId = 500;
   const state = {
@@ -15,6 +15,12 @@ function makeFakeDb(opts?: { tweetCount?: number; autoApprove?: boolean }) {
     state,
     async getPolicy(key: string) {
       if (key === 'x_daily_quota') return { enabled: true, limit: 2 };
+      if (key === 'auto_approve') {
+        return {
+          enabled: opts?.autoApprove ?? true,
+          allowed_step_kinds: opts?.allowedStepKinds ?? ['post_tweet', 'draft_tweet', 'analyze'],
+        };
+      }
       return {};
     },
     async countTodayPostedTweets() {
@@ -53,6 +59,26 @@ describe('integration: closed loop proposal intake', () => {
     expect(db.state.proposals.length).toBe(1);
     expect(db.state.missions.length).toBe(1);
     expect(db.state.steps.length).toBe(1);
+  });
+
+  it('holds a publishing step pending when the policy omits that kind', async () => {
+    // Mirrors the live ops_policy.auto_approve list, which deliberately omits post_tweet.
+    const db = makeFakeDb({
+      tweetCount: 0,
+      autoApprove: true,
+      allowedStepKinds: ['draft_tweet', 'crawl', 'analyze', 'write_content'],
+    });
+
+    const res = await createProposalAndMaybeAutoApprove(db as any, {
+      agentId: 'xalt',
+      source: 'api',
+      title: 'post update',
+      proposedSteps: [{ kind: 'post_tweet', payload: { text: 'hello' } }],
+    });
+
+    expect(res.status).toBe('pending');
+    expect(db.state.missions.length).toBe(0);
+    expect(db.state.steps.length).toBe(0);
   });
 
   it('rejects at gate when quota reached', async () => {

@@ -62,4 +62,96 @@ describe('proposal-service', () => {
     expect(String(out.reason).toLowerCase()).toContain('quota');
     expect(db.state.missions).toHaveLength(0);
   });
+
+  it('does not auto-approve a kind the policy omits', async () => {
+    // ops_policy.auto_approve deliberately omits post_tweet.
+    const db = mkDb({ postedCount: 0, quotaLimit: 8 });
+    db.getPolicy = async (key: string) =>
+      key === 'x_daily_quota'
+        ? { enabled: true, limit: 8 }
+        : { enabled: true, allowed_step_kinds: ['draft_tweet', 'crawl', 'analyze', 'write_content'] };
+
+    const out = await createProposalAndMaybeAutoApprove(db as any, {
+      agentId: 'xalt',
+      source: 'api',
+      title: 'publish attempt',
+      proposedSteps: [{ kind: 'post_tweet', payload: { text: 'should not auto-run' } }],
+    });
+
+    expect(out.status).toBe('pending');
+    expect(db.state.missions).toHaveLength(0);
+  });
+
+  it('rejects publish_skill to a repo outside the publish_gate allowlist', async () => {
+    const db = mkDb({ postedCount: 0, quotaLimit: 8 });
+    db.getPolicy = async (key: string) => {
+      if (key === 'publish_gate') return { enabled: true, allowed_repos: ['hypetopher/aicompany'] };
+      return { enabled: true, allowed_step_kinds: ['publish_skill', 'analyze'] };
+    };
+
+    const out = await createProposalAndMaybeAutoApprove(db as any, {
+      agentId: 'scout',
+      source: 'api',
+      title: 'publish to a repo we do not own',
+      proposedSteps: [{ kind: 'publish_skill', payload: { repo: 'someone/else', files: [{ path: 'SKILL.md', content: 'x' }] } }],
+    });
+
+    expect(out.status).toBe('rejected');
+    expect(String(out.reason)).toContain('not allowed');
+    expect(db.state.missions).toHaveLength(0);
+  });
+
+  it('rejects publish_skill when publish_gate is disabled', async () => {
+    const db = mkDb({ postedCount: 0, quotaLimit: 8 });
+    db.getPolicy = async (key: string) => {
+      if (key === 'publish_gate') return { enabled: false, allowed_repos: ['hypetopher/aicompany'] };
+      return { enabled: true, allowed_step_kinds: ['publish_skill'] };
+    };
+
+    const out = await createProposalAndMaybeAutoApprove(db as any, {
+      agentId: 'scout',
+      source: 'api',
+      title: 'publish while disabled',
+      proposedSteps: [{ kind: 'publish_skill', payload: { repo: 'hypetopher/aicompany', files: [{ path: 'SKILL.md', content: 'x' }] } }],
+    });
+
+    expect(out.status).toBe('rejected');
+    expect(db.state.missions).toHaveLength(0);
+  });
+
+  it('never auto-approves publish_skill even when the policy allows the kind', async () => {
+    const db = mkDb({ postedCount: 0, quotaLimit: 8 });
+    db.getPolicy = async (key: string) => {
+      if (key === 'publish_gate') return { enabled: true, allowed_repos: ['hypetopher/aicompany'] };
+      return { enabled: true, allowed_step_kinds: ['publish_skill', 'analyze'] };
+    };
+
+    const out = await createProposalAndMaybeAutoApprove(db as any, {
+      agentId: 'scout',
+      source: 'api',
+      title: 'publish wants human approval',
+      proposedSteps: [{ kind: 'publish_skill', payload: { repo: 'hypetopher/aicompany', files: [{ path: 'SKILL.md', content: 'x' }] } }],
+    });
+
+    expect(out.status).toBe('pending');
+    expect(db.state.missions).toHaveLength(0);
+  });
+
+  it('fails closed when the auto_approve policy cannot be read', async () => {
+    const db = mkDb({ postedCount: 0, quotaLimit: 8 });
+    db.getPolicy = async (key: string) => {
+      if (key === 'x_daily_quota') return { enabled: true, limit: 8 };
+      throw new Error('policy read failed');
+    };
+
+    const out = await createProposalAndMaybeAutoApprove(db as any, {
+      agentId: 'xalt',
+      source: 'api',
+      title: 'publish attempt during policy outage',
+      proposedSteps: [{ kind: 'post_tweet', payload: { text: 'should not auto-run' } }],
+    });
+
+    expect(out.status).toBe('pending');
+    expect(db.state.missions).toHaveLength(0);
+  });
 });

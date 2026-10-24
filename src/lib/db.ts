@@ -39,6 +39,16 @@ export const db = {
     return data as { id: number };
   },
 
+  async getProposal(id: number): Promise<any | null> {
+    const { data, error } = await (getSupabase() as any)
+      .from('ops_mission_proposals')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data ?? null;
+  },
+
   async insertEvent(row: any): Promise<void> {
     const { error } = await (getSupabase() as any).from('ops_agent_events').insert({
       agent_id: row.agent_id ?? 'system',
@@ -222,15 +232,23 @@ export const db = {
       // Resolutions (duplicate / cancelled / probe artifact) are not incidents.
       if (failureClass === 'resolution') continue;
 
-      // Dedupe: one open postmortem per failed mission. The postmortem step
-      // lives on a *different* mission, so it must be matched by payload.
+      // A dead-lettered unknown step kind is a *permanent* config error: the
+      // executor can never run it, so no amount of diagnosis fixes it.
+      // Diagnosing it again only regenerates the same dead-letter loop.
+      if (failureClass === 'unknown_kind') continue;
+
+      // Dedupe: one postmortem per failed mission, ever — not just one *open*
+      // one. The postmortem step lives on a *different* mission, so it must be
+      // matched by payload. Previously only queued/running postmortems were
+      // counted, so a mission whose postmortem had already succeeded got a
+      // fresh diagnosis on every heartbeat (348 postmortems for one mission).
       const { data: open } = await sb
         .from('ops_mission_steps')
-        .select('id, mission_id')
+        .select('id, mission_id, status')
         .eq('kind', 'analyze')
         .eq('payload->>mode', 'postmortem')
         .eq('payload->>missionId', String(m.id))
-        .in('status', ['queued', 'running']);
+        .in('status', ['queued', 'running', 'succeeded']);
       if (open && open.length > 0) continue;
 
       out.push({

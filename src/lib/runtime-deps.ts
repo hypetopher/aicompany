@@ -1,3 +1,5 @@
+import { githubAdapter } from './github.js';
+
 export const runtimeDeps = {
   llm: {
     async complete(prompt: string): Promise<string> {
@@ -11,4 +13,9 @@ export const runtimeDeps = {
       return { tweetId: `mock_${Date.now()}` };
     },
   },
+  /**
+   * Real adapter: publishes through the `gh` CLI against the worker's
+   * existing auth session. Publishing stays branch+PR only.
+   */
+  github: githubAdapter,
 };

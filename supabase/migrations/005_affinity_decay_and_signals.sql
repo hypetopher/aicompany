@@ -11,7 +11,8 @@ begin
     when score < 0 then least(0, floor(score * (1 - p_percent)))
     else 0
   end,
-  updated_at = now();
+  updated_at = now()
+  where score != 0;
 
   get diagnostics v_count = row_count;
   return v_count;
@@ -27,7 +28,9 @@ declare
 begin
   update ops_agent_affinities
   set score = greatest(-100, least(100, score)),
-      updated_at = now();
+      updated_at = now()
+  where score < -100 or score > 100;
+
   get diagnostics v_count = row_count;
   return v_count;
 end;
