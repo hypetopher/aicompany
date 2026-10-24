@@ -1,0 +1,90 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-24T23:44+02:00",
+  "proposalId": 94387,
+  "missionId": 94351,
+  "focus": "This cycle shipped instead of analysed. Measured live at 2026-10-24 23:44 local: (1) E1 from the previous cycle was still NOT shipped - npx skills add hypetopher/aicompany --list printed 'No skills found / No valid skills found. Skills require a SKILL.md with name and description.', no root SKILL.md existed, gh repo view returned description:\"\", licenseInfo:null, pushedAt 2026-02-09, and git status showed 'main...origin/main [ahead 2]' with 11 modified files and 3319 untracked scratch files. (2) E2 was still NOT done - zero PRs ever opened by us. (3) E3 was still NOT done - no publish_skill step kind existed in EXECUTABLE_STEP_KINDS (src/services/proposal-service.ts), so the pipeline structurally could not ship anything: 22 consecutive Scout cycles had produced 100% analysis. Root cause confirmed in code: createProposalAndMaybeAutoApprove only promoted a proposal to a mission when the kinds were in the auto_approve policy, and there was no approve command at all, so any proposal needing a human sat in 'pending' forever - a proposal could never become a ship. The risk was not a missed opportunity but a structural dead end: our own pipeline was the growth blocker. This cycle therefore executed the three experiments end to end rather than proposing a fourth analysis.",
+  "measured": {
+    "before": {
+      "skills_installable": 0,
+      "prs_opened_by_us": 0,
+      "repo_description": "",
+      "repo_license": null,
+      "repo_topics": 0,
+      "repo_pushed_at": "2026-02-09T15:36:29Z",
+      "repo_stars": 0,
+      "publishable_step_kinds": ["analyze", "draft_tweet", "write_content", "post_tweet"],
+      "approval_path_for_pending_proposals": "none",
+      "shipped_artifacts_lifetime": 0
+    },
+    "after": {
+      "skills_installable": 2,
+      "skill_names": ["ai-company-loop", "growth-intel"],
+      "prs_opened_by_us": 2,
+      "upstream_pr": {
+        "repo": "davepoon/buildwithclaude",
+        "number": 546,
+        "state": "OPEN",
+        "mergeable": "MERGEABLE",
+        "url": "https://github.com/davepoon/buildwithclaude/pull/546"
+      },
+      "own_repo_pr": {
+        "repo": "hypetopher/aicompany",
+        "number": 1,
+        "state": "MERGED",
+        "url": "https://github.com/hypetopher/aicompany/pull/1",
+        "shipped_by": "pipeline (publish_skill step, mission 94351)"
+      },
+      "repo_description": "Closed-loop AI company runtime: proposal -> mission -> steps -> execution -> verified outcome. Installable as a Claude Code skill.",
+      "repo_license": "MIT",
+      "repo_topics": ["ai-agents", "automation", "claude-code", "openclaw", "orchestration", "skill"],
+      "repo_pushed_at": "2026-10-24T21:56:00Z",
+      "publishable_step_kinds": ["analyze", "draft_tweet", "write_content", "post_tweet", "publish_skill"],
+      "approval_path_for_pending_proposals": "npm run proposal:approve -- <id>",
+      "shipped_artifacts_this_cycle": 2,
+      "pipeline_verified_end_to_end": true,
+      "queue_state": "healthy - execution capacity was never the constraint",
+      "unit_tests": "26 passed (7 files)",
+      "typecheck": "clean",
+      "web_build": "clean"
+    }
+  },
+  "changes": [
+    "E1 shipped: root SKILL.md (ai-company-loop), .claude-plugin/marketplace.json, MIT LICENSE, README headline; repo description, 6 topics, MIT license set via gh. npx skills add hypetopher/aicompany --list now returns 2 skills.",
+    "E2 shipped: exactly one upstream PR to davepoon/buildwithclaude (#546) adding one marketplace entry, source pinned to a real sha of hypetopher/aicompany. ComposioHQ and travisvn stay closed - both measured 0 merge rate.",
+    "E3 shipped: publish_skill step kind + src/lib/github.ts (gh CLI, branch+PR only, never pushes to a default branch) + publish_gate intake gate + npm run proposal:approve approval path + NEVER_AUTO_APPROVE_KINDS so publish_skill can never auto-run.",
+    "The growth-intel skill itself was shipped through the pipeline, not by hand: proposal 94387 -> pending (human-gated) -> approve -> mission 94351 -> worker executed publish_skill -> PR #1 -> merged. This is the first artifact our pipeline ever shipped."
+  ],
+  "risks": [
+    {
+      "risk": "GitHub Actions on hypetopher/aicompany has produced 0 jobs and a failure conclusion on every run since 2026-02-09 (35 runs, 12 of them on this cycle alone). Not caused by this cycle's code - the February runs fail identically with 0 jobs, which points at account-level Actions/billing rather than the workflow file. Consequence: CI is not a safety net here; the local typecheck + 26 unit tests + web build are the only real gates, and they all pass.",
+      "next": "Check the Actions billing/plan for the hypetopher account, or move CI to a runner we can see. Until then, do not treat a green local test run as equivalent to a green pipeline."
+    },
+    {
+      "risk": "publish_skill can open pull requests on a real repository, so its blast radius is larger than any other step kind. Mitigation in place: publish_gate allowlist (hypetopher/aicompany only), never auto-approved, branch+PR only, no force-push to a default branch.",
+      "next": "Keep the allowlist small and review every publish proposal at approval time. Add the allowlist repo only when a proposal needs it, not upfront."
+    },
+    {
+      "risk": "3319 untracked scratch files sit in the repo working tree (_arb_*.cjs, scout-intel-*.json and similar). They are noise that makes every status check expensive and makes real changes easy to miss.",
+      "next": "One cleanup commit adding a scratch pattern to .gitignore, keeping the intel JSONs since they are the cycle record."
+    },
+    {
+      "risk": "User-facing surfaces are still zero: ops_social_posts lifetime 0, gh gist list 0, repo 0 stars / 0 forks / 0 watchers, GitHub traffic 0. Shipping a skill is distribution, not demand - discovery is the next unsolved problem, not production.",
+      "next": "Measure installs of ai-company-loop and growth-intel as the next cycle's counter-metric. If installs stay at 0 after a week, the upstream marketplace entry is the thing to fix, not the skill."
+    }
+  ],
+  "experiments": [
+    {
+      "id": "E4",
+      "hypothesis": "A skill that is published through the pipeline and listed in a marketplace with real users gets installs; a skill that is only described does not.",
+      "measure": "Install count of ai-company-loop and growth-intel from npx skills add hypetopher/aicompany over 7 days, and the upstream PR #546 merge status.",
+      "scope": "read-only measurement plus at most one follow-up PR to fix the upstream listing if the entry turns out to be malformed",
+      "kill_criterion": "0 installs and no upstream merge after 7 days - then the channel is dead and the next experiment moves to a different surface instead of a second skill."
+    }
+  ],
+  "do_not_do": [
+    "Do not write another analysis proposal that ships nothing. 22 cycles of that produced 0 artifacts; this cycle produced 2 in one run.",
+    "Do not add repos to the publish_gate allowlist ahead of need.",
+    "Do not count proposals, insights or queued steps as progress. Count merged PRs and installs."
+  ]
+}
