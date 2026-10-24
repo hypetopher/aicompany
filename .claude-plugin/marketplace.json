@@ -5,16 +5,16 @@
   },
   "metadata": {
     "description": "Closed-loop AI company runtime: proposal -> mission -> steps -> execution -> verified outcome",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "ai-company-loop",
-      "description": "Turns a request into a proposal, a mission with measurable steps, executed worker steps and verified outcomes, with an append-only event trail. Includes the growth-intel skill for running measurable growth experiments.",
+      "description": "Turns a request into a proposal, a mission with measurable steps, executed steps and verified outcomes, with an append-only event trail. Includes the growth-intel skill for running measurable growth experiments.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./",
+        "./skills/ai-company-loop",
         "./skills/growth-intel"
       ]
     }
