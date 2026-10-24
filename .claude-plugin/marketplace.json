@@ -1,0 +1,21 @@
+{
+  "name": "ai-company-loop",
+  "owner": {
+    "name": "hypetopher"
+  },
+  "metadata": {
+    "description": "Closed-loop AI company runtime: proposal -> mission -> steps -> execution -> verified outcome",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "ai-company-loop",
+      "description": "Turns a request into a proposal, a mission with measurable steps, executed worker steps and verified outcomes, with an append-only event trail.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./"
+      ]
+    }
+  ]
+}
