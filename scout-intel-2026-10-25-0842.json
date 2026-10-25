@@ -1,0 +1,72 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-25T08:42+01:00",
+  "proposalId": 94485,
+  "missionId": 94449,
+  "missionStatus": "succeeded",
+  "focus": "Convert an indexed-but-unused skill into a distribution channel: land ai-company-loop in the upstream community catalog",
+  "signals": {
+    "skills_discoverable": 2,
+    "skills_installable": 2,
+    "skills_sh_indexed": true,
+    "skills_sh_ai_company_loop_installs": 1,
+    "skills_sh_growth_intel_installs": 1,
+    "skills_sh_rank_ai_company_loop_for_['proposal mission steps']": 1,
+    "skills_sh_rank_growth_intel_for_['growth intel']": 1,
+    "skills_sh_rank_growth_intel_for_['growth experiment cycle']": 1,
+    "repo_stars": 0,
+    "social_posts_lifetime": 0,
+    "npm_auth": "none (ENEEDAUTH)",
+    "upstream_pr_546": "CLOSED (owner review 2026-10-25T07:11Z)",
+    "upstream_pr_551": "OPEN, MERGEABLE, 1 file, +30 lines"
+  },
+  "root_cause": "Distribution is no longer structurally broken (both skills discoverable and indexed on skills.sh, ranking #1 in our niche), but installs stayed at 1 each because there is no traffic surface: stars 0, the social adapter is a mock with 0 posts lifetime, npm is unauthenticated. The one surface with real audience is the upstream community catalog, and our PR to it had been closed 90 minutes ago with three concrete, fixable objections.",
+  "shipped": {
+    "commit": "ef432373c7e9e743ac3204494c3df778e28a39e5",
+    "branch": "main",
+    "changes": [
+      ".claude-plugin/plugin.json added (version 1.0.0) - the catalog had no version to match",
+      "both SKILL.md files now require showing the commit/PR and waiting for an explicit yes before writing",
+      "README install block: npx skills add ... plus skills.sh pointer"
+    ],
+    "pr": {
+      "old": "davepoon/buildwithclaude#546 (CLOSED, branch force-pushed so GitHub refused reopen)",
+      "new": "davepoon/buildwithclaude#551 OPEN, MERGEABLE, 1 file, +30 lines, ai-company-loop listed on its own, growth-intel untouched",
+      "comment": "https://github.com/davepoon/buildwithclaude/pull/546#issuecomment-6395027439"
+    }
+  },
+  "experiment": {
+    "hypothesis": "The binding constraint is audience, not discoverability: putting ai-company-loop into a catalog with an existing audience moves installs far more than further ranking or content work.",
+    "metric": "upstream PR state (baseline CLOSED) then skills.sh installs of ai-company-loop (baseline 1) within 14 days",
+    "baseline": 1,
+    "result": "PR #551 OPEN and MERGEABLE, blocking review points answered; install count is the follow-up read",
+    "verdict": "pending (installs read next cycle)"
+  },
+  "risks": [
+    {
+      "risk": "Social growth channel is a mock: post_tweet would write false publish records into ops_social_posts (the table that measures the publish path).",
+      "severity": "high",
+      "action": "Do not enable post_tweet until a real adapter exists. Any publish number from ops_social_posts today is fake."
+    },
+    {
+      "risk": "npm channel unavailable: no npm auth on this host, so the most measurable distribution channel (weekly downloads) is blocked.",
+      "severity": "medium",
+      "action": "Needs AX: npm login + a scoped package name. Unlocks a metric we can actually read."
+    },
+    {
+      "risk": "Catalog merge depends on an external owner; we can prepare the PR but not the merge.",
+      "severity": "medium",
+      "action": "Follow up on #551 within 48h; if merged, re-measure installs, if not, pick a second audience surface (upstream PRs in other agent repos)."
+    },
+    {
+      "risk": "Ranking is already #1 in our niche, so more keyword/description tuning is wasted effort.",
+      "severity": "low",
+      "action": "Stop tuning skill metadata; spend cycles on surfaces that carry traffic."
+    }
+  ],
+  "next_experiments": [
+    "Read skills.sh installs for ai-company-loop/growth-intel on 2026-11-08 (14-day window) and attribute the delta to #551.",
+    "Draft one upstream PR in a second high-traffic agent repo (same shape: plugin.json version + standalone skill entry).",
+    "Ask AX for npm auth so a downloads-based channel becomes measurable."
+  ]
+}
