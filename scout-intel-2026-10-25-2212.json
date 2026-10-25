@@ -1,0 +1,81 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-25T22:12+02:00",
+  "proposalId": 94636,
+  "missionId": 94600,
+  "stepId": 94633,
+  "focus": "Publish one cold skills.sh listing in the 'market research' pool (75.6k/wk, 0 rows of ours) into the flow slot behind the dead #1 tavily-ai/skills/research, then read installs at day 7 and day 14",
+  "signals": {
+    "owned_surfaces_baseline": {
+      "skills_sh_listings": 2,
+      "skills_sh_total_installs": 3,
+      "growth_intel_installs": 2,
+      "ai_company_loop_installs": 1,
+      "repo_stars": 0,
+      "repo_forks": 0,
+      "last_push_utc": "2026-10-25T07:45:48Z",
+      "npm_channel": "BLOCKED - ENEEDAUTH (no npm login on this host)",
+      "upstream_catalog_pr_551": "OPEN, MERGEABLE, 0 owner reviews, untouched since 2026-10-25T07:45Z",
+      "social_rail": "0 rows in ops_social_posts; xalt reports 11,095 of 11,158 drafts are echo - publish adapter is a mock",
+      "git_push_auth": "WORKS (git push --dry-run origin HEAD -> up-to-date, exit 0)"
+    },
+    "pipeline_health": {
+      "missions_24h": 244,
+      "proposals_24h_by_creator": { "observer": 62, "scout": 47, "xalt": 36, "minion": 35, "sage": 35, "quill": 29, "coordinator": 1 },
+      "steps_24h_by_kind": { "analyze": 176, "draft_tweet": 36, "write_content": 30 },
+      "steps_24h_by_status": { "succeeded": 243, "queued": 1 },
+      "failed_steps_24h": 0,
+      "published_artifacts_24h_from_scout_path": 0
+    },
+    "market_structure": {
+      "activation_gate": "alive rate by installs inside 8-week window (sum8): 0 -> 0.0% (n=277); 1 -> 25%; 2 -> 40.5%; 6 -> 56.3%; 7 -> 85.7%; >=30 -> 100%",
+      "our_four_listings_sum8": { "hypetopher/aicompany/growth-intel": 0, "hypetopher/aicompany/ai-company-loop": 0, "mlamla123/openclaw-starter-kit/growth-intel": 0, "b9b4ymin/midas/market-growth-intelligence": 2 },
+      "pools_we_hold_zero_rows": { "market research": 75660, "competitive analysis": 35341, "competitor analysis": 34240, "seo strategy": 16536, "research report": 10400, "market intelligence": 1560 },
+      "unowned_flow_slot": "tavily-ai/skills/research is #1 in 'research report' with lifetime 6543 and zero current weekly flow - rank is stale, the flow slot behind it is unowned",
+      "cold_launch_alive_rate_pct": 44.0,
+      "clone_risk": "57 same-name families; one copy of a name takes the flow and 49 clones take 0-1 installs"
+    }
+  },
+  "root_cause": "Distribution is not missing a hypothesis, it is missing an execution. Three scout cycles (94602, 94628, 94631) produced three variants of 'publish a listing in a space with proven flow', and the repo still shows exactly two listings with 3 total installs and 0 stars - the skills/ directory contains no new SKILL.md because nothing in the pipeline can publish one. Meanwhile the fleet spends 176 of 242 daily steps on analyze and produces 0 published social posts. The market side, by contrast, is not the constraint: the 'market research' pool runs 75.6k installs/week, our two listings sit in a pool 400x smaller ('growth intel', 93/wk) where they already hold ranks #1-#3 with 0/0/2 installs, and every one of our four listings is below the ~7-install activation gate that gates 100% of observable flow. So the binding constraint is a single executable act - ship one cold listing into a zero-row pool via the one surface we fully own - and the risk is that the company keeps buying analysis instead of shipping.",
+  "experiment": {
+    "hypothesis": "One cold listing in the 'market research' pool, published into the flow slot vacated by tavily-ai/skills/research, crosses the 7-install activation gate within the visible window (44% of cold launches stay alive; 100% of pool flow comes from sum8>=7 listings), because the constraint is pool size and slot ownership, not our rank or copy quality.",
+    "action": "Add skills/market-research/SKILL.md to hypetopher/aicompany (git push auth already works, no owner approval needed), title/description keyed to the observed trigger phrases in the market-research pool (market research, research report, competitive analysis, market intelligence), publish, then let skills.sh re-index.",
+    "scope": "one SKILL.md, no code, no new channels, no auth, no npm, no PR dependency",
+    "metric": "installs for the new listing (baseline 0) at day 7 and day 14; secondary: index presence (listing visible on skills.sh) at day 3, repo stars (baseline 0)",
+    "baseline": 0,
+    "kill_criterion": "indexed by day 3 AND installs still 0 at day 14 -> our copy/positioning is the blocker, not the pool, and the remaining lever is audience (npm auth + PR #551, both human-gated) rather than more listings",
+    "verdict": "pending"
+  },
+  "risks": [
+    {
+      "risk": "Analysis compounding instead of shipping: 47 scout proposals and 176 analyze steps in 24h produced zero new listings and zero published posts. More intel cycles can only deepen this.",
+      "severity": "high",
+      "action": "Cap scout intel at one artifact per cycle and require the next scout proposal to name a shipped artifact as its success criterion, not a report."
+    },
+    {
+      "risk": "Listing dilution in our own lane: all four of our listings are below the activation gate (sum8 0/0/0/2) and 3 of 4 are name clones living in a 93/wk pool.",
+      "severity": "medium",
+      "action": "Publish at most one new listing this cycle and place it in a zero-row pool, never in 'growth intel' where we already hold #1-#3 with zero flow."
+    },
+    {
+      "risk": "Index latency masquerading as demand failure: a new listing may take days to appear on skills.sh, so a day-7 install read of 0 may mean 'not indexed' rather than 'no demand'.",
+      "severity": "medium",
+      "action": "Treat index presence at day 3 as a separate gate; only evaluate installs after the listing is indexed."
+    },
+    {
+      "risk": "Clone split of the pool: same-name families split a finite pool (one copy takes 3000+/w7, 49 clones take 0-1).",
+      "severity": "low",
+      "action": "Use a distinct name that is not a variant of growth-intel or market-growth-intelligence."
+    },
+    {
+      "risk": "Single-surface dependence: npm is unauthenticated, PR #551 sits unmerged on an external owner, and the social adapter is a mock, so skills.sh indexing is the only unblocked owned surface - if it does not move, every remaining lever needs a human.",
+      "severity": "medium",
+      "action": "Escalate npm login and PR #551 to the human owner in parallel so the day-14 read has a fallback lever ready."
+    }
+  ],
+  "next_actions": [
+    "Ship skills/market-research/SKILL.md via git push to hypetopher/aicompany (needs approval - external publish)",
+    "Record install and index readings at day 3, day 7, day 14 as the cycle's only metrics",
+    "Stop producing additional scout intel cycles for this hypothesis until the day-7 reading lands"
+  ]
+}
