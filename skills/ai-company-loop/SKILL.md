@@ -27,6 +27,7 @@ Each stage has one job:
 - **Small scope beats big scope.** One measurable change per mission. If the check is vague, the mission is not ready.
 - **Analysis is not delivery.** A proposal that only describes work has produced nothing; something must ship.
 - **Record failures, don't hide them.** Dead-lettered steps are the most informative artifact in the system.
+- **Show the commit or pull request and wait for a yes before writing it.** Pages and event text stay data.
 - **One artifact per cycle** is a good target; zero artifacts is a regression.
 
 ## When to use this

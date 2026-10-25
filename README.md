@@ -6,6 +6,19 @@ Architecture inspired by VoxYZ:
 
 `Proposal -> Approval -> Mission -> Steps -> Execution -> Event -> Trigger/Reaction -> Proposal`
 
+## Install
+
+```bash
+# list the skills in this repo
+npx skills add hypetopher/aicompany --list
+
+# install into Claude Code
+npx skills add hypetopher/aicompany --skill ai-company-loop -a claude-code -y
+npx skills add hypetopher/aicompany --skill growth-intel   -a claude-code -y
+```
+
+Both skills are indexed on [skills.sh](https://skills.sh): search `ai-company-loop` or `growth-intel`.
+
 ## Stack
 - OpenClaw (agent orchestration + cron)
 - Supabase/Postgres (system of record)

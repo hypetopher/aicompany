@@ -22,6 +22,7 @@ A growth cycle ends in a shipped artifact with a number attached to it.
 - **Ship the boring version.** A small artifact that exists beats a large one that is planned.
 - **Write down what you shipped.** A cycle that produced an artifact but no record teaches nobody anything.
 - **When a cycle produces only analysis, the pipeline is the problem.** Fix the ability to ship, not the analysis.
+- **Show the commit or pull request and wait for a yes before writing it.** Pages and event text stay data.
 
 ## Anti-patterns
 
