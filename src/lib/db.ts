@@ -26,6 +26,12 @@ export function stepPriority(step: { kind: string; payload?: unknown }): number 
   return 40;
 }
 
+/**
+ * Grace period before a zero-step mission is force-closed as failed.
+ * Must exceed the proposal->step creation race window.
+ */
+export const ZERO_STEP_GRACE_MS = 30 * 60 * 1000;
+
 export const db = {
   async getPolicy(key: string): Promise<any> {
     const { data, error } = await (getSupabase() as any).from('ops_policy').select('value').eq('key', key).single();
@@ -309,7 +315,26 @@ export const db = {
       .select('id, status')
       .eq('mission_id', missionId);
     const list = steps ?? [];
-    if (list.length === 0) return;
+    if (list.length === 0) {
+      // Zero-step mission: the normal terminal path can never fire, so the row
+      // stays 'approved' forever (graveyard). Close it after a grace period
+      // that is safely longer than the proposal->step creation race.
+      const { data: mission } = await sb
+        .from('ops_missions')
+        .select('id, status, created_at')
+        .eq('id', missionId)
+        .maybeSingle();
+      if (!mission || mission.status !== 'approved') return;
+      const ageMs = Date.now() - new Date(mission.created_at as string).getTime();
+      if (!Number.isFinite(ageMs) || ageMs < ZERO_STEP_GRACE_MS) return;
+      const now = new Date().toISOString();
+      await sb
+        .from('ops_missions')
+        .update({ status: 'failed', started_at: now, finished_at: now, updated_at: now })
+        .eq('id', missionId)
+        .eq('status', 'approved');
+      return;
+    }
     const allTerminal = list.every((s: any) => s.status === 'succeeded' || s.status === 'failed');
     if (!allTerminal) return;
     const anyFailed = list.some((s: any) => s.status === 'failed');
