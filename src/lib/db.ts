@@ -37,11 +37,13 @@ export const ZERO_STEP_GRACE_MS = 30 * 60 * 1000;
  * Idempotency key for a mission step.
  *
  * The old key embedded the raw payload JSON: `proposal:1:kind:analyze:{...}`.
- * Postgres btree index entries cap at ~2704 bytes, so a large analyze/content
- * payload (3.5k-5.5k bytes observed) made the step INSERT fail with
- * `54000 index row size exceeds btree version 4 maximum`. The mission row was
- * already inserted at that point, so the result was an approved mission with
- * zero steps that could never be claimed and never terminated.
+ * Postgres btree index entries cap at 2704 bytes, so a large analyze/content
+ * payload made the step INSERT abort with
+ * `index row size 4040 exceeds btree version 4 maximum 2704 for index
+ * "idx_ops_mission_steps_idempotency"` (reproduced 2026-10-26 with a 4KB
+ * incompressible payload). The mission row was already inserted at that point,
+ * so the result was an approved mission with zero steps that could never be
+ * claimed and never terminated.
  *
  * Hash the payload instead: fixed 64 hex chars, same dedupe semantics
  * (identical payload -> identical key) and no size ceiling.
