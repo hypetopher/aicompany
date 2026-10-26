@@ -15,7 +15,8 @@
       "strict": false,
       "skills": [
         "./skills/ai-company-loop",
-        "./skills/growth-intel"
+        "./skills/growth-intel",
+        "./skills/market-research-playbook"
       ]
     }
   ]
