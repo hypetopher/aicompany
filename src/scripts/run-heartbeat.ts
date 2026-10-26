@@ -28,6 +28,8 @@ runHeartbeat({
   learnFromOutcomes: noop,
   recoverStaleSteps: noop,
   recoverStaleRoundtables: noop,
+  reapZeroStepMissions: async () => ({ reaped: await db.reapZeroStepMissions() }),
+  reapStalePendingProposals: async () => ({ reaped: await db.reapStalePendingProposals() }),
   logActionRun: db.logActionRun,
 })
   .then((r) => console.log(JSON.stringify(r, null, 2)))

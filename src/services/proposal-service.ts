@@ -31,7 +31,7 @@ export async function createProposalAndMaybeAutoApprove(
     agent_id: input.agentId,
     source: input.source,
     title: input.title,
-    rationale: input.rationale ?? null,
+    rationale: input.rationale?.trim() || deriveRationale(input),
     proposed_steps: input.proposedSteps,
     status: gate.ok ? 'pending' : 'rejected',
     reject_reason: gate.ok ? null : gate.reason,
@@ -54,6 +54,19 @@ export async function createProposalAndMaybeAutoApprove(
 
   const mission = await db.createMissionFromProposal(proposal.id, input.agentId, input.title, input.proposedSteps);
   return { proposalId: proposal.id, status: 'accepted', missionId: mission.id };
+}
+
+/**
+ * Fallback rationale for proposals submitted without one.
+ *
+ * 94% of 24h proposals carried a blank rationale, which made every review
+ * (observer diagnostics, MC) unable to tell what the proposal was for. The
+ * prefix marks the text as derived rather than agent-written so downstream
+ * quality metrics can still tell the difference.
+ */
+function deriveRationale(input: ProposalServiceInput): string {
+  const kinds = input.proposedSteps.map((s) => s.kind).join(', ');
+  return `[auto] ${input.agentId} ${input.source} proposal "${input.title}" (steps: ${kinds})`;
 }
 
 async function checkDailyLimit(_db: any, _agentId: string): Promise<void> {

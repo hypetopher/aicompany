@@ -5,6 +5,8 @@ export async function runHeartbeat(deps: {
   learnFromOutcomes: () => Promise<unknown>;
   recoverStaleSteps: () => Promise<unknown>;
   recoverStaleRoundtables: () => Promise<unknown>;
+  reapZeroStepMissions?: () => Promise<unknown>;
+  reapStalePendingProposals?: () => Promise<unknown>;
   logActionRun: (row: { actor: string; action: string; success: boolean; result: unknown }) => Promise<void>;
 }) {
   const started = Date.now();
@@ -26,6 +28,12 @@ export async function runHeartbeat(deps: {
   await safe('learning.outcomes', deps.learnFromOutcomes);
   await safe('recovery.staleSteps', deps.recoverStaleSteps);
   await safe('recovery.roundtables', deps.recoverStaleRoundtables);
+  if (deps.reapZeroStepMissions) {
+    await safe('recovery.zeroStepMissions', deps.reapZeroStepMissions);
+  }
+  if (deps.reapStalePendingProposals) {
+    await safe('recovery.stalePendingProposals', deps.reapStalePendingProposals);
+  }
 
   await deps.logActionRun({
     actor: 'heartbeat',

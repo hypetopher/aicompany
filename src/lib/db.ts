@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { getSupabase } from './supabase.js';
 
 type Json = Record<string, unknown>;
@@ -31,6 +32,24 @@ export function stepPriority(step: { kind: string; payload?: unknown }): number 
  * Must exceed the proposal->step creation race window.
  */
 export const ZERO_STEP_GRACE_MS = 30 * 60 * 1000;
+
+/**
+ * Idempotency key for a mission step.
+ *
+ * The old key embedded the raw payload JSON: `proposal:1:kind:analyze:{...}`.
+ * Postgres btree index entries cap at ~2704 bytes, so a large analyze/content
+ * payload (3.5k-5.5k bytes observed) made the step INSERT fail with
+ * `54000 index row size exceeds btree version 4 maximum`. The mission row was
+ * already inserted at that point, so the result was an approved mission with
+ * zero steps that could never be claimed and never terminated.
+ *
+ * Hash the payload instead: fixed 64 hex chars, same dedupe semantics
+ * (identical payload -> identical key) and no size ceiling.
+ */
+export function stepIdempotencyKey(proposalId: number, kind: string, payload: unknown): string {
+  const digest = createHash('sha256').update(JSON.stringify(payload ?? {})).digest('hex');
+  return `proposal:${proposalId}:kind:${kind}:${digest}`;
+}
 
 export const db = {
   async getPolicy(key: string): Promise<any> {
@@ -99,10 +118,28 @@ export const db = {
       kind: s.kind,
       payload: s.payload ?? {},
       status: 'queued',
-      idempotency_key: `proposal:${proposalId}:kind:${s.kind}:${JSON.stringify(s.payload ?? {})}`,
+      idempotency_key: stepIdempotencyKey(proposalId, s.kind, s.payload ?? {}),
     }));
     const { error: e2 } = await (getSupabase() as any).from('ops_mission_steps').insert(rows);
-    if (e2) throw e2;
+    if (e2) {
+      // Compensating rollback: without this the mission row survives with zero
+      // steps and the proposal stays 'pending' forever (the 94711/94720/94732
+      // graveyard). The step insert is what failed, so remove the mission and
+      // let the proposal be retried or rejected explicitly.
+      await (getSupabase() as any)
+        .from('ops_missions')
+        .delete()
+        .eq('id', (mission as any).id);
+      await (getSupabase() as any)
+        .from('ops_mission_proposals')
+        .update({
+          status: 'rejected',
+          reject_reason: `step insert failed: ${e2.message ?? String(e2)}`,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', proposalId);
+      throw e2;
+    }
 
     const { error: e3 } = await (getSupabase() as any)
       .from('ops_mission_proposals')
@@ -144,9 +181,34 @@ export const db = {
     if (error) throw error;
   },
 
+  /**
+   * Resolve the agent that actually owns a step.
+   *
+   * The step -> mission -> created_by chain is the only record of who asked
+   * for the work. Hardcoding 'quill'/'observer' here stamped every artifact
+   * with the wrong author, which made insight.generated look 100% observer
+   * no matter who produced it (a chronic observer complaint for days).
+   */
+  async resolveStepAuthor(stepId: number, fallback: string): Promise<string> {
+    const sb = getSupabase() as any;
+    const { data: step } = await sb
+      .from('ops_mission_steps')
+      .select('mission_id')
+      .eq('id', stepId)
+      .maybeSingle();
+    if (!step?.mission_id) return fallback;
+    const { data: mission } = await sb
+      .from('ops_missions')
+      .select('created_by')
+      .eq('id', step.mission_id)
+      .maybeSingle();
+    const author = String(mission?.created_by ?? '').trim();
+    return author || fallback;
+  },
+
   async saveTweetDraft(row: { stepId: number; text: string }): Promise<void> {
     await this.insertEvent({
-      agent_id: 'quill',
+      agent_id: await this.resolveStepAuthor(row.stepId, 'quill'),
       step_id: row.stepId,
       kind: 'tweet.drafted',
       title: 'Tweet drafted',
@@ -157,7 +219,7 @@ export const db = {
 
   async saveInsight(row: { stepId: number; report: string }): Promise<void> {
     await this.insertEvent({
-      agent_id: 'observer',
+      agent_id: await this.resolveStepAuthor(row.stepId, 'observer'),
       step_id: row.stepId,
       kind: 'insight.generated',
       title: 'Insight generated',
@@ -168,7 +230,7 @@ export const db = {
 
   async saveContentDraft(row: { stepId: number; body: string }): Promise<void> {
     await this.insertEvent({
-      agent_id: 'quill',
+      agent_id: await this.resolveStepAuthor(row.stepId, 'quill'),
       step_id: row.stepId,
       kind: 'content.drafted',
       title: 'Content drafted',
@@ -302,6 +364,97 @@ export const db = {
       if (claimed) return claimed;
     }
     return null;
+  },
+
+  /**
+   * Sweep for missions that are 'approved' but have zero steps.
+   *
+   * closeMissionIfComplete() handles the zero-step case too, but it is only
+   * called when a step is claimed - and a zero-step mission has no step to
+   * claim, so the reaper never fired on its own. This sweep is the standalone
+   * path the heartbeat calls every cycle.
+   */
+  async reapZeroStepMissions(graceMs = ZERO_STEP_GRACE_MS): Promise<number> {
+    const sb = getSupabase() as any;
+    const cutoff = new Date(Date.now() - graceMs).toISOString();
+    const { data: missions, error } = await sb
+      .from('ops_missions')
+      .select('id, proposal_id')
+      .eq('status', 'approved')
+      .lt('created_at', cutoff);
+    if (error) throw error;
+
+    let reaped = 0;
+    for (const m of missions ?? []) {
+      const { data: steps } = await sb
+        .from('ops_mission_steps')
+        .select('id')
+        .eq('mission_id', m.id)
+        .limit(1);
+      if ((steps ?? []).length > 0) continue;
+
+      const now = new Date().toISOString();
+      const { error: e } = await sb
+        .from('ops_missions')
+        .update({ status: 'failed', started_at: now, finished_at: now, updated_at: now })
+        .eq('id', m.id)
+        .eq('status', 'approved');
+      if (e) continue;
+      reaped++;
+
+      // The proposal that produced this mission never became a mission
+      // (its step insert aborted). Close it so it stops showing as pending.
+      await sb
+        .from('ops_mission_proposals')
+        .update({
+          status: 'rejected',
+          reject_reason: 'mission closed with zero steps (step insert failed)',
+          updated_at: now,
+        })
+        .eq('id', (m as any).proposal_id ?? -1)
+        .eq('status', 'pending');
+    }
+    return reaped;
+  },
+
+  /**
+   * Sweep proposals that have been 'pending' far too long.
+   *
+   * A proposal only stays pending when a human must approve it (post_tweet /
+   * publish_skill) or when its mission creation aborted. Auto-approvable kinds
+   * that are still pending after days are leftovers from before the gates
+   * existed - they should have been accepted long ago and nobody is going to
+   * look at them now.
+   */
+  async reapStalePendingProposals(maxAgeMs = 7 * 24 * 60 * 60 * 1000): Promise<number> {
+    const sb = getSupabase() as any;
+    const cutoff = new Date(Date.now() - maxAgeMs).toISOString();
+    const { data: proposals, error } = await sb
+      .from('ops_mission_proposals')
+      .select('id, proposed_steps')
+      .eq('status', 'pending')
+      .lt('created_at', cutoff);
+    if (error) throw error;
+
+    let reaped = 0;
+    for (const p of proposals ?? []) {
+      const steps = Array.isArray(p.proposed_steps) ? p.proposed_steps : [];
+      // Kinds that need a human stay pending on purpose.
+      if (steps.some((s: any) => s.kind === 'post_tweet' || s.kind === 'publish_skill')) continue;
+
+      const { error: e } = await sb
+        .from('ops_mission_proposals')
+        .update({
+          status: 'rejected',
+          reject_reason: 'stale proposal reaped (no approval after 7d)',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', p.id)
+        .eq('status', 'pending');
+      if (e) continue;
+      reaped++;
+    }
+    return reaped;
   },
 
   /**
