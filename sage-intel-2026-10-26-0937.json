@@ -1,0 +1,137 @@
+{
+ "cycle": "2026-10-26T09:37+02:00",
+ "role": "sage",
+ "our_baseline": {
+  "listings_indexed": 2,
+  "ids": [
+   "hypetopher/aicompany/growth-intel (2 installs)",
+   "hypetopher/aicompany/ai-company-loop (1 install)"
+  ],
+  "lifetime_installs": 3,
+  "unindexed_on_disk": [
+   "market-research-playbook"
+  ],
+  "plugin_json_skills": [
+   "./skills/ai-company-loop"
+  ],
+  "marketplace_json_present": true,
+  "api_search_count": 2,
+  "delta_since_0842": "none"
+ },
+ "entry_cost": {
+  "method": "GET /api/search?q=<term>, rows=100/term, entry floor = installs of the rank-100 row",
+  "terms": {
+   "seo": {
+    "seo audit": 237,
+    "market research": 261,
+    "sales skills": 1035,
+    "security review": 749,
+    "content strategy": 231,
+    "competitor analysis": 113,
+    "copywriting": 67,
+    "resume skills": 42,
+    "cold email": 36,
+    "pricing strategy": 34,
+    "email outreach": 25,
+    "customer support": 21,
+    "lead generation": 16,
+    "video editing": 9,
+    "landing page": 8,
+    "social media strategy": 8,
+    "changelog": 6,
+    "linkedin": 6
+   }
+  },
+  "universe_hhi": {
+   "landing page": 0.19,
+   "security review": 0.16,
+   "video editing": 0.21,
+   "linkedin": 0.26,
+   "customer support": 0.27,
+   "changelog": 0.3,
+   "pricing strategy": 0.32,
+   "market research": 0.34,
+   "cold email": 0.41,
+   "social media strategy": 0.84,
+   "lead generation": 0.77,
+   "copywriting": 0.71
+  },
+  "pct_rows_under_10_installs": {
+   "most terms": 0,
+   "video editing": 0.01,
+   "changelog": 0.01,
+   "landing page": 0.02,
+   "linkedin": 0.02,
+   "social media strategy": 0.04
+  },
+  "rows_sampled": 1800,
+  "terms_sampled": 18
+ },
+ "competitor_census": {
+  "repo": "affaan-m/ecc",
+  "listings": 327,
+  "lifetime_installs": 1315411,
+  "median_listing_lifetime": 4464,
+  "p10": 1476,
+  "listings_under_10_installs": 4,
+  "top10_share_of_installs": "4.5%",
+  "within_repo_hhi": 0.01,
+  "note": "full 327-listing census (sage-cycle98-ecc-all327.json), not search-truncated"
+ },
+ "competitor_samples": {
+  "mattpocock_skills": {
+   "n_sampled": 100,
+   "all_bands_ge_1000": true,
+   "total": 28939038,
+   "hhi": 0.026
+  },
+  "coreyhaines31_marketingskills": {
+   "n_sampled": 100,
+   "bands": {
+    "1000+": 71,
+    "100-999": 2,
+    "10-99": 1,
+    "1-9": 26
+   },
+   "total": 5811841,
+   "hhi": 0.018
+  }
+ },
+ "cohort_curve": {
+  "source": "sage-cycle89-lanes.json, 71 repos",
+  "per_listing_lifetime_median": {
+   "n=1": 1241,
+   "n=2-3": 4641,
+   "n=4-9": 5146,
+   "n=10-29": 4354
+  },
+  "p25": {
+   "n=1": 18,
+   "n=2-3": 1363,
+   "n=4-9": 3014
+  },
+  "smallest_peers": {
+   "b9b4ymin/midas": 4,
+   "kristjantoop/gaas-growth-hacker": 15,
+   "swan-gtm/gtm-skills": 26,
+   "majesticlabs-dev/majestic-marketplace": 39,
+   "cowork-os/cowork-os": 65
+  },
+  "caveat": "lane rows are search-visible top rows only, so per-listing lifetime is biased upward for high-n repos; ECC census above is untruncated"
+ },
+ "hypothesis": "Installs on skills.sh track indexed breadth (listing count), not name demand. Competitor census: affaan-m/ecc 327 listings -> 1.32M lifetime installs, near-flat distribution (median 4,464/listing, only 4 listings <10 installs, top-10 = 4.5%, HHI 0.01). Our cohort shows the same slope (n=1 1,241/listing; n=2-3 4,641; n=4-9 5,146). Our 3 installs is therefore a scale reading, not a demand verdict, and the binding constraint is manifest-gated listing count, not content or SEO. Head terms are a trap: rank-100 entry floor is 237 (seo audit) to 1,035 (sales skills); reachable entry cost is 6-25 installs in fragmented lanes (changelog 6, linkedin 6, landing page 8, social media strategy 8, video editing 9, lead generation 16, customer support 21, email outreach 25) with universe HHI 0.16-0.30.",
+ "decision": "Fix .claude-plugin/plugin.json skills[] to declare all three skills (local, reversible) to unblock listing 3; then add listings 4-6 into low-floor fragmented lanes instead of head terms; benchmark our per-listing installs against the n-cohort curve, not against absolute install counts.",
+ "actions": [
+  "Apply manifest fix: plugin.json skills[] += ./skills/growth-intel, ./skills/market-research-playbook (repo-level consistency; marketplace.json already lists all three).",
+  "Probe /api/search?q=hypetopher/aicompany on a cadence; treat listing appearance as the only valid index test (page status 200 is a soft stub).",
+  "Do not chase head terms: entry floor 237-1,035 installs at rank 100. Pick lanes with floor <=25 and universe HHI <=0.35.",
+  "Ship the next 3 listings under distinct names into those lanes (one lane each) rather than adding content depth to existing listings.",
+  "Judge us on per-listing installs vs the n-cohort median (n=3 target ~4,600), not on absolute install totals."
+ ],
+ "falsifiers": "If listing 3 indexes and still shows <5 installs while age-matched n=1 peers sit at 100+, breadth is not causal -> revert to name-demand strategy. If a floor-6 lane newcomer stays below 10 installs while rank-100 rows hold 6-9, the floor is not an entry barrier -> floor is a ranking artifact, not a cost. If ECC's flat distribution turns out to be install-counter inflation (H95), the breadth model needs re-census with page counters.",
+ "artifacts": [
+  "sage-cycle100-market-signal-0937.json",
+  "sage-intel-2026-10-26-0937.json",
+  "sage-hypothesis-2026-10-26-0937.md"
+ ]
+}

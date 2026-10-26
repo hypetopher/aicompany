@@ -1,0 +1,1282 @@
+[
+ {
+  "t": "seo audit",
+  "rows": 100,
+  "repos": 45,
+  "floor": 237,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 10,
+    "tot": 1163710,
+    "top": 237572,
+    "top1": 0.2,
+    "hot": 10,
+    "hotpct": 1,
+    "hhi": 0.12
+   },
+   {
+    "repo": "squirrelscan/skills",
+    "n": 2,
+    "tot": 76994,
+    "top": 73879,
+    "top1": 0.96,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.92
+   },
+   {
+    "repo": "firecrawl/firecrawl-workflows",
+    "n": 2,
+    "tot": 64658,
+    "top": 32630,
+    "top1": 0.5,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.5
+   },
+   {
+    "repo": "addyosmani/web-quality-skills",
+    "n": 1,
+    "tot": 32866,
+    "top": 32866,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "agricidaniel/claude-seo",
+    "n": 3,
+    "tot": 24268,
+    "top": 9036,
+    "top1": 0.37,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.34
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "kostja94/marketing-skills",
+    "n": 11,
+    "hotpct": 1,
+    "top1": 0.1,
+    "hhi": 0.09
+   },
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 10,
+    "hotpct": 1,
+    "top1": 0.2,
+    "hhi": 0.12
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.62
+  }
+ },
+ {
+  "t": "market research",
+  "rows": 100,
+  "repos": 71,
+  "floor": 261,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "mattpocock/skills",
+    "n": 1,
+    "tot": 717205,
+    "top": 717205,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 2,
+    "tot": 182615,
+    "top": 114874,
+    "top1": 0.63,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.53
+   },
+   {
+    "repo": "nexscope-ai/amazon-skills",
+    "n": 5,
+    "tot": 83562,
+    "top": 78165,
+    "top1": 0.94,
+    "hot": 5,
+    "hotpct": 1,
+    "hhi": 0.88
+   },
+   {
+    "repo": "affaan-m/ecc",
+    "n": 7,
+    "tot": 40563,
+    "top": 12319,
+    "top1": 0.3,
+    "hot": 7,
+    "hotpct": 1,
+    "hhi": 0.21
+   },
+   {
+    "repo": "firecrawl/firecrawl-workflows",
+    "n": 1,
+    "tot": 32420,
+    "top": 32420,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.34
+  }
+ },
+ {
+  "t": "cold email",
+  "rows": 100,
+  "repos": 54,
+  "floor": 36,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "open.feishu.cn",
+    "n": 1,
+    "tot": 805713,
+    "top": 805713,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 8,
+    "tot": 696354,
+    "top": 127610,
+    "top1": 0.18,
+    "hot": 8,
+    "hotpct": 1,
+    "hhi": 0.14
+   },
+   {
+    "repo": "mbfinotti/sales-skills",
+    "n": 4,
+    "tot": 102368,
+    "top": 25853,
+    "top1": 0.25,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.25
+   },
+   {
+    "repo": "code.deepline.com",
+    "n": 1,
+    "tot": 26470,
+    "top": 26470,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "affaan-m/ecc",
+    "n": 1,
+    "tot": 10074,
+    "top": 10074,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "cold-iq/coldiq-s-gtm-skills",
+    "n": 11,
+    "hotpct": 1,
+    "top1": 0.13,
+    "hhi": 0.1
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.41
+  }
+ },
+ {
+  "t": "sales skills",
+  "rows": 100,
+  "repos": 32,
+  "floor": 1035,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "vercel-labs/skills",
+    "n": 1,
+    "tot": 4042511,
+    "top": 4042511,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "mattpocock/skills",
+    "n": 1,
+    "tot": 868423,
+    "top": 868423,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "mbfinotti/sales-skills",
+    "n": 27,
+    "tot": 697655,
+    "top": 26523,
+    "top1": 0.04,
+    "hot": 27,
+    "hotpct": 1,
+    "hhi": 0.04
+   },
+   {
+    "repo": "autonnel/autonnel-skills",
+    "n": 4,
+    "tot": 413184,
+    "top": 104342,
+    "top1": 0.25,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.25
+   },
+   {
+    "repo": "mbfinotti/revops-skills",
+    "n": 15,
+    "tot": 313530,
+    "top": 21215,
+    "top1": 0.07,
+    "hot": 15,
+    "hotpct": 1,
+    "hhi": 0.07
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "mbfinotti/sales-skills",
+    "n": 27,
+    "hotpct": 1,
+    "top1": 0.04,
+    "hhi": 0.04
+   },
+   {
+    "repo": "mbfinotti/revops-skills",
+    "n": 15,
+    "hotpct": 1,
+    "top1": 0.07,
+    "hhi": 0.07
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.41
+  }
+ },
+ {
+  "t": "resume skills",
+  "rows": 100,
+  "repos": 62,
+  "floor": 42,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "vercel-labs/skills",
+    "n": 1,
+    "tot": 4042511,
+    "top": 4042511,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "lllllllama/rigorpilot-skills",
+    "n": 1,
+    "tot": 336205,
+    "top": 336205,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "paramchoudhary/resumeskills",
+    "n": 22,
+    "tot": 220125,
+    "top": 13929,
+    "top1": 0.06,
+    "hot": 22,
+    "hotpct": 1,
+    "hhi": 0.05
+   },
+   {
+    "repo": "langchain-ai/langchain-skills",
+    "n": 2,
+    "tot": 33390,
+    "top": 17195,
+    "top1": 0.51,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.5
+   },
+   {
+    "repo": "mbfinotti/sales-skills",
+    "n": 1,
+    "tot": 26357,
+    "top": 26357,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "paramchoudhary/resumeskills",
+    "n": 22,
+    "hotpct": 1,
+    "top1": 0.06,
+    "hhi": 0.05
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.71
+  }
+ },
+ {
+  "t": "security review",
+  "rows": 100,
+  "repos": 47,
+  "floor": 749,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "microsoft/azure-skills",
+    "n": 1,
+    "tot": 565323,
+    "top": 565323,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "samber/cc-skills-golang",
+    "n": 4,
+    "tot": 158323,
+    "top": 42216,
+    "top1": 0.27,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.25
+   },
+   {
+    "repo": "affaan-m/ecc",
+    "n": 15,
+    "tot": 155347,
+    "top": 18569,
+    "top1": 0.12,
+    "hot": 15,
+    "hotpct": 1,
+    "hhi": 0.07
+   },
+   {
+    "repo": "solana-foundation/solana-dev-skill",
+    "n": 1,
+    "tot": 98927,
+    "top": 98927,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "usestrix/strix",
+    "n": 5,
+    "tot": 68470,
+    "top": 15289,
+    "top1": 0.22,
+    "hot": 5,
+    "hotpct": 1,
+    "hhi": 0.2
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "affaan-m/ecc",
+    "n": 15,
+    "hotpct": 1,
+    "top1": 0.12,
+    "hhi": 0.07
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.16
+  }
+ },
+ {
+  "t": "video editing",
+  "rows": 100,
+  "repos": 64,
+  "floor": 9,
+  "under10pct": 0.01,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "heygen-com/hyperframes",
+    "n": 2,
+    "tot": 2328329,
+    "top": 1211742,
+    "top1": 0.52,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.5
+   },
+   {
+    "repo": "101-skills/superpowers",
+    "n": 3,
+    "tot": 993046,
+    "top": 870982,
+    "top1": 0.88,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.78
+   },
+   {
+    "repo": "magentosh/superpowers",
+    "n": 2,
+    "tot": 856229,
+    "top": 761172,
+    "top1": 0.89,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.8
+   },
+   {
+    "repo": "qu-skills/superpowers",
+    "n": 2,
+    "tot": 623222,
+    "top": 553391,
+    "top1": 0.89,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.8
+   },
+   {
+    "repo": "skills-shell/superpowers",
+    "n": 2,
+    "tot": 487134,
+    "top": 432363,
+    "top1": 0.89,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.8
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "scenario-labs/skills",
+    "n": 11,
+    "hotpct": 1,
+    "top1": 0.11,
+    "hhi": 0.09
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.21
+  }
+ },
+ {
+  "t": "customer support",
+  "rows": 100,
+  "repos": 63,
+  "floor": 21,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 1,
+    "tot": 114874,
+    "top": 114874,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "googleworkspace/cli",
+    "n": 1,
+    "tot": 29987,
+    "top": 29987,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "mbfinotti/revops-skills",
+    "n": 1,
+    "tot": 20299,
+    "top": 20299,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "claude-office-skills/skills",
+    "n": 3,
+    "tot": 15578,
+    "top": 6491,
+    "top1": 0.42,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.34
+   },
+   {
+    "repo": "okx/onchainos-skills",
+    "n": 2,
+    "tot": 12247,
+    "top": 10465,
+    "top1": 0.85,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.75
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "sylphxai/skills",
+    "n": 15,
+    "hotpct": 1,
+    "top1": 0.1,
+    "hhi": 0.07
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.27
+  }
+ },
+ {
+  "t": "changelog",
+  "rows": 100,
+  "repos": 82,
+  "floor": 6,
+  "under10pct": 0.01,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "heygen-com/hyperframes",
+    "n": 1,
+    "tot": 448637,
+    "top": 448637,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 1,
+    "tot": 78043,
+    "top": 78043,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "addyosmani/agent-skills",
+    "n": 1,
+    "tot": 59315,
+    "top": 59315,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "samber/cc-skills-golang",
+    "n": 1,
+    "tot": 40332,
+    "top": 40332,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "firecrawl/firecrawl-workflows",
+    "n": 1,
+    "tot": 31322,
+    "top": 31322,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.3
+  }
+ },
+ {
+  "t": "linkedin",
+  "rows": 100,
+  "repos": 49,
+  "floor": 6,
+  "under10pct": 0.02,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 9,
+    "tot": 769495,
+    "top": 150704,
+    "top1": 0.2,
+    "hot": 9,
+    "hotpct": 1,
+    "hhi": 0.14
+   },
+   {
+    "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+    "n": 4,
+    "tot": 145039,
+    "top": 41168,
+    "top1": 0.28,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.25
+   },
+   {
+    "repo": "code.deepline.com",
+    "n": 4,
+    "tot": 101288,
+    "top": 36135,
+    "top1": 0.36,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.32
+   },
+   {
+    "repo": "degausai/wonda",
+    "n": 1,
+    "tot": 74605,
+    "top": 74605,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "101-skills/superpowers",
+    "n": 1,
+    "tot": 55464,
+    "top": 55464,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.26
+  }
+ },
+ {
+  "t": "copywriting",
+  "rows": 100,
+  "repos": 59,
+  "floor": 67,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 11,
+    "tot": 1359897,
+    "top": 235165,
+    "top1": 0.17,
+    "hot": 11,
+    "hotpct": 1,
+    "hhi": 0.11
+   },
+   {
+    "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+    "n": 3,
+    "tot": 71026,
+    "top": 38789,
+    "top1": 0.55,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.5
+   },
+   {
+    "repo": "axelfreeman/marketing-mindset",
+    "n": 1,
+    "tot": 50138,
+    "top": 50138,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "samber/cc-skills",
+    "n": 7,
+    "tot": 33297,
+    "top": 5414,
+    "top1": 0.16,
+    "hot": 7,
+    "hotpct": 1,
+    "hhi": 0.14
+   },
+   {
+    "repo": "firecrawl/firecrawl-workflows",
+    "n": 1,
+    "tot": 32028,
+    "top": 32028,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 11,
+    "hotpct": 1,
+    "top1": 0.17,
+    "hhi": 0.11
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.71
+  }
+ },
+ {
+  "t": "competitor analysis",
+  "rows": 100,
+  "repos": 52,
+  "floor": 113,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 3,
+    "tot": 328107,
+    "top": 118805,
+    "top1": 0.36,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.34
+   },
+   {
+    "repo": "affaan-m/ecc",
+    "n": 4,
+    "tot": 26580,
+    "top": 12319,
+    "top1": 0.46,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.31
+   },
+   {
+    "repo": "samber/developer-relations-skills",
+    "n": 2,
+    "tot": 20823,
+    "top": 10526,
+    "top1": 0.51,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.5
+   },
+   {
+    "repo": "apify/agent-skills",
+    "n": 1,
+    "tot": 16307,
+    "top": 16307,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "appeeky/aso-skills",
+    "n": 5,
+    "tot": 14707,
+    "top": 3718,
+    "top1": 0.25,
+    "hot": 5,
+    "hotpct": 1,
+    "hhi": 0.21
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "linkfox-ai/linkfox-skills",
+    "n": 14,
+    "hotpct": 1,
+    "top1": 0.12,
+    "hhi": 0.08
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.45
+  }
+ },
+ {
+  "t": "lead generation",
+  "rows": 100,
+  "repos": 57,
+  "floor": 16,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 4,
+    "tot": 321620,
+    "top": 112868,
+    "top1": 0.35,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.27
+   },
+   {
+    "repo": "apify/agent-skills",
+    "n": 2,
+    "tot": 19122,
+    "top": 16307,
+    "top1": 0.85,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.75
+   },
+   {
+    "repo": "forcedotcom/sf-skills",
+    "n": 1,
+    "tot": 6535,
+    "top": 6535,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "claude-office-skills/skills",
+    "n": 1,
+    "tot": 5143,
+    "top": 5143,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "agricidaniel/claude-ads",
+    "n": 1,
+    "tot": 3829,
+    "top": 3829,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "sam6dvpte34/lead-generation-skill",
+    "n": 32,
+    "hotpct": 1,
+    "top1": 0.04,
+    "hhi": 0.03
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.77
+  }
+ },
+ {
+  "t": "email outreach",
+  "rows": 100,
+  "repos": 59,
+  "floor": 25,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "open.feishu.cn",
+    "n": 1,
+    "tot": 805713,
+    "top": 805713,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 7,
+    "tot": 613710,
+    "top": 127610,
+    "top1": 0.21,
+    "hot": 7,
+    "hotpct": 1,
+    "hhi": 0.16
+   },
+   {
+    "repo": "mbfinotti/sales-skills",
+    "n": 3,
+    "tot": 76957,
+    "top": 25853,
+    "top1": 0.34,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.33
+   },
+   {
+    "repo": "mbfinotti/partnerships-skills",
+    "n": 3,
+    "tot": 39130,
+    "top": 13307,
+    "top1": 0.34,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.33
+   },
+   {
+    "repo": "getcargohq/cargo-skills",
+    "n": 1,
+    "tot": 9893,
+    "top": 9893,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.41
+  }
+ },
+ {
+  "t": "social media strategy",
+  "rows": 100,
+  "repos": 61,
+  "floor": 8,
+  "under10pct": 0.04,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 4,
+    "tot": 370840,
+    "top": 163860,
+    "top1": 0.44,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.3
+   },
+   {
+    "repo": "agricidaniel/claude-ads",
+    "n": 2,
+    "tot": 8566,
+    "top": 4595,
+    "top1": 0.54,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.5
+   },
+   {
+    "repo": "blacktwist/social-media-skills",
+    "n": 3,
+    "tot": 6043,
+    "top": 2212,
+    "top1": 0.37,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.34
+   },
+   {
+    "repo": "samber/dev-event-organizer-skills",
+    "n": 1,
+    "tot": 5020,
+    "top": 5020,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "nexscope-ai/ecommerce-skills",
+    "n": 2,
+    "tot": 2507,
+    "top": 1255,
+    "top1": 0.5,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.5
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "sales-skills/sales",
+    "n": 12,
+    "hotpct": 1,
+    "top1": 0.1,
+    "hhi": 0.09
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.84
+  }
+ },
+ {
+  "t": "landing page",
+  "rows": 100,
+  "repos": 59,
+  "floor": 8,
+  "under10pct": 0.02,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 9,
+    "tot": 937235,
+    "top": 235165,
+    "top1": 0.25,
+    "hot": 9,
+    "hotpct": 1,
+    "hhi": 0.14
+   },
+   {
+    "repo": "autonnel/autonnel-skills",
+    "n": 4,
+    "tot": 413184,
+    "top": 104342,
+    "top1": 0.25,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.25
+   },
+   {
+    "repo": "pbakaus/impeccable",
+    "n": 1,
+    "tot": 360498,
+    "top": 360498,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "heygen-com/hyperframes",
+    "n": 1,
+    "tot": 97353,
+    "top": 97353,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   },
+   {
+    "repo": "anthropics/skills",
+    "n": 1,
+    "tot": 95395,
+    "top": 95395,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.19
+  }
+ },
+ {
+  "t": "content strategy",
+  "rows": 100,
+  "repos": 41,
+  "floor": 231,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 7,
+    "tot": 677816,
+    "top": 163860,
+    "top1": 0.24,
+    "hot": 7,
+    "hotpct": 1,
+    "hhi": 0.17
+   },
+   {
+    "repo": "samber/developer-relations-skills",
+    "n": 4,
+    "tot": 41870,
+    "top": 10555,
+    "top1": 0.25,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.25
+   },
+   {
+    "repo": "kostja94/marketing-skills",
+    "n": 15,
+    "tot": 22073,
+    "top": 3094,
+    "top1": 0.14,
+    "hot": 15,
+    "hotpct": 1,
+    "hhi": 0.08
+   },
+   {
+    "repo": "claude-office-skills/skills",
+    "n": 2,
+    "tot": 11664,
+    "top": 6849,
+    "top1": 0.59,
+    "hot": 2,
+    "hotpct": 1,
+    "hhi": 0.52
+   },
+   {
+    "repo": "affaan-m/ecc",
+    "n": 1,
+    "tot": 9713,
+    "top": 9713,
+    "top1": 1,
+    "hot": 1,
+    "hotpct": 1,
+    "hhi": 1
+   }
+  ],
+  "bigRepos": [
+   {
+    "repo": "kostja94/marketing-skills",
+    "n": 15,
+    "hotpct": 1,
+    "top1": 0.14,
+    "hhi": 0.08
+   }
+  ],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.66
+  }
+ },
+ {
+  "t": "pricing strategy",
+  "rows": 100,
+  "repos": 61,
+  "floor": 34,
+  "under10pct": 0,
+  "ours": 0,
+  "top5": [
+   {
+    "repo": "coreyhaines31/marketingskills",
+    "n": 3,
+    "tot": 191909,
+    "top": 79309,
+    "top1": 0.41,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.34
+   },
+   {
+    "repo": "nexscope-ai/amazon-skills",
+    "n": 6,
+    "tot": 83667,
+    "top": 78165,
+    "top1": 0.93,
+    "hot": 6,
+    "hotpct": 1,
+    "hhi": 0.87
+   },
+   {
+    "repo": "samber/developer-relations-skills",
+    "n": 4,
+    "tot": 41218,
+    "top": 10581,
+    "top1": 0.26,
+    "hot": 4,
+    "hotpct": 1,
+    "hhi": 0.25
+   },
+   {
+    "repo": "appeeky/aso-skills",
+    "n": 3,
+    "tot": 8098,
+    "top": 3718,
+    "top1": 0.46,
+    "hot": 3,
+    "hotpct": 1,
+    "hhi": 0.36
+   },
+   {
+    "repo": "nexscope-ai/ecommerce-skills",
+    "n": 7,
+    "tot": 7392,
+    "top": 1213,
+    "top1": 0.16,
+    "hot": 7,
+    "hotpct": 1,
+    "hhi": 0.15
+   }
+  ],
+  "bigRepos": [],
+  "dens": {
+   "rows": 100,
+   "unihh": 0.32
+  }
+ }
+]
