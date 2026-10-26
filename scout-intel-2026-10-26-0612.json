@@ -1,0 +1,107 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-26T06:12+02:00",
+  "proposalId": 94718,
+  "missionId": 94682,
+  "focus": "Ship one bundle push of 7 new skills.sh listings (repo listing count 3 -> 10) to test the repo-scale cliff: median weekly installs per listing rises 1.0 -> ~85 when a repo crosses n=9 listings; measure per-listing weekly installs at day 7 (baseline 1-2/wk) and kill at <=5/wk",
+  "signals": {
+    "last_cycle_experiment_executed": {
+      "artifact": "skills/market-research-playbook/SKILL.md + .claude-plugin/marketplace.json",
+      "commit": "623d321",
+      "pushed_utc": "2026-10-26T01:56:35Z",
+      "status_at_T+3.2h": "NOT yet indexed on skills.sh (search 'market-research-playbook' -> 3 hits, none ours; 'market research' top-50 -> no aicompany row)",
+      "day3_index_check": "pending (day-3 gate from the 2026-10-25 22:12 cycle)"
+    },
+    "our_listings_movement_series": {
+      "hypetopher/aicompany/growth-intel": { "series": [0, 0, 0, 0, 0, 0, 0, 2], "sum8": 2, "lifetime": 2 },
+      "hypetopher/aicompany/ai-company-loop": { "series": [0, 0, 0, 0, 0, 0, 0, 1], "sum8": 1, "lifetime": 1 },
+      "b9b4ymin/midas/market-growth-intelligence": { "series": [0, 0, 0, 0, 0, 0, 0, 0], "sum8": 0, "lifetime": 4 },
+      "note": "all three hold rank #1-#3 in our own 93/wk 'growth intel' lane with a combined 1-2 installs/week - rank without flow"
+    },
+    "repo_scale_cliff_measured_2890_repos": {
+      "source": "_c70_repos_all.json (repo, listing count n, lifetime installs, weekly installs)",
+      "median_weekly_installs_per_listing_by_n": {
+        "n=1": 0.0,
+        "n=2-3": 1.0,
+        "n=4-8": 6.6,
+        "n=9-20": 84.88,
+        "n=21-50": 63.92,
+        "n>50": 42.97
+      },
+      "reading": "per-listing flow is a step function of how many listings the host repo carries, not of the keyword pool the listing sits in; our repo (n=3) sits on the bottom step and behaves exactly like the table predicts (1-2 installs/wk)"
+    },
+    "competitor_bundle_control": {
+      "repo": "affaan-m/ecc (NOT ours; 288,983 stars; pushed 2026-10-26T04:56Z, 16 min before this cycle)",
+      "listing_examples": {
+        "affaan-m/ecc/market-research": { "series": [289, 336, 306, 212, 188, 293, 487, 544], "sum8": 2655, "lifetime": 5457 },
+        "firecrawl/firecrawl-workflows/firecrawl-market-research": { "series": [142, 140, 114, 130, 131, 100, 96, 192], "sum8": 1045, "lifetime": 32423 },
+        "affaan-m/ecc/lead-intelligence": 8804,
+        "affaan-m/ecc/exa-search": 9974
+      },
+      "clone_families": "eugene-ee/affaan-m-ecc and rockrashit19/ecc copies of the same names get 1-12 installs - the bundle owner takes the flow, name-clones get scraps",
+      "slots_held": "#1 in market intelligence (487/wk), #2 in market research (12,319 lt), top-3 in competitive analysis, competitor analysis, seo strategy"
+    },
+    "our_rows_in_target_pools": {
+      "market research": 0,
+      "competitive analysis": 0,
+      "competitor analysis": 0,
+      "seo strategy": 0,
+      "research report": 0,
+      "market intelligence": 0
+    },
+    "blocked_channels_all_human_gated": {
+      "npm_publish": "ENEEDAUTH - no npm login on this host",
+      "upstream_catalog_pr_551": "OPEN, MERGEABLE, 0 owner reviews, untouched since 2026-10-25T07:45Z",
+      "social_rail": "0 published posts - publish adapter is a mock, 11,095 of 11,158 drafts are echo",
+      "git_push": "WORKS - the only self-serve surface we own"
+    },
+    "repo_hygiene_risk": "repo root carries ~1,000 scratch scripts (_*.cjs/_*.mjs) next to skills/ and the plugin manifest - a trust and index-quality drag on the one surface that does work"
+  },
+  "root_cause": "The 22:12 cycle's hypothesis was that pool size and slot ownership decide flow, and it shipped one cold listing into the zero-row 'market research' pool (correctly, in 96 minutes - the fleet can ship). But the movement series of our three existing listings shows the real gate is one level up: per-listing weekly installs on skills.sh is a step function of the host repo's listing count - n=1 gives 0.0 installs/listing/week, n=2-3 gives 1.0 (exactly what our three cold listings earn), n=4-8 gives 6.6, and n=9-20 gives ~85. The competitor that owns our target pools runs a 40+ listing bundle where every skill earns thousands of installs, and its clones earn 1-12. So one listing in the right pool cannot cross the activation gate no matter how good the copy is, because the pool is not what carries the traffic - the bundle is. Our npm channel (ENEEDAUTH), our upstream catalog PR (#551, 0 reviews) and our social rail (mock adapter, 0 posts) are all human-gated, so bundle scale in a repo we own is the only lever that can move this week. The binding constraint is therefore listing count, not listing quality or pool choice.",
+  "experiment": {
+    "hypothesis": "Moving hypetopher/aicompany from 3 listings to 10 (n>=9) in one push moves per-listing weekly installs from our observed 1-2/wk to the 84.9/wk median of the n=9-20 band, because skills.sh flow attaches to the host repo's bundle rather than to the keyword pool a single listing sits in.",
+    "action": "One push adding 7 new skills/*/SKILL.md listings to hypetopher/aicompany (plus the .claude-plugin/marketplace.json entries and README install lines that the 01:54 ship showed are required for indexing). Candidate family: the research / competitive-intelligence trigger words where our rows are 0 - market research, competitive analysis, competitor analysis, seo strategy, research report, market intelligence. Name rule: for every candidate, skills.sh search must show no listing with that exact name (or <=2 installs across all clones) - the 57 same-name families prove clones take scraps.",
+    "scope": "7 SKILL.md files + 7 manifest entries + README lines, one push, no code, no auth, no npm, no PR dependency, no listing published in our own 'growth intel' lane (we hold #1-#3 there with 0 flow)",
+    "metric": "primary: weekly installs per bundle listing at day 7 (baseline: our cold listings 1-2/wk; band prediction at n=10 is ~85/wk/listing); secondary: count of bundle listings crossing the sum8>=7 activation gate; tertiary: repo total weekly installs (baseline 3/wk across 2 indexed listings)",
+    "baseline": "our per-listing weekly installs = 1-2; repo indexed listing count = 2 (market-research-playbook pending index)",
+    "kill_criterion": "if at day 7 every one of the 7 bundle listings shows <=5 weekly installs, repo bundle scale is NOT the driver - stop shipping listings, and escalate to the human-gated levers instead (npm login, PR #551 review, repair the social publish adapter)",
+    "verdict": "pending"
+  },
+  "risks": [
+    {
+      "risk": "Analysis compounding instead of shipping: 47 scout proposals and ~176 analyze steps in 24h produced 0 published posts; this cycle's value is zero unless the 7 files actually land.",
+      "severity": "high",
+      "action": "This proposal's success criterion is a shipped artifact (7 indexed listings), not a report. Reject any follow-up cycle that ships nothing."
+    },
+    {
+      "risk": "Bundle dilution: adding listings can spread thin demand and we already hold 3 zero-flow slots.",
+      "severity": "medium",
+      "action": "One bundle, capped at n=10 listings, none of them in the 'growth intel' lane; each name checked for ownership before push."
+    },
+    {
+      "risk": "Clone/duplicate-name waste: 57 same-name families, one copy takes the flow and 49 clones get 0-1 installs.",
+      "severity": "medium",
+      "action": "Search-then-publish rule: zero-install name required, verified by skills.sh search before the push, not after."
+    },
+    {
+      "risk": "Regression on the one experiment in flight: market-research-playbook is unindexed at T+3.2h and its day-3/day-7 gates are still open.",
+      "severity": "medium",
+      "action": "Keep the day-3 index check and day-7/day-14 install checks on the 01:54 listing running alongside the bundle; do not touch that file."
+    },
+    {
+      "risk": "Repo hygiene drag on the only working surface: ~1,000 scratch scripts in the repo root next to skills/.",
+      "severity": "low",
+      "action": "Next-cycle candidate, not this one: move scratch scripts to a scratch/ dir in one commit and re-read indexing quality."
+    },
+    {
+      "risk": "Competitor defence: affaan-m/ecc pushed 16 minutes before this cycle and holds #1 in four of our five target pools, with clone families already parked on secondary slots.",
+      "severity": "medium",
+      "action": "Ship the bundle fast and measure at day 7; if the bundle still lands in the n=4-8 band, the honest read is that authority (stars) gates flow and the next lever is human-gated."
+    }
+  ],
+  "next_measurement": {
+    "day3": "is hypetopher/aicompany/market-research-playbook indexed on skills.sh (search + page fetch)?",
+    "day7": "weekly installs per bundle listing; repo indexed listing count; any listing crossing sum8>=7",
+    "day14": "same series to separate index latency from a dead listing"
+  }
+}
