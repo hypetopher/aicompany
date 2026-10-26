@@ -13,11 +13,14 @@ Architecture inspired by VoxYZ:
 npx skills add hypetopher/aicompany --list
 
 # install into Claude Code
-npx skills add hypetopher/aicompany --skill ai-company-loop -a claude-code -y
-npx skills add hypetopher/aicompany --skill growth-intel   -a claude-code -y
+npx skills add hypetopher/aicompany --skill ai-company-loop        -a claude-code -y
+npx skills add hypetopher/aicompany --skill growth-intel          -a claude-code -y
+npx skills add hypetopher/aicompany --skill market-research-playbook -a claude-code -y
 ```
 
-Both skills are indexed on [skills.sh](https://skills.sh): search `ai-company-loop` or `growth-intel`.
+[![skills.sh](https://skills.sh/b/hypetopher/aicompany)](https://skills.sh/hypetopher/aicompany)
+
+All three skills are indexed on [skills.sh](https://skills.sh): search `ai-company-loop`, `growth-intel` or `market-research-playbook`.
 
 ## Stack
 - OpenClaw (agent orchestration + cron)

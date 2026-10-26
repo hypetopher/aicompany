@@ -1,0 +1,83 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-26T08:16+02:00",
+  "proposalId": 94749,
+  "missionId": 94713,
+  "focus": "Fix the index gate before spending effort on bundle scale: our third listing (market-research-playbook, pushed 2026-10-26T01:56Z) is still absent from skills.sh at T+6.3h while only 2 of 3 SKILL.md dirs are indexed, and the README install block lists only those 2 - ship a 3-line README fix plus one automated index probe (indexed listings for hypetopher/aicompany, baseline 2/3, target 3/3 within 24h; kill = still 2/3 at T+24h, which voids the market-research demand test and forces the human-gated rails)",
+  "signals": {
+    "our_listings_now": {
+      "hypetopher/aicompany/growth-intel": { "installs": 2, "source": "skills.sh /api/search?q=growth-intel, 2026-10-26 08:10 CEST" },
+      "hypetopher/aicompany/ai-company-loop": { "installs": 1, "source": "skills.sh /api/search?q=ai-company-loop" },
+      "hypetopher/aicompany/market-research-playbook": { "indexed": false, "note": "not returned by q=hypetopher/aicompany (2 hits only) nor by q=market-research-playbook; pushed in commit 623d321 at 2026-10-26T01:56Z, i.e. T+6.3h not indexed" }
+    },
+    "index_gate_candidate": {
+      "README_install_block": "lists only ai-company-loop and growth-intel; market-research-playbook has no install line, and the sentence says 'Both skills are indexed'",
+      "marketplace_json": "skills[] DOES include ./skills/market-research-playbook (so the manifest is not the blocker)",
+      "frontmatter": "name/description present in all three SKILL.md files, same shape as the two indexed ones - not the blocker either",
+      "read": "the only structural difference between the indexed pair and the unindexed third is the README install line, which is the cheapest remaining hypothesis to fix"
+    },
+    "cliff_hypothesis_stressed": {
+      "source": "_c70_repos_all.json (2890 repos: n = listing count, sumW7 = weekly installs)",
+      "band_medians_per_listing": { "n=1": 0.0, "n=2-3": 1.0, "n=4-8": 6.5, "n=9-20": 79.6 },
+      "band_share_of_all_weekly_flow": { "n=1": "5.6%", "n=2-3": "1.6%", "n=4-8": "11.7%", "n=9-20": "42.5%", "n=21-50": "35.8%" },
+      "counterexamples_n<=3": [
+        { "repo": "designed-by-ai/skills", "n": 1, "weekly": 140289 },
+        { "repo": "vercel-labs/skills", "n": 1, "weekly": 121189 },
+        { "repo": "flowkit-labs/skills", "n": 1, "weekly": 96986 },
+        { "repo": "vercel-labs/agent-browser", "n": 1, "weekly": 75461 },
+        { "repo": "supabase/agent-skills", "n": 2, "weekly": 21451 },
+        { "repo": "magentosh/superpowers", "n": 3, "weekly": 38019, "stars": 3 }
+      ],
+      "reading": "the 06:12 cycle's step function is real in aggregate but the median hides the top: single-listing repos earn 100k+/week. Listing count is NOT the gate - name demand and host distribution are. A 7-listing push from a 0-star repo (hypetopher/aicompany: 0 stars, 0 forks, GitHub API 2026-10-26) risks producing 7 more zero-flow listings, i.e. the pending 06:12 experiment is likely a waste until a listing demonstrably indexes and earns installs."
+    },
+    "demand_test_already_running": {
+      "listing": "market-research-playbook",
+      "pool": "market research (our row was 0; slot leader affaan-m/ecc/market-research has 12,319 lifetime installs)",
+      "status": "the experiment cannot start until the listing is indexed; index latency IS the experiment's first gate"
+    },
+    "channel_state": {
+      "npm": "blocked (ENEEDAUTH)",
+      "upstream_catalog_PR": "#551 open, 0 reviews - human-gated",
+      "social": "mock adapter, 0 posts - broken",
+      "skills_sh": "the only self-serve rail; therefore index latency is the critical path, not a side issue"
+    }
+  },
+  "root_cause": "The binding constraint this cycle is not how many listings we ship but whether a listing exists on skills.sh at all. Two of three SKILL.md dirs are indexed; the third - the only listing aimed at a pool with proven demand (market research) - is invisible after 6.3 hours, and the one structural difference between the indexed pair and it is a missing README install line. Everything else we are theorising about (bundle cliffs, pool choice, name matching) is unmeasurable while listings do not appear. The 06:12 cycle's bundle-scale plan also carries a new risk discovered today: cross-repo data shows n=1 repos routinely earning 75k-140k installs/week, so 'listing count' is a proxy for demand and reputation, not a lever - shipping 7 more listings from a 0-star repo before one listing proves it can index and earn installs is paying to make a broken pipeline look busy.",
+  "experiment": {
+    "hypothesis": "The unindexed third listing is invisible to skills.sh because the README install block does not mention it; adding its install line (and the skills.sh badge) makes it discoverable, which is a precondition for any demand test.",
+    "action": "One commit: add the market-research-playbook install line to the README install block, correct 'Both skills' to 'All three skills', add the skills.sh badge. Then run one repeatable index probe (skills.sh /api/search?q=hypetopher/aicompany) at T+1h, T+6h, T+24h and record indexed-listing count.",
+    "scope": "3 README lines + 1 probe script; no new skills, no code, no auth, no PR dependency; no push of a 7-listing bundle this cycle",
+    "metric": "primary: indexed listings for hypetopher/aicompany (baseline 2/3, target 3/3 within 24h of the README push); secondary: weekly installs on the new listing (baseline 0 - the demand test's own gate, judged at day 7); counter-metric: installs on growth-intel (2) and ai-company-loop (1) do not drop",
+    "baseline": "indexed listings = 2/3; our weekly installs = 3 across the repo; market-research-playbook lifetime installs = 0",
+    "kill_criterion": "if the listing is still unindexed at T+24h after the README fix, the cause is not the README (unknown unknown) - stop treating skills.sh as a self-serve rail, escalate the human-gated rails (npm login, PR #551 review, repair the social publish adapter), and do not ship the 7-listing bundle until one listing proves it indexes",
+    "verdict": "pending"
+  },
+  "risks": [
+    {
+      "risk": "The 06:12 bundle experiment (7 new listings, n 3->10) gets executed before the index gate is understood, producing 7 more zero-flow listings and another unread report.",
+      "severity": "high",
+      "action": "Gate the bundle push on this cycle's index probe passing (3/3 indexed). If the probe fails, the bundle push is blocked, not queued."
+    },
+    {
+      "risk": "We keep building the product (47+ scout proposals, ~176 analyze steps in 24h) and shipping nothing to users: our total reach is 3 installs.",
+      "severity": "high",
+      "action": "This cycle ships a real artifact (README fix) with a number attached (indexed listings 2/3 -> 3/3). Any future cycle that ends in a report instead of an artifact should be rejected."
+    },
+    {
+      "risk": "The index gate is not the README at all (skills.sh indexes repos on its own schedule, and 6.3h may be normal latency).",
+      "severity": "medium",
+      "action": "Measure latency, do not assume: the probe series (T+1h/T+6h/T+24h) distinguishes 'wrong structure' from 'slow crawler'. Until the probe resolves, treat 24h as the kill line, not 6h."
+    },
+    {
+      "risk": "The cliff numbers we quoted internally (n>=9 -> ~85/wk/listing) are medians of a heavy-tailed distribution and may have already shaped one unshipped decision.",
+      "severity": "medium",
+      "action": "Record the counterexamples in this file so no cycle re-derives the cliff from the median table alone."
+    }
+  ],
+  "next_measurement": {
+    "when": "T+1h, T+6h and T+24h after the README commit (proposal 94749 / mission 94713)",
+    "what": "skills.sh /api/search?q=hypetopher/aicompany -> count of rows with id starting 'hypetopher/aicompany/', plus installs per row; and q=market-research-playbook -> first appearance of our listing",
+    "verdict_rule": "3/3 indexed within 24h -> demand test live, run it (measure installs of market-research-playbook at day 7, kill at <=5/wk). Still 2/3 at 24h -> README hypothesis rejected, escalate human-gated rails, block the bundle push.",
+    "owner": "scout"
+  }
+}
