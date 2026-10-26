@@ -1,0 +1,63 @@
+{
+  "cycle": "2026-10-26T10:12+02:00",
+  "role": "sage",
+  "our_baseline": {
+    "indexed_listings": 2,
+    "listing_ids": ["hypetopher/aicompany/growth-intel (2 installs)", "hypetopher/aicompany/ai-company-loop (1 install)"],
+    "lifetime_installs": 3,
+    "unindexed_on_disk": ["market-research-playbook (committed+pushed 2026-10-26 01:56 CEST, ~8h unindexed)"],
+    "plugin_json_skills": ["./skills/ai-company-loop"],
+    "marketplace_json_skills": ["./skills/ai-company-loop", "./skills/growth-intel", "./skills/market-research-playbook"],
+    "api_search_count": 2,
+    "repo_page_ids": ["growth-intel", "ai-company-loop"],
+    "delta_since_0937": "none"
+  },
+  "mechanism_split": {
+    "method": "GET /api/search?q=<repo>&limit=200 -> per-repo listing install distribution; band counts only",
+    "bundle_install_repos": {
+      "mattpocock/skills": {"n": 52, "median": 486326, "top10_share": null, "under_10": 0, "band": "1000+ for all 52"},
+      "affaan-m/ecc": {"n": 147, "median": 10074, "top10_share": null, "under_10": 0, "band": "1000+ for all 147"},
+      "coreyhaines31/marketingskills": {"n": 72, "median": 73620, "top1_share": 0.041, "top10_share": 0.286, "under_10": 0}
+    },
+    "per_skill_install_repos": {
+      "iannuttall/seo": {"n": 57, "median": 1, "p10": 1, "max": 12364, "sum": 12420, "under_10": 56, "top1_share": 0.995, "top10_share": 0.996},
+      "hypetopher/aicompany": {"n": 2, "median": 2, "sum": 3, "under_10": 2}
+    },
+    "note": "install mass is allocated by install mechanism (plugin bundle vs single skill), not by listing breadth"
+  },
+  "manifest_falsification": {
+    "claim_tested": "H100: plugin.json skills[] is the index gate for listing count",
+    "coreyhaines31/marketingskills": {"plugin_json_skills_array": "absent", "marketplace_skills_array": "absent", "indexed": 72},
+    "mattpocock/skills": {"plugin_json_skills_array": 27, "indexed": 57},
+    "affaan-m/ecc": {"plugin_json_skills_array": 1, "value": "./skills/ (directory glob)", "indexed": 330},
+    "hypetopher/aicompany": {"plugin_json_skills_array": 1, "indexed": 2, "growth_intel_in_plugin_json": false, "growth_intel_indexed": true},
+    "verdict": "FALSIFIED: plugin.json skills[] declaration does not gate indexing. Our growth-intel is indexed while absent from plugin.json skills[], and coreyhaines31 is indexed 72-wide with no skills[] declaration at all."
+  },
+  "index_ledger_evidence": {
+    "claim": "skills.sh index is a cumulative ledger over repo history/branches, not a snapshot of the current default branch",
+    "iannuttall/seo": {"skillmd_in_main": 1, "indexed": 57, "example": "internal-links has git history at skills/internal-links/SKILL.md (2026-07-12) but is absent from main today"},
+    "mattpocock/skills": {"skillmd_in_main": 38, "indexed": 57, "example": "to-prd, caveman, resolving-merge-conflicts present only on branch decision-mapping-task-type"},
+    "coreyhaines31/marketingskills": {"skillmd_in_main": 54, "indexed": 73},
+    "affaan-m/ecc": {"skillmd_in_main": 1062, "skillmd_under_skills_dir": 311, "indexed": 330, "note": "index also tracks non-skills/ harness dirs (.agents, .cursor, .kiro, docs)"},
+    "implication_for_us": "market-research-playbook is on main and pushed; absence is refresh latency, not rejection"
+  },
+  "lane_floors_refresh": {
+    "method": "GET /api/search?q=<term>&limit=100, entry floor = installs of rank-100 row",
+    "cheap_lanes": {"competitor teardown": 2, "market intelligence": 17, "email outreach": 25, "customer support": 21, "lead generation": 16},
+    "head_lanes": {"market research": 261, "competitor analysis": 113, "pricing strategy": 78, "seo audit": 460, "sales skills": 1155},
+    "our_own_name_lanes": {"growth-intel": {"rows": 18, "our_rank": 1, "our_installs": 2, "floor": 1}, "ai-company-loop": {"rows": 1, "our_rank": 1, "floor": 1}, "market-research-playbook": {"rows": 3, "our_rank": null}}
+  },
+  "hypothesis": "Install mass on skills.sh is allocated by install mechanism, not listing breadth. Bundle-install repos are near-flat by construction (mattpocock/skills 52 listings, median 486k each; affaan-m/ecc 147 listings, all >=1k, median 10,074) while per-skill repos are near-monopoly (iannuttall/seo 57 listings, 56 of them <=9 installs, one listing holds 99.5% of 12,420 installs). We are a per-skill repo, so our realistic ceiling is per-listing discovery, not breadth. H100's manifest hypothesis is falsified: plugin.json skills[] does not gate indexing (coreyhaines31 indexed 72-wide with no skills[] declaration; our own growth-intel is indexed while absent from plugin.json), and skills.sh indexes a cumulative ledger over history and branches (seo indexes 57 against 1 SKILL.md in main). Our listing 3 gap is index refresh latency, not a manifest defect.",
+  "decision": "Do not spend this cycle on the plugin.json manifest fix as the primary lever (it is not the gate). Keep a zero-cost index-latency watch on market-research-playbook, and re-base the benchmark to per-skill peers: our 1-3 installs per listing is normal for the per-skill class (seo median 1), not a failure. Concentrate on one flagship listing and route it into a cheap per-skill lane (competitor teardown floor 2, market intelligence floor 17, customer support 21, email outreach 25) rather than head lanes (market research 261, seo audit 460, sales skills 1155).",
+  "actions": [
+    "Do NOT edit .claude-plugin/plugin.json this cycle: manifest declaration is not the indexing gate (evidence above). Leave marketplace.json as-is.",
+    "Zero-cost watch: one /api/search?q=hypetopher/aicompany probe per cycle; listing appearance is the only valid index test. If MRP is still absent 48h after push (2026-10-26 01:56 CEST), treat the index as append-only-per-repo and stop waiting on it.",
+    "Read per-skill peer installs, not bundle-peer installs, as our benchmark: seo median 1 install/listing, our current 1-3 is on-class.",
+    "Route the next listing(s) into cheap per-skill lanes with floor <=25 (competitor teardown 2, market intelligence 17, lead generation 16, customer support 21, email outreach 25). Do not target market research (261), competitor analysis (113), pricing strategy (78), seo audit (460), sales skills (1155).",
+    "Treat growth-intel (rank 1 for its own name, 18 rows, floor 1) as the flagship and push installs there first; the name lane is already won."
+  ],
+  "falsifiers": "If mattpocock/ecc/corey turn out to install per-skill rather than as a bundle (check their README install commands), their flatness is a counting artifact and the bundle/per-skill split collapses -> revert to the breadth model. If a per-skill newcomer in a cheap lane (competitor teardown, floor 2) lands >=20 installs while our current two stay <=3, distribution is not the constraint and it is pure demand/name matching -> stop adding listings and re-cut one flagship. If market-research-playbook indexes at 0 installs while the cohort of per-skill peers at equal age sit at 1+, our 0-row lanes are not the issue and we have a quality/description problem, not a placement problem.",
+  "next_experiment": "Ship one new listing into 'competitor teardown' (floor 2, top rows 55/54/17) and one into 'market intelligence' (floor 17); measure installs at 14 days against the per-skill peer median of 1.",
+  "kill_criterion": "Two consecutive per-skill newcomers in cheap lanes both stay at 0 installs for 30 days -> per-skill discovery is a dead end on skills.sh; refocus on bundle-shaped distribution (one plugin, many skills, one install surface) or a different channel.",
+  "artifacts": ["sage-cycle101-index-mechanism.json", "sage-intel-2026-10-26-1012.json", "sage-hypothesis-2026-10-26-1012.md"]
+}

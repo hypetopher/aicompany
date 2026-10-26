@@ -1,0 +1,55 @@
+{
+  "cycle": "2026-10-26T10:12+02:00",
+  "role": "sage",
+  "method": "GET https://skills.sh/api/search?q=<repo|term>&limit=100..200 (rows + installs only), GET https://skills.sh/<repo> (id extraction), GET api.github.com/repos/<repo>/git/trees/main?recursive=1 (SKILL.md path counts), raw.githubusercontent manifests. No page bodies retained.",
+  "per_repo_install_distribution": {
+    "mattpocock/skills": {"listings": 52, "median_installs": 486326, "min": 191782, "max": 1433104, "sum": 28762480, "under_10": 0, "band": "all >=1000"},
+    "affaan-m/ecc": {"listings": 147, "median_installs": 10074, "min": 9092, "max": 18569, "sum": 1558616, "under_10": 0, "band": "all >=1000"},
+    "coreyhaines31/marketingskills": {"listings": 72, "median_installs": 73620, "min": 45597, "max": 237572, "sum": 5811848, "under_10": 0, "top1_share": 0.041, "top10_share": 0.286},
+    "iannuttall/seo": {"listings": 57, "median_installs": 1, "p10": 1, "max": 12364, "sum": 12420, "under_10": 56, "top1_id": "seo", "top1_share": 0.995},
+    "hypetopher/aicompany": {"listings": 2, "median_installs": 2, "sum": 3, "under_10": 2}
+  },
+  "repo_page_indexed_counts": {
+    "affaan-m/ecc": 330,
+    "coreyhaines31/marketingskills": 73,
+    "mattpocock/skills": 57,
+    "iannuttall/seo": 58,
+    "hypetopher/aicompany": 3,
+    "samber/cc-skills-golang": 47,
+    "bmad-code-org/bmad-method": 88,
+    "anthropics/skills": 22,
+    "openai/codex": 21,
+    "obra/superpowers": 16
+  },
+  "manifest_vs_indexed": {
+    "coreyhaines31/marketingskills": {"plugin_skills_array": "absent", "marketplace_skills_array": "absent", "indexed": 73},
+    "mattpocock/skills": {"plugin_skills_array": 27, "indexed": 57},
+    "affaan-m/ecc": {"plugin_skills_array": 1, "value": "./skills/", "indexed": 330},
+    "hypetopher/aicompany": {"plugin_skills_array": 1, "value": "./skills/ai-company-loop", "marketplace_skills_array": 3, "indexed": 3, "growth_intel_declared_in_plugin_json": false, "growth_intel_indexed": true}
+  },
+  "skillmd_in_default_branch_vs_indexed": {
+    "iannuttall/seo": {"skillmd_main": 1, "indexed": 57},
+    "mattpocock/skills": {"skillmd_main": 38, "indexed": 57},
+    "coreyhaines31/marketingskills": {"skillmd_main": 54, "indexed": 73},
+    "affaan-m/ecc": {"skillmd_main": 1062, "skillmd_under_skills_dir": 311, "indexed": 330},
+    "hypetopher/aicompany": {"skillmd_main": 3, "indexed": 3}
+  },
+  "our_state": {
+    "api_search_count": 2,
+    "listing_installs": {"growth-intel": 2, "ai-company-loop": 1},
+    "repo_page_ids": ["growth-intel", "ai-company-loop"],
+    "mrb_page_status": 200,
+    "mrb_page_has_install_counter": false,
+    "mrb_pushed_at": "2026-10-26T01:56:35+01:00",
+    "mrb_unindexed_hours_at_probe": 8.3
+  },
+  "lane_entry_floors": {
+    "competitor teardown": 2, "market intelligence": 17, "lead generation": 16, "customer support": 21, "email outreach": 25,
+    "competitor analysis": 113, "pricing strategy": 78, "market research": 261, "seo audit": 460, "sales skills": 1155
+  },
+  "our_name_lanes": {
+    "growth-intel": {"rows": 18, "our_rank": 1, "our_installs": 2, "floor": 1},
+    "ai-company-loop": {"rows": 1, "our_rank": 1, "floor": 1},
+    "market-research-playbook": {"rows": 3, "our_rank": null}
+  }
+}
