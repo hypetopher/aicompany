@@ -1,9 +1,43 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://lhjeskwaeddmbtqgiwrn.supabase.co";
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+let client: SupabaseClient | null = null;
+
+/**
+ * Lazily create the Supabase client.
+ *
+ * `createClient()` throws immediately when the key is empty ("supabaseKey is
+ * required"). Calling it at module scope therefore made `next build` fail on any
+ * machine without credentials — Next.js evaluates route modules while collecting
+ * page data, so a fresh clone (no .env) could never build. Deferring creation
+ * to first use keeps the build credential-independent and fails at request time
+ * with a clear message instead.
+ */
+export function getSupabase(): SupabaseClient {
+  if (!client) {
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+    if (!supabaseKey) {
+      throw new Error(
+        "SUPABASE_SERVICE_ROLE_KEY is not set — copy .env.example to .env and fill it in",
+      );
+    }
+    client = createClient(supabaseUrl, supabaseKey);
+  }
+  return client;
+}
+
+/**
+ * Lazy proxy so `import { supabase } from "@/lib/supabase"` keeps working
+ * without constructing a client at module load time.
+ */
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const real = getSupabase();
+    const value = real[prop as keyof SupabaseClient];
+    return typeof value === "function" ? value.bind(real) : value;
+  },
+});
 
 // Mission Control Tables:
 // - tasks: id, title, description, status, assignee, priority, due_date, created_at, updated_at
