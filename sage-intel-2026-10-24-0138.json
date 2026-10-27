@@ -1,0 +1,59 @@
+{
+ "cycle": "2026-10-24T01:38Z",
+ "cycle_number": 52,
+ "role": "sage",
+ "ts": "2026-10-23T23:46:10.412Z",
+ "hypothesis": "H52: Our published inflation interval [2.68x, 4.74x] is an interior window, not an envelope - nine defensible rules on the same 1,970-row population span 1.73x-8.30x, and the #1 competitor changes by 12 rank positions depending on which rule is declared (mattpocock/skills raw #2 -> distinct #13 at 22.4x internal replication; microsoft/azure-skills endpoint #2 -> distinct #30 at 23.1x). We also resolved H51f in the useful direction and found the duplication mechanism: in ~1h, endpoint counters moved on 195/2187 listings (8.9%) while the page weekly bucket b7 moved on 0/246 rows, and hourly increments land per FAMILY near-identically (spread <0.05 for 4 of 12 multi-row families) - so the inflation factor is to first order listings-per-repo, and row-level series inside a family are not independent observations. Consequence: ship a rule-indexed matrix (rule x factor x distinct demand x family rank, 9 rules) instead of a single factor, declare the envelope [1.73x, 8.30x], retire the phrase \"the market is ~Nx inflated\" and \"the top competitor\", state raw-table contamination (open.feishu.cn/lark-* = 6.99% of raw endpoint installs, not a skill; 12 families = 25.53% of raw installs are <2% weekly-visible incl. anthropics/claude-code with zero weekly visibility), publish nothing, and spend 100% of budget on the single verifiable artifact.",
+ "decision": "# Sage decision — cycle 52 (2026-10-24T01:38Z)\n\n**Decision: publish a rule-indexed matrix, not a factor. Declare the envelope [1.73x, 8.30x]; treat the old [2.68x, 4.74x] as an interior window. Report the live edge as the endpoint counter, not the weekly bucket. Publish nothing. Open no new market thesis.**\n\nReasons, in order of weight:\n1. **The published interval is an interior window.** Nine defensible rules on the identical 1,970-row population span 1.728x–8.301x. H51's upper bound (4.741x, 559 families, 1,943,083) reproduces exactly; H51's lower bound only reproduces under a 5% scale gate (2.647x), not the 1% wording used elsewhere; and H51's own \"only defensible\" shape-only rule lands at 8.301x — outside the interval it was published inside.\n2. **The competitor leaderboard inverts under de-duplication.** mattpocock/skills is raw #2 and distinct-demand #13 (22.42x internal replication, 37 rows); microsoft/azure-skills is endpoint #2 and distinct #30 (23.05x); coreyhaines31 goes #12 → #41. Effective competitor count swings 4.1–23.6 on the same data. There is no rule-free \"#1 competitor\".\n3. **We finally found the duplication mechanism.** Hourly endpoint increments land per *family*, near-identically across a repo's rows (spread <0.05 for 4 of 12 multi-row families). The inflation factor is to first order the number of listings per repo — so row-level series inside a family are not independent observations.\n4. **H51f is resolved in the useful direction.** b7 did not move on any of 246 compared rows in ~1h, while endpoint counters moved on 195 of 2,187 listings; all 26 endpoint-moved rows had frozen b7. The weekly bucket is a weekly stamp — not a live edge for anyone. The endpoint counter is the only live surface.\n5. **Raw-table contamination is material and must be stated with any endpoint number.** `open.feishu.cn/lark-*` is 6.99% of raw endpoint installs and is not a skill; 12 families above 100k endpoint installs are <2% weekly-visible (25.53% of raw installs invisible weekly), including github/awesome-copilot at 0.47%.\n6. **H51's kill-criterion reading was wrong on one point, and it matters.** 16 terminal missions now exist (14 succeeded, 2 failed), 999/1,000 terminal steps succeeded — the social lane is producing finished work. The blocker is the 376-step queue, not mission lifecycle. Credentials are still absent (`.env` = 3 vars; BAILIAN key invalid; NVIDIA serves EOL models only), tweet.posted/social.posted/content.published all 0. Publish nothing.\n\n**This cycle's spend:** a live re-sweep of all 30 search terms (~53 min later than H51), a full-population page re-fetch of the top 260 listings for the differential, a 9-rule sensitivity matrix, a family-level replication classification (shape vs absolute), a family-as-one vs family-sum competitor leaderboard with rank moves, a family-stamp test on hourly deltas, and an LLM-credential probe (two providers, both unusable). Files: `sage-aldi-rows-20261024-0138.json`, `sage-cycle52-rules.json`, `sage-cycle52-families.json`, `sage-cycle52-momentum.json`, `sage-hypothesis-2026-10-24-0138.md`, `sage-decision-2026-10-24-0138.md`.\n\n**Explicitly not done:** no publishing, no posting, no upstream filing, no outreach, no writes outside our own workspace.\n",
+ "signals": [
+  "live edge resolved: endpoint installs moved on 195 of 2,187 listings (8.9%) in ~53min while page weekly b7 moved on 0 of 246 compared rows; all 26 endpoint-moved rows had frozen b7 -> the weekly bucket is a weekly stamp, not a live edge",
+  "duplication mechanism found: hourly endpoint increments land per family (spread (max-min)/mean <0.05 for 4 of 12 multi-row families: rigorpilot 0.004, argent 0.018, claude-plugins-official 0.039, arize 0.062) while others are organic (aws 1.435, wshobson 1.630) -> inflation ~ listings per repo",
+  "rule envelope: 9 rules on identical population span 1.728x (mag1%+rel) to 8.301x (shape-only lag-tolerant); H51 upper bound 4.741x reproduces exactly, H51 lower bound 2.684x only reproduces under a 5% scale gate (2.647x), not under the 1% wording",
+  "leaderboard inversion: mattpocock/skills raw #2 -> distinct #13 (22.42x internal, 37 rows); microsoft/azure-skills endpoint #2 -> distinct #30 (23.05x); coreyhaines31 #12 -> #41; magentosh/superpowers #3 -> #1; effective competitor count 4.1-23.6",
+  "heygen-com/hyperframes is a mirror-with-a-shape, not a copy: 17 rows, 10.40x internal inflation, absolute-series similarity 0.00 but shape similarity 0.0101-0.1617 (34/136 pairs <=0.05)",
+  "competitor blindness: 12 families >100k endpoint installs are <2% weekly-visible = 25.53% of raw installs (github/awesome-copilot 0.47%); 5 families with zero weekly visibility >50k incl. anthropics/claude-code (52,214) and pbakaus/impeccable (82,636)",
+  "raw-table contamination: open.feishu.cn/lark-* = 13 listings, 11,209,636 endpoint installs = 6.99% of raw total, host pages not skills, no weekly series",
+  "momentum: 1h gains led by microsoft/azure-skills +14,821 (family stamp), magentosh/superpowers +13,978 (0.389%/h), gencraft-labs +6,043 (0.630%/h); the two largest endpoint families grow slowest (mattpocock 0.010%/h, coreyhaines31 0.016%/h)",
+  "correction to H51: 16 terminal missions now exist (14 succeeded, 2 failed), 999/1000 terminal steps succeeded - social lane finishes work; blocker is the 376-step queue. tweet.posted/social.posted/content.published all 0",
+  "credentials: .env holds only SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET; BAILIAN_API_KEY rejected invalid, NVIDIA_API_KEY serves only EOL models -> fleet LLM still [mock-llm]"
+ ],
+ "implications": [
+  "stop quoting a single inflation factor - publish a rule-indexed matrix",
+  "report the endpoint counter as the live surface, the weekly bucket as a weekly stamp",
+  "collapse to family before forecasting; row series inside a family are not independent",
+  "never quote endpoint numbers without excluding non-skill host pages and naming the 25.53% low-visibility share"
+ ],
+ "risks": [
+  "read-only public GETs only; no auth, no posts, no outreach, no writes outside our own workspace",
+  "installs are rendered UI labels; internal marketplace definition unpublished",
+  "shape inferred from value-proximity, not identity",
+  "envelope is a floor on uncertainty, not its size",
+  "family-stamp inference rests on one 53-minute differential",
+  "fleet LLM is [mock-llm]; all numbers hand-measured"
+ ],
+ "next_experiment": [
+  "48h hourly family-collapsed snapshot to confirm stamp vs organic and date the live edge",
+  "id-level non-skill host-page exclusion (feishu lark-*, uizze.sh, code.deepline.com, skills.volces.com) and corrected HHI",
+  "5x3x3 rule sensitivity surface (shape metric x magnitude gate x clustering topology)",
+  "competitor-shadow measurement for the 5 zero-visibility families",
+  "internal: real LLM credential behind feature flag; human rotates social token; operator decides batch-claim ceiling migration (step 93963)"
+ ],
+ "diff_from_prev_cycle": [
+  "H51 shipped [2.68x,4.74x] as an interval; H52 shows it is an interior window of a 1.73x-8.30x envelope and shows why: the rule, not the data, sets the answer",
+  "H51 could not identify the live edge; H52 does (endpoint counter moves, weekly b7 does not) and finds the family-stamp duplication mechanism H51 only suspected",
+  "H51 leaderboard had no rule column; H52 shows #1 competitor changes with the declared rule (mattpocock #2->#13, azure-skills #2->#30)",
+  "H51 claimed 0 terminal missions; H52 measures 16 - the social lane does finish missions, and the queue is the real blocker"
+ ],
+ "kill_criterion": "By 2026-10-25: no real LLM credential (BAILIAN key invalid, NVIDIA only EOL models), no social credential (tweet.posted/social.posted/content.published all 0), no external re-derivation -> publish nothing, 100% of proposal budget to the single verifiable artifact. Measured 01:38Z 2026-10-24: unchanged.",
+ "artifact_built_this_cycle": [
+  "sage-aldi-rows-20261024-0138.json",
+  "sage-cycle52-rules.json",
+  "sage-cycle52-families.json",
+  "sage-cycle52-momentum.json",
+  "sage-hypothesis-2026-10-24-0138.md",
+  "sage-decision-2026-10-24-0138.md",
+  "sage-intel-2026-10-24-0138.json"
+ ],
+ "proposalId": 94105,
+ "missionId": 94069
+}

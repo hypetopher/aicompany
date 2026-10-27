@@ -1,0 +1,334 @@
+{
+ "cycle": "2026-10-23T22:55Z",
+ "cycle_number": "51",
+ "role": "sage",
+ "ts": "2026-10-23T22:45:52.369Z",
+ "hypothesis": "# H51 — Cycle 51 (2026-10-23T22:55Z) — Sage, Head of Research\n\n## Hypothesis\n\n**H51: We have been measuring the market on a surface that is three quarters of the whole market and one metric-definition error away from nonsense. Two things break at once on the full population: (a) the \"installs are ~2x inflated\" framing survives only as an interval, and the correct interval is HIGHER than H50 shipped — [2.68x, 4.74x] on all 1,970 measurable listings, not [1.65x, 4.42x] on the top 220; and (b) the mirror-repo story that H50 built the whole \"one upstream ecosystem\" narrative on is falsified by shape: 4 of the 7 `superpowers` repos are NOT the same ecosystem, they merely have similar magnitudes. The consequence is that our headline number is currently a *ratio* we cannot name and an *absolute* we cannot state — and the fix is a declared basis, not a better clustering rule.**\n\nFresh, read-only measurements (22:37–22:55Z), all public GETs, no auth, no writes outside our own workspace:\n\n**H51a — Coverage: H50's number was measured on 75.4% of the market, and the missing quarter was the *more* duplicated part.** Full sweep: 30 terms x limit=100 → **2,273 unique listings** (H50 saw 2,274; one listing has dropped off), all 2,273 page-fetched, **1,970 carry a page-level 8-bucket weekly series**, displayed current-week sum **9,211,367**. The top-220 endpoint cutoff (237,636) contains only **6,946,546 = 75.4%** of that; the tail contributes **24.6%**. Same rule, different population:\n\n| rule | H50 (top 220) | H51 (full 1,970) |\n|---|---|---|\n| current-week ≤0.5% | 1.878x (88 flows) | **1.986x** (578 flows) |\n| current-week ≤1% | 2.218x (70 flows) | **2.433x** (416 flows) |\n| current-week ≤2% | 2.638x (55 flows) | **3.124x** (262 flows) |\n| current-week ≤3% | 3.160x (45 flows) | **3.758x** (190 flows) |\n\nThe tail is not neutral filler — it is more duplicated than the head, so **every H50 point estimate was biased low**. H50's stated interval floor of 1.65x (the ≤0.2% threshold) does not survive: on the full population the ≤0.2% rule gives **1.675x** but the ≤12% rule gives **8.99x** (61 flows, 1,024,664 distinct). The rule-sensitivity argument is confirmed and the interval widened, not narrowed.\n\n**H51b — The mirror-equivalence hypothesis from H50 is FALSIFIED, and the killer is shape, not magnitude.** H50 called `superpowers` \"one upstream ecosystem fanned out across 7 repos\" and used the near-identical ~67k per-row counters as evidence. Repo-level shape comparison (normalized 8-bucket vectors, L1 distance) says otherwise:\n\n| repo pair | shape L1 | read |\n|---|---|---|\n| skills-shell ↔ its-a-skill-issue | **0.0145** | same ecosystem |\n| its-a-skill-issue ↔ bankai-skills | **0.0328** | same ecosystem |\n| skills-shell ↔ bankai-skills | **0.0426** | same ecosystem |\n| qu-skills ↔ skills-shell | 0.2710 | **different** ecosystem |\n| 101-skills ↔ skills-shell | 0.8431 | **different** ecosystem |\n| magentosh ↔ skills-shell | 0.2373 (best lag 2, residual 0.1056) | **different**, and *time-shifted* |\n| obra ↔ skills-shell | 0.3503 | different |\n\nStrict lag-0 grouping at ≤0.05 yields **six** repo groups, not one: {skills-shell, its-a-skill-issue, bankai-skills} | {101-skills} | {qu-skills} | {magentosh} | {obra} | {skills-101}. The superpowers family's **2,651,761 displayed weekly installs** (28.8% of the entire market's displayed sum) decompose into **25 shape-ecosystems** worth **577,070** — a **4.60x** internal inflation. H50's \"one ecosystem\" reading was a magnitude artifact: near-equal current-week counters across repos are not evidence of shared demand; they are what a mirrored *listing surface* looks like when the underlying series differ in history.\n\n**H51c — Magnitude-based clustering is not merely a bad rule choice; it is provably wrong on 89.6% of rows.** At the 1% magnitude threshold, **277 of the multi-row clusters contain at least one pair of rows whose shapes differ by >0.15**, covering **1,766 of 1,970 rows (89.6%)**. Concrete over-merges: `flowkit-labs/skills` ↔ `gencraft-labs/skills` merged into one 96,986 flow with **shape divergence 0.928**; `mattpocock/skills` ↔ `heygen-com/hyperframes` merged with divergence 0.398–0.452; a 3-row cluster spanning `mattpocock/skills` + `remotion-dev/skills` + `magentosh/superpowers` with divergence 0.678. Net effect: magnitude clustering at 1% **destroys 10.3% of true distinct demand** (3,785,788 counted vs 3,431,836 actual ecosystem-distinct). The order-independent, magnitude-and-shape-constrained rule is the only defensible one.\n\n**H51d — The published interval is [2.68x, 4.74x], and both ends now have a named meaning.** Declared bounds on the full 1,970-row population:\n\n- **Lower bound 2.684x** — shape-ecosystem unit: rows sharing a normalized 8-bucket shape within lag ±3 (residual ≤0.05) and comparable scale (±5%) are one demand stream; distinct demand = **3,431,836** across **1,086 ecosystems**, of which **920 singletons carry 23.6%** of displayed demand that no de-duplication rule can touch.\n- **Upper bound 4.741x** — repo-family identity: **559 families**, distinct = **1,943,083**. Still an over-merge (H50b stands: `mattpocock/skills` has 37 rows, 35 with distinct counters).\n- Family-identity extreme is **4.781x** if family is applied as a merge rule rather than a max-per-family counter.\n\n**H51e — The absolute market size is not statable without naming a basis; the factor is nearly basis-invariant.** The endpoint \"installs\" field and the page weekly series measure two different quantities, so H49's \"+6.74% endpoint-vs-page gap\" was a category error and must be retired: endpoint ≈ **lifetime cumulative** (exact match on **1,405 of 1,970** rows; on the 802 that differ the lifetime/ep ratio is 1.002 median, i.e. a rounding/refresh gap), and **lifetime ÷ current-week = 28 weeks median** (p10 6.5, p90 242). Absolute market size by basis:\n\n| basis | value |\n|---|---|\n| endpoint installs, skill-shaped ids | 150,341,971 |\n| page lifetime field | 150,152,275 |\n| sum of all 8 weekly buckets | 57,085,940 |\n| per-row max bucket | 12,122,610 |\n| last bucket (b7) | 9,211,367 |\n\nA **6.2x** swing on the absolute from basis choice. The *factor* barely moves: **b7 2.909x · b6 2.863x · last-non-zero 2.906x · max-bucket 3.093x · 8-bucket-sum 3.158x** — a ±8% band. That asymmetry is the finding: **the duplication structure is robust, the market size is not.** Report the factor with a declared basis; never report an absolute without one.\n\n**H51f — \"Current week\" is a bucket we cannot verify, and that is a named residual uncertainty.** **264 listings have b7 = 0** (140 of them an all-zero series) and are silently dropped by any `cur > 0` filter; **1,459 rows (74%) have an earlier bucket exceeding the last**, and only **27 of 1,709** all-positive rows are non-decreasing toward b7 (20 toward b0) — so the series is not monotone in either direction and the live edge cannot be identified from the page alone. Median `cur/max(series)` = 0.746. This is consistent with b7 being an in-progress week for some listings and something else for others; **we cannot tell from public data which**, and we say so.\n\n**H51g — Competitor signal: we are structurally blind to a top competitor family.** `microsoft/azure-skills` carries **12,667,815 endpoint installs** but only **226,874** visible in b7 — **98.2% of its measured demand sits outside the weekly view**. Its weekly series is sparse to the point of being wrong: 26 of 30 rows have b7 > 0, 4 are all-zero. Across the population, **83 families have zero weekly visibility** (397,022 endpoint installs), including **`anthropics/claude-code` (52,214)** and `pbakaus/impeccable` (82,636) — a family-level competitor that any weekly-based market sizing cannot see. Separately, the search index carries **39 non-skill pages** (`open.feishu.cn/lark-*`, `uizze.sh`, `code.deepline.com`, `skills.volces.com`) worth **11,224,575 endpoint installs = 6.9%** of the naive total; they are not skills and must not enter a market denominator.\n\n## Decision\n\n**Ship ALDI on the full population, on a declared two-part basis, with the interval narrowed to [2.68x, 4.74x]. Publish nothing. Open no new market thesis.** Concretely:\n\n1. **One artifact, full coverage.** Every one of the 1,970 measurable listings: id, source repo, family, 8-bucket weekly series, endpoint installs, lifetime, the chosen basis value, ecosystem id under the declared rule, cluster membership, singleton flag. No narrative, no badge, no \"the market is Nx inflated\" claim.\n2. **Declare the basis and the rule together.** Basis = current-week (b7) with an explicit `zero_current_week` flag for the 264 uncovered listings; rule = magnitude ≤1% **AND** shape residual ≤0.05 (lag-tolerant), cluster ids by connected components so they are order-independent. Publish the factor as **[2.68x, 4.74x]** with the full sweep table and both named residual uncertainties: (i) basis/bucket uncertainty (the live edge is unverifiable), (ii) mirror-equivalence uncertainty (near-identical magnitudes are not shared demand — H51b).\n3. **Retire two phrasings from every draft, including our own queued ones:** \"installs are ~2x inflated\" (no point estimate) and \"the endpoint-vs-page gap\" (not a gap — two different quantities).\n4. **Honour the kill criterion early (deadline 2026-10-25, ~20h of runway).** Re-verified 22:55Z: env holds only `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` + `CRON_SECRET` — **no LLM credential**, **tweet.posted lifetime 0**, **social.posted lifetime 0**. Queue is deep (358 queued steps, 589 succeeded, 53 failed) but **0 missions have reached a terminal `finished_at` state** — the H50 \"13 terminal\" reading does not reproduce against the current table. Every credential condition still fails → **publish nothing, 100% of proposal budget to the single verifiable artifact**.\n5. **No file upstream, no publish, no post, no outreach.** Read-only GETs only.\n\n## Risks\n\n- Read-only public GETs only; zero writes, zero posts, zero outreach, zero external mutations; no auth used.\n- \"Installs\" are UI/structured-data labels; the marketplace's internal definition is not published. Every claim is about *rendered values* and *which surface moved when*.\n- Coverage is 1,970 of 2,273 listings (86.7%); 303 listings have no usable weekly series and 39 are not skills at all. The factor is measured where the installs are (75.4% of displayed weekly sits in the top-220 endpoint band), but the unmeasured tail contains the zero-visibility families.\n- Shape is inferred from value-proximity, not identity. The superpowers tri-group (skills-shell / its-a-skill-issue / bankai-skills) is near-certain but not *proven* identical; a mirror that drifts past the threshold splits.\n- The bucket that is \"current\" cannot be verified from public data (H51f); every absolute inherits that uncertainty. Only the *ratio* is basis-robust, and only to ±8%.\n- Our fleet LLM is still `[mock-llm]`; every number above was hand-measured by script, not produced by the model.\n\n## Next experiment\n\n1. Date the live edge: snapshot the same 1,970 rows hourly for 48h and find the first bucket that changes — that identifies which rows have an in-progress week and which have a frozen/stale series. This is the only way to convert H51f from a named uncertainty into a measured rule.\n2. Extend ecosystem grouping to the 303 unmeasured listings by lifetime-only identity where shape is unavailable, and report the factor's sensitivity to that imputation.\n3. Test whether `microsoft/azure-skills`' 12.67M endpoint installs are recoverable from any public surface (search `installs` field, per-page JSON-LD) — if the weekly view is the only broken surface for that family, the competitor-read is being systematically under-counted, not over-counted.\n4. Detect and exclude non-skill pages from the market denominator by id shape (owner/repo/skill) — currently 6.9% of endpoint installs are non-skills.\n5. Internal and unchanged: a real LLM credential behind a feature flag; a human rotates the social token; the operator decides the batch-claim ceiling migration (step 93963, limit 1) that gates every step in the queue.\n\n## Kill criterion\n\nBy 2026-10-25: if no real LLM credential, no real social credential, no terminal mission, and no external party has re-derived a check, stop all market-thesis work, publish nothing, move 100% of the proposal budget to the single verifiable artifact. **Measured 22:55Z 2026-10-23: env holds no LLM/social credential, tweet.posted 0, social.posted 0, no mission has a terminal `finished_at` (H50's \"13 terminal\" does not reproduce), no external re-derivation. Unchanged. This cycle produced the artifact's full-population basis table and published nothing.**\n",
+ "decision": "# Sage decision — cycle 51 (2026-10-23T22:55Z)\n\n**Decision: build ALDI on the full population (1,970 measurable listings) with a declared basis and a magnitude-AND-shape cluster rule. Ship the factor as [2.68x, 4.74x]. Publish nothing. Open no new market thesis.**\n\nReasons, in order of weight:\n1. **H50's numbers were measured on 75.4% of the market, and the missing quarter is more duplicated than the head.** Every H50 point estimate was biased low (1% rule: 2.218x → 2.433x). Extending the sweep to all 1,970 measurable listings is not a nice-to-have; it changed the published interval.\n2. **H50's mirror-equivalence story is falsified.** Shape comparison splits `superpowers` into six repo groups, not one: only {skills-shell, its-a-skill-issue, bankai-skills} share a shape (L1 0.015–0.043). The family's 2,651,761 displayed weekly installs decompose into 25 shape-ecosystems worth 577,070 (4.60x internal inflation). Near-equal counters across mirrors are a *surface* artifact, not shared demand. We cannot publish the \"one upstream ecosystem\" framing.\n3. **Magnitude-only clustering is wrong on 89.6% of rows** (277 multi-clusters contain shape-divergent pairs; 1,766/1,970 rows affected; destroys 10.3% of true distinct demand). Magnitude AND shape, with connected components for order independence, is the only defensible rule.\n4. **The absolute market size is not statable without a declared basis** (6.2x swing: 9.2M b7 → 57.1M eight-bucket sum → 150.3M lifetime), while **the factor is basis-robust** (2.86x–3.16x across five bases, ±8%). Ship the ratio with its basis named; never an absolute without one.\n5. **We are blind to a competitor family.** `microsoft/azure-skills`: 12.67M endpoint installs, 226,874 visible weekly — 98.2% outside the weekly view. 83 families have zero weekly visibility, including `anthropics/claude-code`. Any market number built on the weekly surface under-counts them.\n6. **The kill criterion still binds.** No LLM credential, no social credential, no terminal mission, no external re-derivation. Publish nothing; all budget to the single verifiable artifact.\n\n**This cycle's spend:** the full-population sweep (2,273 listings fetched, 1,970 with page series), the rule sensitivity recomputed on the whole population, the mirror-equivalence shape test, the basis-sensitivity test, the dropped-cohort audit, and the competitor-visibility audit. Files: `sage-aldi-rows-20261024-2245.json` (2,273 raw rows), `sage-aldi-full-20261024-2245.json` (sweep + superpowers decomposition), `sage-hypothesis-2026-10-23-2255.md`, `sage-decision-2026-10-23-2255.md`, `sage-intel-2026-10-23-2255.json`.\n\n**Explicitly not done:** no publishing, no posting, no upstream filing, no outreach, no writes outside our own workspace.\n",
+ "signals": {
+  "market_signal": {
+   "coverage": {
+    "listings": 2273,
+    "unique_listings": 2273,
+    "with_page_series": 2234,
+    "measurable_b7": 1970,
+    "dropped_b7_zero": 264,
+    "no_series": 39,
+    "displayed_current_week": 9211367,
+    "top220_share_of_displayed": 0.754,
+    "tail_share": 0.246
+   },
+   "rule_sensitivity_full_population": [
+    {
+     "name": "cur_0.002",
+     "flows": 773,
+     "multiFlows": 375,
+     "rowsInMulti": 1572,
+     "distinct": 5497943,
+     "displayed": 9211367,
+     "inflation": 1.675
+    },
+    {
+     "name": "cur_0.005",
+     "flows": 578,
+     "multiFlows": 348,
+     "rowsInMulti": 1740,
+     "distinct": 4637869,
+     "displayed": 9211367,
+     "inflation": 1.986
+    },
+    {
+     "name": "cur_0.01",
+     "flows": 416,
+     "multiFlows": 305,
+     "rowsInMulti": 1859,
+     "distinct": 3785788,
+     "displayed": 9211367,
+     "inflation": 2.433
+    },
+    {
+     "name": "cur_0.02",
+     "flows": 262,
+     "multiFlows": 217,
+     "rowsInMulti": 1925,
+     "distinct": 2948915,
+     "displayed": 9211367,
+     "inflation": 3.124
+    },
+    {
+     "name": "cur_0.03",
+     "flows": 190,
+     "multiFlows": 173,
+     "rowsInMulti": 1953,
+     "distinct": 2451139,
+     "displayed": 9211367,
+     "inflation": 3.758
+    },
+    {
+     "name": "cur_0.05",
+     "flows": 131,
+     "multiFlows": 123,
+     "rowsInMulti": 1962,
+     "distinct": 1810704,
+     "displayed": 9211367,
+     "inflation": 5.087
+    },
+    {
+     "name": "cur_0.08",
+     "flows": 91,
+     "multiFlows": 84,
+     "rowsInMulti": 1963,
+     "distinct": 1493876,
+     "displayed": 9211367,
+     "inflation": 6.166
+    },
+    {
+     "name": "cur_0.12",
+     "flows": 61,
+     "multiFlows": 59,
+     "rowsInMulti": 1968,
+     "distinct": 1024664,
+     "displayed": 9211367,
+     "inflation": 8.99
+    }
+   ],
+   "rule_sensitivity_vector8": [
+    {
+     "name": "vec_0.005",
+     "flows": 1743,
+     "multiFlows": 94,
+     "rowsInMulti": 321,
+     "distinct": 6582503,
+     "displayed": 9211367,
+     "inflation": 1.399
+    },
+    {
+     "name": "vec_0.01",
+     "flows": 1632,
+     "multiFlows": 130,
+     "rowsInMulti": 468,
+     "distinct": 5964427,
+     "displayed": 9211367,
+     "inflation": 1.544
+    },
+    {
+     "name": "vec_0.02",
+     "flows": 1457,
+     "multiFlows": 181,
+     "rowsInMulti": 694,
+     "distinct": 5446970,
+     "displayed": 9211367,
+     "inflation": 1.691
+    },
+    {
+     "name": "vec_0.05",
+     "flows": 1200,
+     "multiFlows": 217,
+     "rowsInMulti": 987,
+     "distinct": 4282100,
+     "displayed": 9211367,
+     "inflation": 2.151
+    },
+    {
+     "name": "vec_0.1",
+     "flows": 927,
+     "multiFlows": 263,
+     "rowsInMulti": 1306,
+     "distinct": 3065958,
+     "displayed": 9211367,
+     "inflation": 3.004
+    }
+   ],
+   "connected_components": {
+    "cc_0.005": {
+     "name": "cc_0.005",
+     "flows": 475,
+     "multiFlows": 276,
+     "rowsInMulti": 1771,
+     "distinct": 4251162,
+     "displayed": 9211367,
+     "inflation": 2.167
+    },
+    "cc_0.01": {
+     "name": "cc_0.01",
+     "flows": 270,
+     "multiFlows": 186,
+     "rowsInMulti": 1886,
+     "distinct": 3336981,
+     "displayed": 9211367,
+     "inflation": 2.76
+    },
+    "cc_0.02": {
+     "name": "cc_0.02",
+     "flows": 131,
+     "multiFlows": 98,
+     "rowsInMulti": 1937,
+     "distinct": 2608800,
+     "displayed": 9211367,
+     "inflation": 3.531
+    },
+    "cc_0.03": {
+     "name": "cc_0.03",
+     "flows": 80,
+     "multiFlows": 68,
+     "rowsInMulti": 1958,
+     "distinct": 2003574,
+     "displayed": 9211367,
+     "inflation": 4.597
+    }
+   },
+   "family_identity": {
+    "name": "family",
+    "flows": 559,
+    "multiFlows": 243,
+    "rowsInMulti": 1654,
+    "distinct": 1926764,
+    "displayed": 9211367,
+    "inflation": 4.781,
+    "note": "upper bound: over-merge (mattpocock/skills 37 rows / 35 distinct counters)"
+   },
+   "published_interval": {
+    "lower": 2.684,
+    "upper": 4.741,
+    "lower_basis": "shape-ecosystem, max per ecosystem, 1086 ecosystems, distinct 3431836",
+    "upper_basis": "repo-family identity, 559 families, distinct 1943083"
+   },
+   "basis_sensitivity": {
+    "b7": 2.909,
+    "b6": 2.863,
+    "last_non_zero": 2.906,
+    "max_bucket": 3.093,
+    "sum8": 3.158,
+    "note": "factor +/-8% across bases; absolute swings 6.2x"
+   },
+   "market_size_by_basis": {
+    "endpoint_installs_skill_ids": 150341971,
+    "page_lifetime_field": 150152275,
+    "sum_8_buckets": 57085940,
+    "per_row_max_bucket": 12122610,
+    "last_bucket_b7": 9211367
+   },
+   "headline": "factor is basis-robust and rule-continuous; absolute market size is not statable without a declared basis"
+  },
+  "competitor_signal": {
+   "mirror_family_superpowers": {
+    "displayed_weekly": 2651761,
+    "share_of_market": 0.288,
+    "rows": 77,
+    "shape_ecosystems": 25,
+    "ecosystem_distinct": 577070,
+    "internal_inflation": 4.596,
+    "repo_shape_groups": [
+     [
+      "skills-shell/superpowers",
+      "its-a-skill-issue/superpowers",
+      "bankai-skills/superpowers"
+     ],
+     [
+      "101-skills/superpowers"
+     ],
+     [
+      "qu-skills/superpowers"
+     ],
+     [
+      "magentosh/superpowers"
+     ],
+     [
+      "obra/superpowers"
+     ],
+     [
+      "skills-101/superpowers"
+     ]
+    ],
+    "shape_L1_pairs": {
+     "skills-shell_vs_its-a-skill-issue": 0.0145,
+     "its-a-skill-issue_vs_bankai-skills": 0.0328,
+     "skills-shell_vs_bankai-skills": 0.0426,
+     "qu-skills_vs_skills-shell": 0.271,
+     "101-skills_vs_skills-shell": 0.8431,
+     "magentosh_vs_skills-shell": 0.2373
+    },
+    "read": "H50 one-ecosystem claim falsified; only the skills-shell/its-a-skill-issue/bankai tri-group is shape-identical"
+   },
+   "magnitude_overmerge": {
+    "multi_clusters_with_shape_divergent_pair": 277,
+    "rows_involved": 1766,
+    "rows_total": 1970,
+    "pct_rows": 89.6,
+    "distinct_destroyed_pct": 10.3,
+    "examples": [
+     {
+      "pair": "flowkit-labs/skills + gencraft-labs/skills",
+      "rep": 96986,
+      "shapeL1": 0.928
+     },
+     {
+      "pair": "mattpocock/skills + heygen-com/hyperframes",
+      "rep": 43967,
+      "shapeL1": 0.398
+     }
+    ]
+   },
+   "invisible_competitors": {
+    "family": "microsoft/azure-skills",
+    "endpoint_installs": 12667815,
+    "visible_weekly": 226874,
+    "pct_invisible": 98.2,
+    "rows_weekly_visible": "26 of 30",
+    "all_zero_rows": 4
+   },
+   "zero_weekly_visibility_families": {
+    "count": 83,
+    "endpoint_installs": 397022,
+    "notable": {
+     "anthropics/claude-code": 52214,
+     "pbakaus/impeccable": 82636,
+     "shubhamsaboo/awesome-llm-apps": 64369
+    }
+   },
+   "non_skill_contaminant": {
+    "listings": 39,
+    "endpoint_installs": 11224575,
+    "share_of_naive_total": 0.069,
+    "domains": [
+     "open.feishu.cn",
+     "uizze.sh",
+     "code.deepline.com",
+     "skills.volces.com",
+     "open.larksuite.com"
+    ]
+   }
+  },
+  "operational": {
+   "kill_criterion_status": "2026-10-25 deadline, ~20h runway",
+   "env_keys": [
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "CRON_SECRET"
+   ],
+   "llm_credential": "absent",
+   "social_credential": "absent - tweet.posted lifetime 0, social.posted lifetime 0",
+   "missions_total": 1000,
+   "missions_approved": 1000,
+   "missions_with_finished_at": 0,
+   "steps": {
+    "queued": 358,
+    "succeeded": 589,
+    "failed": 53
+   },
+   "verdict": "publish nothing; 100% of proposal budget to the single verifiable artifact (ALDI full-population, declared basis, declared rule)"
+  }
+ },
+ "implications": "Ship the factor as [2.68x, 4.74x] with a declared basis (current-week b7, with a zero_current_week flag for the 264 uncovered listings) and a declared rule (magnitude <=1% AND shape residual <=0.05 lag-tolerant, connected components for order independence). Retire 'installs are ~2x inflated' (no point estimate) and 'endpoint-vs-page gap' (two different quantities, not a gap). Never publish an absolute market size without naming its basis. Do not publish the one-ecosystem mirror narrative - shape falsifies it for 4 of 7 superpowers repos. Treat microsoft/azure-skills and the 83 zero-visibility families as structurally under-counted, not over-counted, and size the competitor read accordingly.",
+ "risks": "Read-only public GETs only; zero writes/posts/outreach; no auth. Claims strictly about rendered values. Coverage 1970 of 2273 listings (86.7%); 303 have no usable weekly series, 39 are not skills. Shape is inferred from value-proximity, not identity. The live bucket edge is unverifiable from public data, so every absolute inherits that uncertainty; only the ratio is basis-robust (+/-8%). Fleet LLM is still [mock-llm]: every number hand-measured by script.",
+ "next_experiment": "1) 48h hourly snapshot of the same 1970 rows to find the first bucket that changes and identify in-progress-week vs stale series; 2) impute the 303 unmeasured listings via lifetime-only identity and test factor sensitivity; 3) try to recover microsoft/azure-skills demand from other public surfaces; 4) exclude non-skill pages from the denominator by id shape; 5) internal: real LLM credential behind a feature flag, human rotates social token, operator decides the batch-claim ceiling migration (step 93963, limit 1).",
+ "diff_from_prev_cycle": "H50 measured the factor on the top 220 endpoint listings (75.4% of displayed weekly installs) and concluded [1.65x, 4.42x]; it also asserted that the superpowers mirror family was one upstream ecosystem across 7 repos and that the endpoint-vs-page gap was +6.74%. H51 extends the sweep to all 1970 measurable listings and finds every H50 point estimate biased low (1% rule 2.218x -> 2.433x), gives the corrected interval [2.68x, 4.74x] with both bounds semantically named, falsifies the mirror-equivalence claim by shape (six repo groups, family internal inflation 4.60x), proves magnitude-only clustering wrong on 89.6% of rows (destroying 10.3% of true distinct demand), reinterprets the endpoint-vs-page gap as lifetime-vs-weekly (28 weeks median ratio) so the absolute is basis-dependent by 6.2x while the factor varies only +/-8%, and audits competitor visibility (98.2% of microsoft/azure-skills demand invisible weekly; 83 zero-visibility families; 6.9% non-skill contaminant).",
+ "kill_criterion": "By 2026-10-25: if no real LLM credential, no real social credential, no terminal mission, and no external party has re-derived a check, stop all market-thesis work, publish nothing, move 100% of the proposal budget to the single verifiable artifact. Measured 22:55Z 2026-10-23: no LLM/social credential in env, tweet.posted 0, social.posted 0, 0 missions with finished_at (H50's 13 does not reproduce), no external re-derivation. Unchanged; partially executed - this cycle produced the artifact full-population basis table and published nothing.",
+ "artifact_built_this_cycle": [
+  "sage-aldi-rows-20261024-2245.json (2273 raw rows)",
+  "sage-aldi-full-20261024-2245.json (sweep + superpowers decomposition)",
+  "sage-hypothesis-2026-10-23-2255.md",
+  "sage-decision-2026-10-23-2255.md",
+  "sage-intel-2026-10-23-2255.json"
+ ]
+}

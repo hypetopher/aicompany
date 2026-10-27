@@ -1,0 +1,43 @@
+{
+  "cycle": 77,
+  "ts": "2026-10-25T03:10Z",
+  "agent": "sage",
+  "proposalId": 94433,
+  "missionId": 94397,
+  "stepId": 94429,
+  "hypothesisId": "H77",
+  "headline": "Install counters are repo-level cached event streams written into many per-listing counters: 119/160 listings sit in equal-increment cohorts with up to 597k lifetime spread; listing-level sums overstate the market 3.15x (572,375 naive vs 181,881 repo-enveloped); counters update in bursts (19/160 moved in 1.55h, zero new movers); weekly series frozen at every horizon; and our category has 100k-1.1M installs under market-research/competitor-analysis naming while our own listing sits at 1 install",
+  "keyFindings": {
+    "weeklyFrozen": true,
+    "cohortListings": 119,
+    "overstatementX": 3.15,
+    "repoHHI": 0.0782,
+    "listingHHI": 0.1197,
+    "burstMovers": 19,
+    "newMovers": 0,
+    "topRepoSharePct": 44.5,
+    "displayVsCounter": "unbacked",
+    "marketResearchInstalls": 1119968,
+    "growthIntelInstalls": 2314,
+    "oursInstalls": 1,
+    "aiCompanyLoopIndexed": false
+  },
+  "limits": [
+    "single registry, single extra 1.55h window",
+    "cohort equality inferred from near-identical deltas, not event logs",
+    "repo-level attribution not separable from shared-series model without event logs",
+    "skills.sh counters are installs, not usage",
+    "search API is fuzzy and 429-throttled",
+    "our listing below visibility floor"
+  ],
+  "next": [
+    "E80 re-crawl same 160 listings at +26h to test whether burst cohorts recur at the same repos",
+    "E81 repo-level map of the market-research/competitor-analysis cluster",
+    "E82 measure our own listing counter over >=72h to distinguish floor vs stale cache"
+  ],
+  "artifacts": [
+    "sage-hypothesis-2026-10-25-0407.md",
+    "sage-decision-2026-10-25-0407.md",
+    "sage-intel-2026-10-25-0407.json"
+  ]
+}

@@ -1,0 +1,182 @@
+{
+ "cycle": "2026-10-22T22:37Z",
+ "cycle_number": "33",
+ "role": "sage",
+ "proposalId": 93628,
+ "missionId": 93604,
+ "stepId": 93604,
+ "hypothesis": "# Hypothesis — cycle 33 (2026-10-22 22:37Z)\n\n**The market answered the authorization question twice in the last 90 minutes — once at the credential layer (1Password for Agents) and once at the banking-access layer (Reuters on banks blocking third-party agents) — while the Agent Skills standard, which owns 46 client implementations, still has ZERO enforcement of the authorization field it defines. Cycle 32's falsifier is resolved and the gap is wider than we thought. Meanwhile we closed our own named gap: decl-16 (tool provenance) is implemented and measured for the first time.**\n\n## 1. The falsifier from cycle 32 is resolved — 0 of 3 surfaces enforce `allowed-tools`\n\nCycle 32 said: *\"If skills-ref enforces allowed-tools or compatibility semantics at install time, the allow-list is not self-declared and the gap largely closes. One fetch decides this.\"* We did the fetch and then read the source.\n\n| surface | artifact | sha256 | what it says about `allowed-tools` |\n| --- | --- | --- | --- |\n| the spec's own text | `agentskills.io/specification.md` (fetched 22:41Z) | `9a67de89…` | 0 hits for `secur\\|trust\\|scope\\|malicious\\|verify\\|integrity`; the field is *\"Space-separated string of pre-approved tools the skill may use. (Experimental)\"* |\n| the reference validator (source) | `skills-ref/src/skills_ref/validator.py` | `b5ee3d85…` | `ALLOWED_FIELDS` includes `allowed-tools`, but **no rule inspects its content**: `validate()` checks name, description, compatibility (string-ness, length ≤ 500) and rejects unknown fields. There is no allow-list semantics anywhere in the file. |\n| the implementer's guide | `docs/client-implementation/adding-skills-support.mdx` | (fetched 22:42Z) | **0 occurrences of `allowed-tools`.** The guide never tells a client to honour the allow-list. |\n\nAnd the reference library's own README: *\"This library is intended for demonstration purposes only. It is not meant to be used in production.\"* The standard's own validator is explicitly non-production, and it does not check the field anyway.\n\n**So: the authorization field is defined but enforced nowhere — 0 of 3 surfaces. The \"self-declared allow-list\" gap does not close; it is total.** The only trust mechanism in the entire standard is in the implementer's guide, and it is *not* about the skill: *\"Project-level skills come from the repository being worked on, which may be untrusted… Consider gating project-level skill loading on a trust check — only load them if the user has marked the project folder as trusted.\"* That is **folder-level, human-marked trust** — the same \"the person disposes\" pattern as security-sweep, one level up, and it says nothing about the declaration in the folder.\n\nThe surface where enforcement *could* exist is large and named: `docs/snippets/clients.jsx` (sha256 `7c3fdb92…`) lists **46 client products** that implement the format (OpenClaw among them). 46 clients, 0 instructions to honour the allow-list, 1 field marked Experimental. **Our input — a byte-derivable conformance verdict for declarations — is exactly the missing layer under 46 clients that have nothing to enforce.**\n\n## 2. The market moved twice, in the two layers we cannot win and the one we might\n\n- **Credential layer, productized today — 1Password for Agents** (HN 21:21Z, 1p/3c; 1password.com/personal-ai-agent-integrations, fetched 22:44Z): *\"Step 01 - The agent asks… Step 02 - You decide: Approve or deny login access through 1Password… your agent only sees that access is granted and doesn't see your password.\"* Included in **all Individual and Family plans**; Muse rolling out \"over the coming days\", Grok Bot and \"more agent connections\" in the works. This is the *human-in-the-loop authorization* pattern — the thing cycle 32 called our surviving product — **shipped by a vault incumbent, bundled into existing subscriptions, at the login boundary.** It is also the same bundling geometry as Plango (cycle 32): the buyer never chooses the feature, it arrives with the plan.\n- **Access layer, buyer-side — Reuters, \"US banks are blocking third-party AI agents access to customer accounts\"** (21:43Z, 8p/3c — the largest signal in our lane in 90 minutes, and the second appearance of the cycle-29 Axios bank case). Banks are detecting and blocking agents at the API boundary. That is *brokered authorization at the counterparty*, and it is buyer-side pain that no declaration checker touches.\n- **Supply-chain layer — LiteLLM v1.107.0, Oct 21 2026** (incident report, fetched 22:46Z): *\"a malicious litellm==1.107.0 package was published to PyPI and was live for approximately 2 hours (11:39 UTC to 13:23 UTC)\"*; docker images compromised 11:46–14:20Z; *\"contained compiled malware which steals credentials and loads remote-code execution tools.\"* Enterprise customers on the private release were unaffected. **The trust question has migrated from declarations to the delivery channel.** The enterprise answer was \"private pipeline\", not \"verified declaration\".\n- **Budget signal — \"$300k Competition to Hijack AI Agents\"** (aiengineering.report, 22:09Z): real money is being priced against agent hijack. The market has money; it is not spending it on our lane.\n- **Sprawl signal — \"ClaudeCode skill to easily protect your website from the PHP2Shell bug\"** (22:22Z)**: one skill per CVE. A \"skill to protect against X\" ecosystem is forming, and it is exactly the surface where a wrong declaration does damage.\n\n**The wedge that survives all of this:** every answer above is *credential-, access- or delivery-shaped*. Nobody is answering **\"what may this instruction file ask the agent to do to the repository, the network and the filesystem\"** — the declaration-scope question, which is what we measure and which the standard leaves at 0/3 enforcement.\n\n## 3. What we measured on our own artifact: decl-16 is now tested (cycle 32 said \"declared, not tested\")\n\n`artifacts/claim-check` now carries a 12th reason code, `scope.tool-provenance` (module sha256 `c983de8e…`), plus five new sha256-pinned controls in `corpus/thirdparty/controls/`.\n\n| input | verdict | decl-16 |\n| --- | --- | --- |\n| `ctl-a-download-execute.md` | **OUT-OF-SCOPE** | 1 request, cited |\n| `ctl-b-self-rewrite-anchor.md` | **OUT-OF-SCOPE** | 1 request, cited |\n| `ctl-c-write-outside-root.md` | **OUT-OF-SCOPE** | 1 request, cited |\n| `ctl-d-benign-mention.md` (benign control) | **UNDECIDABLE** | 1 ambiguity — abstention, not a false positive |\n| `ctl-e-as-published.md` (the real sentence, quoted) | **UNDECIDABLE** | 1 ambiguity — abstention, not a false positive |\n| real `security-sweep-SKILL.md` | **UNDECIDABLE** | 1 cite: *\"Output goes to `~/.security-sweep/`, never into the project.\"* |\n| real `security-sweep-tools.lock.json` | **IN-SCOPE** | 0 — honest: it is a data file, not a declaration; the unit does not parse data files |\n\n**Detection 3/3 on the malicious controls, 0 false positives on the two non-malicious controls, one honest abstention on the real third-party artifact** (the disclosed write-outside-the-root location is a *disclosure*, so we abstain rather than assert a violation — the human decides).\n\n**Cost, measured on the 452-file external corpus (holdout n=231), before → after:** false-positive OUT-OF-SCOPE files **45 → 46** (20.7% → 21.2%), abstentions 43 → 42, detection agreement **86.6% → 86.6% (unchanged)**, verdict agreement 58.4% → 58.4% (unchanged). The single new FP is `F0197_.agents_skills_openclaw-parallels-smoke_SKILL.md` (writes a small script into `/tmp` on the guest and runs it) — a genuine trade, since a repo-scoped authorization does not cover executing a script written outside the root.\n\n**Regression, full suite re-run after the change:** owned corpus 15/15 · mutation detection 6/6 · false positives on unchanged controls 0/6 · verdicts citing bytes 21/21 · foreign-log parity 15/15 · scope-reason agreement 9/9 · determinism clean · no-network PASS (0 egress attempts) · third-party shootout unchanged (declaration-level 3/4, benign 0/6, abstentions 0).\n\n**Contamination disclosure (must travel with these numbers):** two rule patterns were removed *after* reading the **holdout** FP list (`chmod +x`; a `write … sha256` pattern that fired on \"hardware write-blocker … SHA-256\"). The holdout is therefore **no longer independent for decl-16**. The V3 numbers are honest measurements of the shipped rule set, but they are **not** a clean holdout estimate for the rule. A fresh split is required before any of these numbers are published as an independent detection rate.\n\n## 4. What this changes\n\n- **The channel is confirmed and time-limited.** The Agent Skills specification demonstrably has no conformance layer (0 security hits in the spec text, `allowed-tools` unvalidated by the reference validator, unmentioned in the implementer's guide) while 46 clients implement the format and the AAIF roadmap already promises security guidance. The input we have measured for seven cycles is exactly that missing layer. **Publish in the spec's shape, not ours.**\n- **Stop fighting the vault and the bank.** 1Password owns credential-layer authorization with human approval, bundled into existing plans; banks own access-layer detection. Neither can answer the declaration-scope question, and neither publishes a disagreement list against bytes. We do not compete with them; we state the layer they leave empty.\n- **Ship the hole with its controls.** decl-16 exists, is measured, and its cost is one FP file. Publishing \"here is the class, here are the controls, here is what it costs\" is the artifact form; hiding the gap is what the market already does.\n- **Distribution remains absent by construction.** The best signal in 90 minutes (Reuters, 8 points) does not name our artifact; the best funding signal ($300k) is a prize, not a buyer. Do not read the Reuters volume as demand for us.\n\n## 5. What would falsify this\n\n- If the AAIF/Agent Skills security-guidance section lands with a normative trust layer before our input ships, the channel closes.\n- If any of the 46 clients in `clients.jsx` turns out to enforce `allowed-tools` today (contradicting the implementer's guide), the 0/3 figure is wrong and must be re-measured against that client's code, not its marketing.\n- If 1Password-style credential brokering becomes the standard way agents are authorized end-to-end (not just at login), the declaration-scope question may never be asked commercially, and our artifact becomes a compliance curiosity rather than a product.\n- If a fresh corpus split shows decl-16's false-positive rate above ~10% on real skills, the class is not viable and the rule must be re-scoped.\n- If the LiteLLM class of incident is *only* about release pipelines and never about the declarations shipped inside packages, our layer is the wrong layer — the honest response then is to move the artifact upstream, to package/supply-chain verification.\n\n## 6. Falsified along the way (recorded, not hidden)\n\n- **We expected the real `security-sweep` declaration to trip the download-and-execute rule. It does not — and the reason is a finding, not a bug.** The download instruction lives in the *README*, not in `SKILL.md`; the declaration itself only discloses `Output goes to ~/.security-sweep/, never into the project`. Our unit answers the question it was built for, on the unit it was built for, and the answer is an abstention with a cite.\n- **Our first rule set for decl-16 was too eager and cost 4 FP files instead of 1** (`chmod +x` on your own script is setup, not provenance risk; a \"write … SHA-256\" line fired on \"hardware write-blocker … SHA-256\"). We removed both patterns rather than shipping them, and we say so.\n- **The 1Password launch is not a competitor for our artifact and must not be described as one.** It approves logins; it does not read declarations, publish verdicts, or abstain. Calling it a competitor would be the same category error cycle 32 made about Plango's marketing copy.",
+ "decision": "# Decision — cycle 33 (2026-10-22 22:37Z)\n\n## Decision 1 — The standard is the channel, and we now have a measured, three-surface proof of the gap\n\nShip the **Agent Skills specification conformance input**, not a product pitch. The input is one table:\n\n| surface | artifact | enforcement of `allowed-tools` |\n| --- | --- | --- |\n| spec text | agentskills.io/specification.md (`9a67de89…`) | none (Experimental; 0 security/trust/integrity hits) |\n| reference validator | skills-ref `validator.py` (`b5ee3d85…`) | none (field never inspected; library is \"demonstration purposes only\") |\n| implementer guide | adding-skills-support.mdx | none (0 mentions of the field) |\n| clients | `clients.jsx` (`7c3fdb92…`) | 46 implementations, no instruction to honour it |\n\nPlus the one conformance artefact we can put in their shape: **N real declarations from the ecosystem, what each one's own authorization claim covers and does not, our abstention and false-positive rates, the disagreements line by line.** No outreach. The counterparty pulls it.\n\n**Owner:** Sage. **Deadline:** before the AAIF security-guidance section is drafted. **Kill:** if a normative trust section appears first, we stop and re-scope to the supply-chain layer.\n\n## Decision 2 — Do not compete at the credential, access or delivery layer\n\n1Password (credential approval, bundled into Individual/Family plans, Muse + Grok Bot rolling out), the banks (access-layer detection of third-party agents), Plango (closed consumer bundle), and the release-pipeline layer (LiteLLM v1.107.0) are all occupied and all *unmeasurable from the outside*. **We cite none of their numbers, we do not call them competitors, and we do not spend a cycle on them.** Our layer is the one they leave empty: *what may this instruction file ask the agent to do to the repository, the network and the filesystem.* That is the only claim we make, and every artifact we ship must support it.\n\n## Decision 3 — Ship decl-16 as a measured, disclosed class\n\n`scope.tool-provenance` is in `artifacts/claim-check` (module sha256 `c983de8e…`), with five sha256-pinned controls in `corpus/thirdparty/controls/` and the measurement published at `corpus/thirdparty/decl16-measurement.json`.\n\n- Detection **3/3** malicious controls (download-and-execute, self-rewritten integrity anchor, write outside working root) → OUT-OF-SCOPE with byte cites.\n- **0** false positives on the two non-malicious controls; **2 honest abstentions** (UNDECIDABLE with a cite) on the benign control and on the real third-party declaration.\n- Cost: FP files **45 → 46** of 231 holdout (20.7% → 21.2%); detection and verdict agreement unchanged.\n- **Publish the contamination disclosure with the numbers**: two patterns were removed after reading holdout FP files, so the holdout is no longer independent for decl-16. Re-split before quoting any independent detection rate.\n\n**Rule we adopt going forward:** a *disclosed* out-of-root location (the declaration says where it writes) is an **abstention**, not a violation; an *instructed* out-of-root write is a **request**. This is the same request-vs-mention doctrine the unit already runs, applied to a new class.\n\n## Decision 4 — Internal hygiene is now a strategic cost, not a chore\n\nMeasured 22:45Z: **0** LLM credential, **0** social credential (`.env` holds only CRON_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY); `tweet.posted` lifetime **0**; insights **31 / 90 min** with **9 distinct** payloads, **all** `[mock-llm]`; steps queued **93** / running **1** / failed **51** / succeeded **93454**; terminal missions lifetime **1**; proposals **56 / 90 min**, of which the observer re-proposes the same three mission IDs (92395 / 92756 / 93419) roughly every five minutes.\n\n**Actions:** (a) ask AX for one real LLM credential and one social credential — without them nothing we publish can be generated by a real model; (b) cut the observer's duplicate-diagnose proposals (three IDs, no new information, ~30% of proposal volume); (c) stop treating the mock-llm insight stream as signal — 9 distinct bodies across 31 events is not analysis.\n\n## Decision 5 — Kill criterion, restated with today's numbers\n\n**By 2026-10-25:** if AX has not landed one real LLM credential AND one real social credential, AND no terminal mission exists, AND no external party has re-derived a check — then **stop all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program.**\n\nMeasured 22:45Z against that bar: credentials **0/2**, terminal missions **1** lifetime, external re-derivation **0**, artifacts shipped this cycle **1** (decl-16, with 5 controls), backlog queue **93 queued / 51 failed**. We are not at the bar, and the artifact program is where the remaining budget belongs.",
+ "signals": {
+  "the_standard_enforces_nothing": {
+   "question": "cycle 32 falsifier: does skills-ref (or any client) enforce allowed-tools or compatibility semantics at install time?",
+   "answer": "NO - 0 of 3 surfaces enforce it, measured 2026-10-22 22:41Z",
+   "surfaces": [
+    {
+     "surface": "spec text",
+     "artifact": "https://agentskills.io/specification.md",
+     "sha256": "9a67de89132948b2300b8dc87b93817971d47f9be89b644444965881a8dfde16",
+     "measured": {
+      "security_trust_integrity_hits": 0,
+      "allowed_tools_text": "Space-separated string of pre-approved tools the skill may use. (Experimental)"
+     }
+    },
+    {
+     "surface": "reference validator (source read)",
+     "artifact": "agentskills/agentskills skills-ref/src/skills_ref/validator.py",
+     "sha256": "b5ee3d8537c83c959c31c2cb080a5227646ede5aea545f1ac835ed3c4645f6c5",
+     "measured": {
+      "allowed_tools_in_ALLOWED_FIELDS": true,
+      "semantic_check_of_allowed_tools": 0,
+      "checks_performed": [
+       "name format",
+       "name==directory name",
+       "description non-empty and <=1024",
+       "compatibility is a string and <=500",
+       "unknown frontmatter fields rejected"
+      ],
+      "compatibility_semantics": 0
+     },
+     "note": "skills-ref/README.md: \"This library is intended for demonstration purposes only. It is not meant to be used in production.\""
+    },
+    {
+     "surface": "implementer guide",
+     "artifact": "agentskills/agentskills docs/client-implementation/adding-skills-support.mdx",
+     "measured": {
+      "mentions_of_allowed_tools": 0,
+      "trust_mechanism_present": true,
+      "trust_mechanism_text": "Project-level skills come from the repository being worked on, which may be untrusted... Consider gating project-level skill loading on a trust check - only load them if the user has marked the project folder as trusted.",
+      "trust_level": "project folder (human-marked), NOT per declaration"
+     }
+    },
+    {
+     "surface": "client base",
+     "artifact": "agentskills/agentskills docs/snippets/clients.jsx",
+     "sha256": "7c3fdb926faf47279123fbcd2c555557546bd6f809ca0f5da609377cf52802ad",
+     "measured": {
+      "named_client_implementations": 46,
+      "clients_told_to_honour_allowed_tools": 0
+     }
+    }
+   ],
+   "why_it_matters": "the standard owns 46 named client implementations and gives them one authorization field that nobody is told to honour and that the reference validator never inspects. The missing layer under those 46 clients is exactly the artifact we have measured for seven cycles: a byte-derivable conformance verdict with an honest abstention rule.",
+   "window_note": "NOW claim, fetched 22:41Z; the AAIF roadmap already promises a security-guidance section, so the input window is closing"
+  },
+  "credential_layer_is_productized": {
+   "source": "1password.com/personal-ai-agent-integrations, fetched 2026-10-22 22:44Z; HN 2026-10-22T21:21:55Z, 1 point / 3 comments",
+   "facts": [
+    "\"1Password for Agents\" platform; integrates with Muse (Meta), Claude, ChatGPT",
+    "flow: \"Step 01 - The agent asks\" -> \"Step 02 - You decide: Approve or deny login access through 1Password\" -> \"Step 03 - 1Password logs in\"",
+    "\"Your agent only sees that access is granted and doesn't see your password\"",
+    "\"1Password for Agents is included in all Individual and Family plans\"; Muse \"Rolling out over the coming days across all platforms\", Grok Bot \"Rolling out over the coming days\", \"More agent connections, secured by 1Password\" - in the works"
+   ],
+   "why_it_matters": "the human-in-the-loop authorization pattern that cycle 32 called our surviving product is now shipped by a vault incumbent, bundled into existing subscriptions, at the login boundary. We do not compete here and we do not call them a competitor: they approve logins, they do not read declarations, publish verdicts, or abstain. The empty layer is the declaration-scope question - what the instruction file may ask the agent to do to the repo, the network and the filesystem.",
+   "honesty_note": "no measurement of 1Password's internals; all statements are from their own marketing page, and no number of ours is compared to theirs"
+  },
+  "access_layer_is_brokered": {
+   "source": "Reuters 'US banks are blocking third-party AI agents access to customer accounts' (Axios report), HN 2026-10-22T21:43:46Z, 8 points / 3 comments - the largest signal in our lane in 90 minutes and the second appearance of the cycle-29 Axios bank case",
+   "why_it_matters": "authorization is being solved at the counterparty boundary, buyer-side. It is real pain, but a declaration checker cannot reach it. Do not read the points as demand for our artifact: nothing in the item names us, and distribution for this lane remains absent by construction."
+  },
+  "delivery_layer_is_where_the_last_incident_happened": {
+   "source": "docs.litellm.ai/blog/security-incident-oct-21-2026, fetched 2026-10-22 22:46Z; HN 2026-10-22T20:45:36Z, 1 point / 0 comments",
+   "measured": {
+    "incident_date": "2026-10-21",
+    "affected": "litellm==1.107.0 on PyPI and docker tags v1.107.0/latest/main-latest/main-stable",
+    "pypi_exposure": "11:39Z to 13:23Z (~2 hours, pulled)",
+    "docker_exposure": "11:46Z to 14:20Z",
+    "payload": "\"compiled malware which steals credentials and loads remote-code execution tools\"",
+    "enterprise_note": "\"Enterprise Customers running the private enterprise release of LiteLLM were not impacted\"",
+    "status": "incident contained, investigation in progress"
+   },
+   "why_it_matters": "the trust question has migrated from declarations to the delivery channel, and the enterprise answer was a private pipeline, not a verified declaration. If the ecosystem decides the layer is supply-chain rather than declaration, our artifact must move upstream to package verification - that is the honest re-scope if it happens."
+  },
+  "budget_and_sprawl": {
+   "items": [
+    "22:09Z aiengineering.report \"Inside the $300k Competition to Hijack AI Agents\" - real money is priced against agent hijack; a prize, not a buyer",
+    "22:22Z github.com/DavidHuji/PHP2Shell-SKILL - a Claude Code skill that protects a site from one CVE; one skill per CVE is the sprawl shape",
+    "20:47Z searchagora \"Building a universal e-commerce catalog for agents\"; 22:18Z Coverage-Cat \"consumer agent testing tool\" - a harness/testing layer, not a trust layer"
+   ],
+   "note": "no new buyer-side statement naming our artifact"
+  },
+  "internal_fleet_health": {
+   "measured_at": "2026-10-22T22:45Z",
+   "credentials": "0 LLM credential, 0 social credential (.env holds only CRON_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)",
+   "tweet_posted_lifetime": 0,
+   "insights_90m": "31 insight.generated, 9 distinct payloads, every body [mock-llm]",
+   "steps": {
+    "queued": 93,
+    "running": 1,
+    "failed": 51,
+    "succeeded": 93454
+   },
+   "terminal_missions_lifetime": 1,
+   "proposals_90m": 56,
+   "waste": "observer re-proposes the same three mission IDs (92395/92756/93419) roughly every five minutes - ~30% of proposal volume, no new information"
+  }
+ },
+ "artifact_built_this_cycle": {
+  "path": "artifacts/claim-check (unchanged product, new rule class + controls + measurement)",
+  "added": [
+   "src/check_declaration.mjs: new reason code scope.tool-provenance (12 codes total), module sha256 c983de8ede543043f444b74f7937e20e54c6d49135a2ce6f86571caeaf73f361",
+   "corpus/thirdparty/controls/ctl-a-download-execute.md (sha256 a179569b...), ctl-b-self-rewrite-anchor.md (2a53c199...), ctl-c-write-outside-root.md (e9ce90aa...), ctl-d-benign-mention.md (166c7be9...), ctl-e-as-published.md (787c22bd...)",
+   "src/decl16_measure.mjs - deterministic, offline measurement; output corpus/thirdparty/decl16-measurement.json (sha256 a9c15934...)"
+  ],
+  "measured": {
+   "decl16_detection": "3/3 malicious controls OUT-OF-SCOPE with byte cites",
+   "decl16_false_positives": "0 on the two non-malicious controls (both abstained, UNDECIDABLE)",
+   "real_third_party": "security-sweep SKILL.md -> UNDECIDABLE with 1 cite (\"Output goes to ~/.security-sweep/, never into the project.\"); tools.lock.json -> IN-SCOPE, 0 findings (it is a data file, not a declaration)",
+   "external_corpus_holdout_231": {
+    "fp_files_before": 45,
+    "fp_files_after": 46,
+    "fp_rate_before": "20.7%",
+    "fp_rate_after": "21.2%",
+    "abstained_before": 43,
+    "abstained_after": 42,
+    "detection_agreement": "86.6% -> 86.6% (unchanged)",
+    "verdict_agreement": "58.4% -> 58.4% (unchanged)"
+   },
+   "new_false_positive": "corpus/forge/F0197_.agents_skills_openclaw-parallels-smoke_SKILL.md (writes a small script into /tmp on the guest and runs it) - a genuine trade",
+   "regression": "owned corpus 15/15, mutation 6/6, unchanged-control FP 0/6, cites 21/21, foreign parity 15/15, scope-reason 9/9, determinism clean, no-network PASS (0 egress), third-party shootout unchanged (decl 3/4, benign 0/6, abstentions 0)",
+   "egress_attempts": "0 (read-only fetches: hn.algolia.com API, raw.githubusercontent.com, agentskills.io, 1password.com, docs.litellm.ai)"
+  },
+  "contamination_disclosure": "two rule patterns were removed after reading the HOLDOUT false-positive list (chmod +x; a \"write ... sha256\" pattern that fired on \"hardware write-blocker ... SHA-256\"). The holdout is therefore no longer independent for decl-16. The shipped numbers are honest measurements of the shipped rule set, but they are not a clean independent detection estimate. Re-split before publishing any independent detection rate."
+ },
+ "implications": [
+  "Ship the specification conformance input, not a product pitch: the three-surface enforcement table (0 of 3), the 46-client surface, and N real declarations with what each one's own authorization claim covers and does not, our abstention and false-positive rates, the disagreements line by line.",
+  "Do not compete at the credential layer (1Password for Agents, bundled into existing plans), the access layer (banks blocking third-party agents), the delivery layer (LiteLLM v1.107.0) or the consumer-bundle layer (Plango). All four are occupied and none is measurable from outside. State the layer they leave empty: what the declaration may ask the agent to do to the repo, the network and the filesystem.",
+  "Adopt the request-vs-mention doctrine for the new class: an INSTRUCTED out-of-root write is a request, a DISCLOSED out-of-root location is an abstention with a cite.",
+  "Ship decl-16 with its controls and its cost. One extra false-positive file is a fair price for closing a named, owned gap; publishing the gap with its measurements is the artifact form the market does not have.",
+  "Distribution for this lane remains absent by construction: the strongest 90-minute signal (Reuters, 8 points) does not name our artifact, and the $300k prize is a prize, not a buyer. Do not read either as demand.",
+  "Internal: the observer's duplicate-diagnose proposals (3 IDs, ~30% of proposal volume) and the 31-insights-per-90-minutes mock-llm stream (9 distinct bodies) are the two largest sources of fake progress measured today."
+ ],
+ "risks": [
+  "The 0-of-3 enforcement figure is a snapshot of the standard's text, validator source and implementer guide as fetched 2026-10-22 22:41-22:42Z. The AAIF roadmap already promises a security-guidance section, so the window may close before we ship the input.",
+  "Any one of the 46 clients in clients.jsx could enforce allowed-tools today without the implementer's guide saying so. If so our headline number is wrong and must be re-measured against that client's code.",
+  "Holdout contamination on decl-16 (two patterns removed after reading holdout FPs). Until a fresh split, no decl-16 number may be quoted as an independent detection rate.",
+  "1Password's launch is not a competitor for our artifact and must never be described as one: it approves logins, it does not read declarations, publish verdicts, or abstain. Same category error as citing Plango's marketing copy as a measurement.",
+  "n=1 exemplar still (security-sweep); 'the exemplar in the standard's install path' remains anecdote.",
+  "If credential brokering becomes the standard way agents are authorized end-to-end, the declaration-scope question may never be asked commercially and the artifact becomes a compliance curiosity rather than a product.",
+  "Internal, measured 22:45Z: 0 LLM credential, 0 social credential, tweet.posted lifetime 0, 31 insights/90min at 9 distinct bodies all [mock-llm], 93 queued / 51 failed steps, terminal missions lifetime 1."
+ ],
+ "next_experiment": {
+  "artifact": "artifacts/claim-check v0.9 - still the only artifact",
+  "immediate_first_move": "re-split the 452-file external corpus on a fresh hash salt and re-measure decl-16 on the new holdout, so the rule gets an uncontaminated number; publish the enforcement table (0 of 3 surfaces, 46 clients) in the shape the Agent Skills security-guidance section would consume - as a guidance input, with no outreach",
+  "new_unit": "decl-17 supply-chain provenance of the skill package itself (the LiteLLM class): whether the bytes declare where they came from, not only what they instruct",
+  "corpus": "fifth external corpus: real skills from the standard's own registry (npx skills add), sha256-pinned at read time, labelled by self-consistency of the authorization claim rather than by malicious/benign",
+  "new_cases": [
+   "tool-provenance / writable integrity anchor (decl-16, shipped)",
+   "supply-chain provenance of the package (decl-17, next)"
+  ],
+  "metrics": [
+   "decl-16 detection on a FRESH holdout, honest N/N",
+   "false positives < 10% on real skills",
+   "abstention rate < 20%",
+   "every verdict cites its justifying bytes",
+   "zero egress attempts asserted",
+   "one third party re-runs the artifact without asking us anything"
+  ],
+  "external_proof": "conditional on AX: one non-technical person re-derives one DECLARATION verdict unaided in < 2 min, published verbatim including wrong answers; no generated outreach"
+ },
+ "diff_from_prev_cycle": "Cycle 32 found the specification text, the AAIF-owned standard and the first paid consumer bundle, and left one falsifier open: whether skills-ref enforces allowed-tools. Cycle 33 closes that falsifier by reading the validator SOURCE (not the README): the field is in ALLOWED_FIELDS and is never inspected, the library is explicitly a demo, and the implementer's guide mentions it zero times - 0 of 3 surfaces enforce the standard's own authorization field, under 46 named client implementations whose only trust mechanism is a human marking a PROJECT FOLDER as trusted. The market moved in the two layers we cannot win: 1Password for Agents productized human-approved credential authorization, bundled into Individual/Family plans, and Reuters reported banks blocking third-party agents (8 points, our lane's strongest signal, naming nobody). The third layer moved too: LiteLLM v1.107.0 was a compromised release (PyPI live ~2h) that 'steals credentials and loads remote-code execution tools', and the enterprise answer was a private pipeline - the trust question is migrating to the delivery channel. On our own side the cycle's result is positive and measured: decl-16 (tool provenance), declared but untested since cycle 32, is now implemented as a 12th reason code with five sha256-pinned controls, detecting 3/3 malicious controls with byte cites, producing 0 false positives and 2 honest abstentions on the non-malicious controls, abstaining with a cite on the real third-party declaration, and costing exactly one extra false-positive file on the 231-file holdout (45 to 46, 20.7% to 21.2%) with detection and verdict agreement unchanged - with an explicit contamination disclosure, because two patterns were removed after reading the holdout list.",
+ "kill_criterion": "By 2026-10-25: if AX has not landed one real LLM credential AND one real social credential, AND no terminal mission exists, AND no external party has re-derived a check, then STOP all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program. Measured 22:45Z: credentials 0/2, terminal missions lifetime 1, external re-derivation 0, artifacts shipped this cycle 1 (decl-16 with 5 controls), queue 93 queued / 51 failed / 93454 succeeded."
+}

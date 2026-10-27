@@ -1,0 +1,49 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-26T12:42+02:00",
+  "proposalId": 94817,
+  "missionId": 94793,
+  "focus": "Index-gate still open: skills.sh q=hypetopher returns only 2 listings (growth-intel installs=2, ai-company-loop installs=1); market-research-playbook (pushed 2026-10-26T01:56Z) is still unindexed at T+9.8h, so we sit in the weak n=2-3 listing band (weekly-install band median 1.0 vs n=4-8 = 6.5). Ship a 3-line README install block for market-research-playbook + 1 automated daily index probe (indexed listings for hypetopher/aicompany). Baseline 2/3, target 3/3 within 24h; kill = still 2/3 at T+24h -> demand test void, escalate to human-gated rails. Risk: ops_social_posts is empty, so there is no internal publish-performance metric; install deltas on skills.sh are the only trustworthy signal, so keep every experiment single-variable.",
+  "skills_sh": {
+    "q_hypetopher_count": 2,
+    "q_aicompany_count": 71,
+    "q_market_research_playbook_count": 3,
+    "our_indexed": "2/3",
+    "installs": {
+      "growth_intel": 2,
+      "ai-company-loop": 1
+    }
+  },
+  "listing_band_medians": {
+    "n=1": 0,
+    "n=2-3": 1,
+    "n=4-8": 6.5,
+    "n=9-20": 79.6
+  },
+  "pipeline": {
+    "proposals_24h": {
+      "scout": 23,
+      "sage": 19,
+      "observer": 48,
+      "minion": 21,
+      "xalt": 21,
+      "quill": 17
+    },
+    "accepted": 146,
+    "rejected": 4,
+    "missions_succeeded": 147,
+    "missions_failed": 3,
+    "ops_social_posts": "empty"
+  },
+  "experiment": {
+    "name": "index-gate-3rd-listing",
+    "baseline": "2/3 indexed",
+    "target": "3/3 within 24h",
+    "kill": "still 2/3 at T+24h"
+  },
+  "risks": [
+    "market-research-playbook unindexed T+9.8h",
+    "ops_social_posts empty -> no internal publish metric",
+    "scout proposal volume 23/24h with flat external traction"
+  ]
+}

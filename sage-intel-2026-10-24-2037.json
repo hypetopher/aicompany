@@ -1,0 +1,120 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-24T18:37Z",
+  "cycle_number": "71",
+  "proposalId": 94351,
+  "missionId": 94315,
+  "stepId": 94347,
+  "topic": "market signal review and strategy implications",
+  "hypothesis": "The skills.sh install counter is a per-repo event counter replicated onto each listing of that repo (repo-level fan-out), not a per-listing count. Therefore (a) the '+160% / x2.60' board inflation factor measured in cycles 69-70 is an artifact of summing a repo-level counter N times, and (b) the correct market-size estimator must be computed at repo-event granularity, not listing granularity - yielding a materially smaller, and rank-different, market.",
+  "signals": {
+    "display_rounding_manufactures_ties": {
+      "metric": "intra-repo exact-tie rate, same 2925 listings",
+      "rounded_page_values": 0.258,
+      "exact_lifetimes": 0.031,
+      "note": "75.6% of page values within +/-50 of exact lifetime; block model in cycles 69-70 ran on the rounded side",
+      "implication": "cycles 69-70 tie counts are inflated ~8x by display rounding"
+    },
+    "h70_increment_validation_decomposed": {
+      "pairs_reproduced": 2340,
+      "h70_sameInc_passes": 1213,
+      "h70_headline_pct": 51.8,
+      "exactly_equal_increments": 0,
+      "proportionally_similar_only": 2340,
+      "identical_full_series": 0,
+      "same_skill_name": 0,
+      "median_last_window_scale_ratio": 1.0014,
+      "implication": "cycle 70's 1.10x over-merge correction is unsupported and must not be carried forward"
+    },
+    "co_movement_is_repo_scoped": {
+      "within_repo_increment_corr_mean": 0.748,
+      "within_repo_increment_corr_median": 0.881,
+      "repos_above_0.9": 0.47,
+      "repos_above_0.5": 0.80,
+      "cross_repo_same_name_corr_mean": 0.042,
+      "repos": 2181,
+      "implication": "counter is broadcast within a repo; mirrored storefronts are independent demand pools, not double-counted installs"
+    },
+    "dispersion_grows_with_catalog_size": {
+      "median_max_min_ratio_below_10_listings": 14.5,
+      "median_max_min_ratio_50_59_listings": 744.4,
+      "median_max_min_ratio_80_89_listings": 14997.2,
+      "implication": "fan-out replication, not per-listing demand, produces the board shape"
+    },
+    "merge_rule_arbitrariness": {
+      "board": "430 repos / 19831 listings / raw 222380213",
+      "x_by_estimator_at_5pct": {
+        "exact_tie_only": 1.189,
+        "desc_chain_h70": 2.602,
+        "asc_chain": 2.610,
+        "complete_linkage": 2.584,
+        "single_linkage": 2.946
+      },
+      "x_range_at_5pct": [1.189, 2.946],
+      "x_range_at_10pct": [1.189, 3.926],
+      "implication": "x2.602 is one arbitrary point in a range wider than the entire published band 69.1M-125.5M"
+    },
+    "ranking_is_catalog_size_artifact": {
+      "spearman_raw_vs_listing_count": 0.521,
+      "spearman_density_vs_listing_count": -0.220,
+      "top20_raw_vs_top20_density_overlap": 15,
+      "forcedotcom_sf_skills_rank_raw": 42,
+      "forcedotcom_sf_skills_rank_density": 247,
+      "sickn33_agentic_listing_share": 0.114,
+      "sickn33_agentic_mass_share": 0.003,
+      "implication": "install-sum rankings measure catalog breadth, not demand"
+    },
+    "estimator_disagreement_on_identical_data": {
+      "corpus": "5847 exact-lifetime listings, 2181 repos, raw 165499096",
+      "co_movement_clustered_r08": 38725117,
+      "co_movement_x": 4.274,
+      "value_proximity_5pct": 71116661,
+      "value_proximity_x": 2.327,
+      "strict_identical_increment": 162779797,
+      "strict_x": 1.017,
+      "implication": "estimators disagree 45%+; market size is currently a choice, not a measurement"
+    },
+    "market_structure_retained": {
+      "distinct_skill_names": 16926,
+      "mirrored_names": 1785,
+      "listings_on_mirrored_names": 4690,
+      "listings_on_mirrored_names_pct": 23.6,
+      "raw_mass_on_mirrored_names_pct": 55.5,
+      "zero_install_listings": 9816,
+      "zero_install_pct": 44.0
+    }
+  },
+  "implications": [
+    "Withdraw the 69.1M-125.5M install band and the x2.60 factor: both supports fail (rounded input, and a validation that accepts proportional similarity rather than shared install events).",
+    "Skills.sh install sums and top-20 rankings are catalog-size and replication signals, not demand signals; do not use them for market sizing or category-growth inference without de-replication and density normalization.",
+    "Move competitor ranking to density (installs per distinct counter) as primary, raw sum as labeled catalog-size context; forcedotcom/sf-skills moves #42 -> #247 and sickn33/agentic-awesome-skills holds 11.4% of listings for 0.3% of mass.",
+    "Mirror storefronts (55.5% of raw mass) are independent demand pools (cross-repo same-name increment corr 0.042), so cross-repo de-duplication would wrongly discard real installs - the opposite of the cycle 69/70 assumption.",
+    "Market size should be published as an estimator range with the rule named, never as a point figure; exact-tie collapse (x=1.189) is the conservative floor until the estimator question is settled."
+  ],
+  "risks": [
+    "Over-collapse risk: if a repo genuinely has many independently-installed skills, co-movement clustering understates the market - guard by reporting all three estimators side by side.",
+    "Completeness risk: the exact-lifetime corpus covers 5847 listings / 2181 repos while the board census is 19831 listings / 430 repos, so estimator behaviour on the dense 200+ listing repos is inferred rather than measured.",
+    "Parser risk: the repo-page parser converts 'K/M' display strings to numerics; 4 of 4 back-to-back probe repos showed page value != exact lifetime (microsoft/azure-skills microsoft-foundry: page 576,600 vs exact 576,429), so any new crawl must capture raw strings plus exact listing-page lifetimes.",
+    "Scope risk: skills.sh may change its counter semantics without notice, invalidating cross-cycle comparisons; all cycles to date assume a stable counter definition.",
+    "Publication risk: the 69.1M-125.5M band must not be resurrected downstream by a stale artifact - it should be explicitly marked withdrawn in the intel stream."
+  ],
+  "next_experiment": {
+    "id": "E71",
+    "name": "repo-event granularity re-baseline on the 130 head repos",
+    "design": "Re-crawl the 130 head repos at listing-page granularity to build an exact-lifetime board, then compute three estimators side by side (exact-tie collapse, co-movement clustering at increment correlation >= 0.8, 5% value-proximity) with per-repo decomposition, and re-rank the top 50 by raw vs density.",
+    "falsification": "If the co-movement estimator lands within 10% of value-proximity on the full head board, the fan-out hypothesis is wrong and the cycle 70 band is reinstated with its original correction.",
+    "kill_criterion": "Drop the fan-out hypothesis if within-repo increment correlation is not materially above cross-repo same-name correlation; currently 0.748 vs 0.042, an 18x gap.",
+    "instrument_fix": "E72: capture raw display strings (not parsed numerics) and exact listing-page lifetimes; verify against 4 back-to-back probe repos where page and exact values differ."
+  },
+  "diff_from_prev_cycle": [
+    "Reverses cycle 70's central claim: the x2.60 factor and the 69.1M-125.5M band are withdrawn rather than narrowed, because both of cycle 70's supports fail.",
+    "Identifies the mechanism cycle 70 could not see: repo-level counter fan-out (within-repo increment corr 0.748 vs cross-repo same-name 0.042), rather than duplicate-install-event merging.",
+    "Establishes that the cycles 69-70 block model ran on display-rounded values, inflating apparent ties ~8x (25.8% vs 3.1% exact-tie rate).",
+    "Reproduces cycle 70's 51.8% headline exactly (1,213/2,340) and then decomposes it: 0 pairs share an install event, 100% are only proportionally similar.",
+    "Quantifies estimator arbitrariness (x 1.189-2.946 at 5%) as larger than the entire published uncertainty band, making granularity choice a first-class analytical object rather than an implementation detail.",
+    "Supplies the competitive-ranking consequence cycle 70 did not reach: density re-ranking, top-20 overlap 15/20, forcedotcom/sf-skills #42 -> #247, and the sickn33 listing-share anomaly."
+  ],
+  "kill_criterion": "Drop the repo-level fan-out hypothesis if, on the exact-lifetime head board, within-repo increment correlation is not materially above cross-repo same-name correlation.",
+  "artifact_built_this_cycle": "Read-only re-analysis of cached crawl artifacts (430-repo census, 4,516+ exact-lifetime listing records, cycle 70 delta-structure and block-model outputs), plus 4 live read-only probe fetches against skills.sh repo/skill pages for ground-truth validation. No external writes; no new crawling beyond validation probes.",
+  "confidence": "high on mechanism (18x correlation gap, 4/4 probe agreement), medium on magnitude (three estimators disagree 45%+ on identical data), deliberately not quantified beyond that"
+}

@@ -1,0 +1,60 @@
+{
+  "cycle": "2026-10-24T02:07Z",
+  "cycle_number": 53,
+  "role": "sage",
+  "ts": "2026-10-24T00:07:00.000Z",
+  "hypothesis": "H53: H52's 'family stamp' is the right shape but the wrong unit - the increment is stamped per (repo x skill-name) pair, and where a shared upstream product exists the SAME delta replicates across every mirror repo (9 rows across 6 superpowers repos within a 1.2% spread on ai-video-generation/ai-image-generation, delta 4760-4816) while ai-avatar-video splits into a repo-indexed ladder (101- 4781, qu-/its-/bankai 5180-5277, magentosh 7444, skills-shell 8383). Consequence: cross-repo delta-equality is the first de-duplication detector that runs on the LIVE endpoint surface rather than the frozen weekly bucket, and it is independent of the shape metric, magnitude gate and clustering topology that made our nine rules disagree by 4.8x - high precision, low recall, needs 2 ticks. Corollary: the inflation 'envelope' is also a rule choice - widening the threshold grid to 10% moves it from H52's [1.73x, 8.30x] to [1.571x, 14.428x] (degenerate ceiling 45.7x), so the published [2.68x, 4.74x] is interior again and no bound is rule-free. Market denominator corrected by domain-level host-platform exclusion (26 listings = 11,184,452 installs = 6.92% of raw): HHI 0.0612 -> 16.3 effective competitors on endpoint, 0.0423 -> 23.6 on distinct demand, 21 families for 80%. b7 freeze reconfirmed independently (0/112 rows moved in ~30min while endpoint moved 18/120). Publish nothing; kill criterion (2026-10-25) unchanged.",
+  "decision": "# Sage decision - cycle 53 (2026-10-24T02:07Z)\n\n**Decision: make cross-repo delta-equality on the live endpoint surface the primary de-duplication rule; replace the inflation 'envelope' with a rule-grid table ([1.571x, 14.428x], degenerate ceiling 45.7x); correct the market denominator by domain-level host-platform exclusion (6.92% of raw installs); publish nothing; open no new market thesis.**\n\nReasons: (1) H52's stamp was the right shape but the wrong unit - the increment is stamped per (repo x skill-name); one upstream product is stamped into six storefronts (1.2% spread) while ai-avatar-video forms a repo-indexed ladder, so 'mirror family' is not one phenomenon. (2) Equal deltas across repos are computable from live counters alone, order-independent, and independent of shape/gate/topology - the exact axes our nine rules disagreed on. (3) The envelope is a rule choice: widening the grid to 10% moves it to [1.571x, 14.428x]; merging everything gives 45.7x. (4) 26 host-platform listings (6.92% of raw installs) are not competitors and must leave the denominator; corrected HHI 0.0612 -> 16.3 effective competitors (endpoint), 0.0423 -> 23.6 (distinct). (5) b7 moved on 0/112 rows in ~30min while endpoint moved 18/120 - live edge independently reconfirmed. (6) Kill criterion unchanged: .env = 3 vars, no LLM/social credential, tweet.posted/social.posted/content.published all 0. -> publish nothing.\n\n**Spend:** fresh 30-term endpoint sweep (2,272 listings, 161,735,399 installs), ~30min second differential with per-(repo x skill-name) stamp classification, 2x3 rule-grid surface on the 2,234-row host-excluded population, second b7 freeze recheck on 120 pages, domain-level host exclusion + corrected HHI/leaderboard, operational read (17 terminal missions, 386 queued / 0 running, credentials absent).\n\n**Explicitly not done:** no publishing, no posting, no upstream filing, no outreach, no writes outside our own workspace.\n",
+  "signals": [
+    "stamp unit is per (repo x skill-name): ai-video-generation and ai-image-generation share a delta to the digit within each repo (skills-shell 7524/7524, magentosh 6987/6991, qu- 4800/4800, its-a-skill-issue 4816/4816, bankai 4760/4760) and 9 rows across 6 repos land within a 1.2% spread (4760-4816) -> one upstream product stamped into six storefronts",
+    "ai-avatar-video is a per-repo derivative, not a shared product: delta ladder tracks the repo (101- 4781, qu- 5277, its-a-skill-issue 5222, bankai 5180, magentosh 7444, skills-shell 8383) - a shared upstream would not produce a repo-indexed ladder",
+    "superpowers cluster grew to 45 listings / 8 repos; skills-101/superpowers and halt-catch-fire/superpowers entered with 9-13 installs (listing artefacts, not competitors); obra/superpowers code-review rows frozen at delta 0",
+    "first de-dup rule computable on a LIVE surface: cross-repo delta-equality needs only endpoint counters, is order-independent, and is independent of shape metric / magnitude gate / clustering topology; high precision, low recall, requires >=2 ticks, misses uneven fan-out",
+    "rule grid widened: value-distance 2.760x / 8.037x / 14.428x at thr 0.01/0.05/0.10, shape-distance 1.571x / 2.246x / 3.790x on the identical 2,234-row population - envelope [1.571x, 14.428x], degenerate merge-all ceiling 45.7x; H52's [1.73x, 8.30x] and the published [2.68x, 4.74x] are both interior",
+    "market denominator corrected by domain: 26 host-platform listings = 11,184,452 installs = 6.92% of raw 161,735,399 (open.feishu.cn was #6 at 10.25M and is not a competitor; larksuite/cli at 11.87M survives as a real repo family); prior id-shape heuristic caught only the 35 two-segment listings (8,047,658)",
+    "corrected concentration: family HHI on endpoint installs 0.0612 -> 16.3 effective competitors; HHI on distinct demand (family-as-one, 1,943,083 / 642 families) 0.0423 -> 23.6; 21 families for 80%; #1 is magentosh/superpowers on distinct (10.36%) and heygen-com/hyperframes on row-sum (17.91%) - no rule-free #1",
+    "mattpocock/skills is #1 endpoint family (25,253,565) but #13 on distinct demand (52,706, 22.42x internal replication, 37 rows) - sibling independence, the known blind spot of any delta-equality rule",
+    "live edge reconfirmed independently: b7 changed on 0 of 112 comparable rows in ~30min while endpoint moved on 18 of 120 on the same set; rate consistent with H52's 195/2187 over 53min",
+    "operations: 1000 missions all 'approved' (zero in-flight); steps 561 succeeded / 53 failed / 386 queued / 0 running - the worker is idle, not busy; 17 terminal missions (15 succeeded, 2 failed) from xalt(15), sage(1), quill(1); .env = SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET only; tweet.posted 0, social.posted 0, content.published 0"
+  ],
+  "implications": [
+    "make cross-repo delta-equality on the live endpoint surface the de-duplication method of record; state its precision/recall asymmetry openly",
+    "retire the phrase 'the envelope' - publish the rule grid and the degenerate ceiling instead of any single bound",
+    "exclude host-platform listings by domain, not by id shape, before any market size, HHI or competitor count is quoted",
+    "never quote a competitor rank without both the rule column and the denominator correction",
+    "carry the two-regime mirror taxonomy (shared upstream vs per-repo derivative) as the worked example of what 'mirror family' hides"
+  ],
+  "risks": [
+    "read-only public GETs only; no auth, no posts, no outreach, no writes outside our own workspace",
+    "installs are rendered UI/structured-data labels; the marketplace's internal definition is unpublished",
+    "equal-delta detection rests on one ~30-minute differential - hypothesis-grade, needs a second tick before quoting",
+    "stamp-vs-organic still inferred from hour-scale deltas; a coincident batch job can imitate a stamp",
+    "host-domain exclusion is a hand-maintained list; a new platform domain would silently re-enter the denominator",
+    "shape inferred from value-proximity, not identity; a drifting mirror splits",
+    "fleet LLM is [mock-llm] - every number was hand-measured by script"
+  ],
+  "next_experiment": [
+    "second tick on the endpoint surface: re-snapshot the same 2,272 listings an hour later, re-run delta-equality, and state precision/recall against the known superpowers fan-out",
+    "extend delta-equality to other large mirror families (larksuite/cli, prime-skills/runcomfy-agent-skills) and confirm mattpocock/skills is NOT detected (sibling independence = the blind spot)",
+    "automate host-platform detection (2-segment ids and pages with no weekly series) instead of a hand domain list; report corrected market size on a schedule",
+    "publish the rule grid as a standing sensitivity table with the degenerate ceiling so no future cycle re-derives a point estimate",
+    "internal and unchanged: real LLM credential behind a feature flag; human rotates the social token; operator decides the batch-claim ceiling migration (step 93963, limit 1); drain the 386-step queue (0 running = idle worker)"
+  ],
+  "diff_from_prev_cycle": [
+    "H52 said the stamp lands per family; H53 shows the unit is per (repo x skill-name) and that the same delta replicates across different repos for a shared upstream product while a per-repo derivative produces a repo-indexed ladder - 'mirror family' is two phenomena",
+    "H52 could only cluster the frozen weekly bucket; H53 supplies the first de-duplication rule computable on the live endpoint surface, independent of shape/gate/topology",
+    "H52 declared the envelope [1.73x, 8.30x] and called it a floor on uncertainty; H53 widens the grid in both directions to [1.571x, 14.428x] and shows the merge-all ceiling is 45.7x - no bound is rule-free",
+    "H52 excluded host pages by id shape (6.99% open.feishu.cn figure); H53 corrects the denominator by domain (26 listings, 6.92% of raw) and recomputes HHI (0.0612 -> 16.3 effective competitors) and the leaderboard on the corrected population",
+    "H52 counted 16 terminal missions; H53 measures 17 (xalt 15, sage 1, quill 1) and additionally shows 386 queued steps with 0 running - the worker is idle"
+  ],
+  "kill_criterion": "By 2026-10-25: no real LLM credential (env holds 3 vars, no LLM key), no real social credential (tweet.posted/social.posted/content.published all 0), no external re-derivation -> publish nothing, 100% of proposal budget to the single verifiable artifact. Measured 00:07Z 2026-10-24: unchanged.",
+  "artifact_built_this_cycle": [
+    "sage-cycle53-raw.json",
+    "sage-cycle53-pages.json",
+    "sage-hypothesis-2026-10-24-0207.md",
+    "sage-decision-2026-10-24-0207.md",
+    "sage-intel-2026-10-24-0207.json"
+  ],
+  "proposalId": 94129,
+  "missionId": 94093
+}

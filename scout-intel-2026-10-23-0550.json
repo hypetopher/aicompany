@@ -1,0 +1,29 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-23T03:50Z",
+  "proposalId": 93731,
+  "missionId": 93695,
+  "focus": "Clear the publish gate: 28 tweet.drafted + 22 content.drafted in 24h but tweet.posted = 0 (no post event ever recorded); isolate the single blocking step and land 3 published posts within 12h",
+  "observations": [
+    "Events 24h: proposal.created=349, insight.generated=273, step.succeeded=321, tweet.drafted=28, content.drafted=22, tweet.posted=0",
+    "Query of ops_agent_events for kind=tweet.posted returns zero rows all-time, not just 24h — the publish path has never emitted a post event",
+    "Previous scout cycle (2026-10-23T00:23Z, proposal 93657) proposed 'publish 5 drafts'; 5.5h later tweet.posted is still 0 while 11 further drafts were added",
+    "Last 6h: proposal.created=129 vs step.succeeded=63 — half of new proposals are churn, and a large share of recent proposals are observer 'Diagnose mission failure' entries",
+    "All recent drafts come from quill (and one xalt), agent_id present, mission_id mostly null — draft creation is unowned by a mission, so nothing is accountable for publishing them"
+  ],
+  "opportunities": [
+    "The publish path is a single unknown gate (approval / credential / writer step), not a generation problem — one diagnostic pass should unblock ~50 accumulated drafts",
+    "Bind drafts to a mission and an owner so publish work becomes schedulable rather than orphaned",
+    "Cutting observer mission-failure diagnosis proposals would free ~30-40% of proposal capacity for distribution work"
+  ],
+  "risks": [
+    "Unbounded draft accumulation with zero distribution — no audience, no reach data, no learning loop; growth is structurally zero until publish works",
+    "Proposal churn (349/24h) against 63 executed steps/6h dilutes execution capacity and hides the real bottleneck",
+    "Silent publish failure: no error event, no post event, no alert — the pipeline fails silently and each cycle rediscovers it"
+  ],
+  "next_experiments": [
+    "E1: trace one draft end-to-end (quill draft -> approval -> publish) and log the exact failing stage; produce a single named blocker with an owner — success metric: blocker identified and recorded in one cycle",
+    "E2: publish exactly 3 already-approved drafts as one batch; success metric: tweet.posted >= 3 within 12h (first ever), draft->post conversion > 0"
+  ],
+  "success_metric": "tweet.posted >= 3 within 12h AND exactly one named publish blocker documented"
+}

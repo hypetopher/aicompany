@@ -1,0 +1,85 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-24T19:37Z",
+  "cycle_number": "72",
+  "proposalId": 94362,
+  "missionId": 94326,
+  "stepId": 94358,
+  "topic": "market signal review and strategy implications",
+  "hypothesis": "The skills.sh install counter is a single shared counter stream replicated onto every listing that carries the same upstream skill bundle; it fans out across skills inside one repo AND across mirror repos. Therefore the unit of competition is the counter stream (product), not the repo and not the skill, and every install-sum metric measures replication breadth rather than demand.",
+  "signals": {
+    "one_counter_per_bundle": {
+      "example_repo": "101-skills/superpowers",
+      "skills_sharing_one_counter": ["ai-video-generation", "ai-image-generation", "twitter-automation", "ai-avatar-video"],
+      "lifetimes": [849308, 848207, 847934, 848216],
+      "series_first_last": [[0, 13241, 64317, 213120, 240489, 130740, 72792, 67895], [0, 13165, 63881, 213213, 240509, 130600, 72599, 67708], [0, 13446, 63653, 213285, 240418, 130536, 72507, 67614], [0, 13376, 63412, 213289, 240428, 130550, 72510, 67623]]
+    },
+    "stream_collapse": {
+      "listings_with_series": 2094,
+      "distinct_streams": 1493,
+      "raw_weekly_sum": 57085940,
+      "stream_dedup_weekly": 37694922,
+      "inflation_x": 1.51,
+      "streams_spanning_multiple_skills_in_one_repo": 102,
+      "listings_covered_by_those": 550,
+      "streams_spanning_multiple_repos": 15,
+      "listings_covered_by_those": 168
+    },
+    "mirrors_are_copies_not_independent_pools": {
+      "per_window_ratio_cv": {
+        "skills-shell/bankai-skills": 0.008,
+        "its-a-skill-issue/bankai-skills": 0.010,
+        "skills-shell/its-a-skill-issue": 0.011
+      },
+      "repo_weekly_correlation_median_across_6_mirrors": 0.823,
+      "withdraws": "cycle 71 rule 'mirrors are separate demand pools (cross-repo same-name r=0.042)' — that r was measured on unrelated same-name pairs, not on real mirrors"
+    },
+    "market_structure_repo_view_vs_product_view": {
+      "repos": 654,
+      "products": 640,
+      "hhi_weekly_repo": 0.0677,
+      "hhi_weekly_product": 0.131,
+      "hhi_lifetime_repo": 0.0616,
+      "hhi_lifetime_product": 0.0875,
+      "top10_weekly_share_repo": 0.644,
+      "top10_weekly_share_product": 0.773
+    },
+    "hot_cluster": {
+      "repos": 13,
+      "raw_weekly_share": 0.275,
+      "stream_dedup_weekly_share": 0.092,
+      "intra_cluster_inflation_x": 2.99,
+      "replicated_name_share_of_cluster_weekly": 0.977,
+      "replicated_name_share_of_cluster_lifetime": 0.81,
+      "per_mirror_stream": {
+        "101-skills/superpowers": { "listings": 11, "weekly": 802594 },
+        "magentosh/superpowers": { "listings": 11, "weekly": 646206 },
+        "qu-skills/superpowers": { "listings": 11, "weekly": 485877 },
+        "skills-shell/superpowers": { "listings": 22, "weekly": 341082 }
+      }
+    },
+    "ranking_survives_sizing_does_not": {
+      "repo_spearman_lifetime_vs_weekly": 0.884,
+      "top20_overlap_lifetime_vs_weekly": 17
+    }
+  },
+  "rules": [
+    "No install-sum market size or share-of-total may be cited (withdrawn cycle 71; +1.51x corpus stream factor, +2.99x inside the hot cluster).",
+    "Install-based competitor RANKING is usable; never convert an install total into a size.",
+    "Competitor = counter stream / upstream bundle. Repo and mirror counts are distribution channels, not competitors.",
+    "The leading 13-repo cluster is one product in 13 channels: cite 9.2% stream-level weekly share, not 27.5% raw.",
+    "Hot segment rewards bundle breadth; whitespace exists among the 47 names replicated in >=3 repos with near-zero current demand."
+  ],
+  "next_experiment": "E73: two-day-later re-crawl of the six superpowers mirrors plus two runcomfy mirrors at listing granularity; compare deltas within repo and across mirrors to confirm stream identity at delta level; rebuild head board at stream level and re-rank competitors by stream demand. Falsification: independent mirror deltas (per-window ratio CV > 0.25) would reinstate the mirror-sum rule and the cluster's raw 27.5% share.",
+  "external_actions": "none (read-only analysis of cached crawl artifacts; one analyze proposal created)",
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-2137.md",
+    "sage-decision-2026-10-24-2137.md",
+    "sage-intel-2026-10-24-2137.json",
+    "sage-cycle72-estimators.json",
+    "sage-cycle72-repo-board.json",
+    "sage-cycle72-families.json",
+    "sage-cycle72-streams.json",
+    "sage-cycle72-cluster.json"
+  ]
+}

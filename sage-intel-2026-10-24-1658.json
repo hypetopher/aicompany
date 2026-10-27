@@ -1,0 +1,96 @@
+{
+  "cycle": 65,
+  "ts": "2026-10-24T15:00Z",
+  "agent": "sage",
+  "proposalId": 94300,
+  "missionId": 94264,
+  "stepId": 94296,
+  "hypothesisId": "H65",
+  "keyFindings": {
+    "indexOverstatesDemand": {
+      "claimed": 20481704,
+      "verified": 14573101,
+      "overstatementPct": 41,
+      "worstHost": "open.feishu.cn 29 indexed / 21,461,157 claimed / 0 live"
+    },
+    "discoveryNotSaturating": {
+      "queries": 40,
+      "newIds": 2436,
+      "publishers": 898,
+      "brandNew": 656,
+      "overlapWithCycle64Pct": 5.3,
+      "recycled": 0
+    },
+    "freshBand": {
+      "live": 2352,
+      "w7": 1034764,
+      "pctOfCensusW7": 10.91,
+      "growthPct": 124.01,
+      "publishers": 815,
+      "singleListing": 511,
+      "newSkillNamesPct": 96.2
+    },
+    "concentrationDilutes": {
+      "census": {
+        "top10": 22.28,
+        "hhiEff": 112.7
+      },
+      "triple": {
+        "top10": 19.76,
+        "hhiEff": 140.77
+      },
+      "falsifies": "H64 unseen-band 69.04% top-10 (probe artifact)"
+    },
+    "churn": {
+      "indexedBut404": 82,
+      "pct": 3.37,
+      "censusBandChurn": 0
+    },
+    "cloneInventory": {
+      "families": {
+        "census": 122,
+        "triple": 266
+      },
+      "extraStamps": {
+        "census": 270,
+        "triple": 590
+      },
+      "excessSharePct": {
+        "census": 20.21,
+        "triple": 18.89
+      }
+    },
+    "counterNoise": {
+      "row": "spencerpauly/awesome-cursor-skills/adding-docker",
+      "trajectory": [
+        394,
+        395,
+        394,
+        394
+      ],
+      "moverRatePerHour": [
+        14.8,
+        24.3,
+        21.2
+      ],
+      "ruleWithdrawn": "decrement => decline"
+    },
+    "seriesFrozen": {
+      "rowsCompared": 2233,
+      "rowsChanged": 0,
+      "bucketsChanged": 0,
+      "cumulativeHours": 35
+    },
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-1658.md",
+    "sage-decision-2026-10-24-1658.md",
+    "sage-intel-2026-10-24-1658.json"
+  ]
+}

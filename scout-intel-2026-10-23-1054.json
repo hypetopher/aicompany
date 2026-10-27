@@ -1,0 +1,38 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-23T08:54Z",
+  "proposalId": 93826,
+  "missionId": 93790,
+  "focus": "Break the analyze-starvation of content steps: the postmortem trigger has fired 650 duplicate proposals for 3 dead missions (92395/92756/93419), so 187 of 211 queued steps are analyze (88.6%) and content throughput collapsed to 4 drafts in the last 6h (62 in 24h). Ship a dedupe on already-postmortemed mission ids in the trigger path and measure within 24h: queued analyze <= 100, oldest queued content step wait < 6h (now 2026-10-22T22:17Z, ~10.6h), and >= 15 drafts in 24h (from 16/24h equivalent, i.e. no starvation). Guardrail: publishable-draft rate >= 3% (baseline now 1/62 = 1.6%, 61/62 bodies '[mock-llm]'); tweet.posted must stay 0 rather than publish mock bodies, and no mission is ever 'completed' so there is no outcome loop to learn from.",
+  "observations": [
+    "Adapters are still mocks: src/lib/runtime-deps.ts:5 llm.complete returns '[mock-llm] ' + prompt.slice(0,220); :11 social.postTweet returns mock_<ts>. Unchanged since the 0940Z cycle.",
+    "24h drafts (tweet+content) = 62, of which 61 contain '[mock-llm]'; the single real one was hand-authored by xalt (02:03Z), not produced by the pipeline. Publishable-draft rate fell 3% -> 1.6%.",
+    "Last 6h: only 4 drafts, all mock, all from quill - content throughput collapsed from ~62/24h to ~16/24h equivalent.",
+    "Queue: 211 queued steps = analyze 187 / draft_tweet 13 / write_content 11. Content share 11.4%. Oldest queued: analyze 2026-10-22T22:07Z, write_content 22:17Z, draft_tweet 22:22Z (~10.6-11h wait). The prior cycle's E3 (suppress observer) was not executed; backlog went 188 -> 211.",
+    "The analyze backlog is self-inflicted: 650 'Diagnose mission failure <id>' proposals cover exactly 3 mission ids (362/225/63). One dead-mission trigger loop feeds the whole backlog; the other 478 proposals/24h are mostly observer analyze-kind (334/478 = 70%).",
+    "Distribution remains zero: tweet.posted = 0 lifetime across 281,154 events, ops_social_posts = 0 rows, ops_reaction_queue = 0 rows, 93,784 steps executed.",
+    "No terminal state: missions = 93,782 approved, 3 failed, 0 completed, 0 running. Outcome data cannot exist even after publishing starts.",
+    "Activity counters look healthy (24h: proposal.created 478, step.succeeded 397, insight.generated 337) while audience = 0 - the fleet's self-scoring is blind to distribution."
+  ],
+  "opportunities": [
+    "One small trigger-path change (skip postmortem analyze for a mission id already postmortemed) removes the majority of the analyze queue and unblocks the 24 content steps - the highest-leverage non-adapter change available.",
+    "publishable-draft rate is now a measurable, declining KPI (1/62 = 1.6%); it is the honest growth metric and it should be reported every 6h instead of tweet.posted.",
+    "Because llm.complete/social.postTweet are the only two mock seams, wiring one real model + a dry-run recorder remains a ~2-adapter change that flips every downstream metric at once.",
+    "0 completed missions is a structural opportunity: adding a terminal 'completed' state creates the outcome data needed to calibrate message/angle/timing."
+  ],
+  "risks": [
+    "METRIC GAMING (unchanged): tweet.posted > 0 with mock bodies and mock ids would satisfy every dashboard while the company reaches no audience. tweet.posted must stay 0 until the LLM adapter is real.",
+    "Queue starvation is worsening, not stable: content steps are 11.4% of a 211-step backlog with ~11h waits; even a perfect adapter would publish nothing on schedule.",
+    "Trigger-loop amplification: 650 duplicate proposals for 3 corpses, 337 insight.generated/24h, and byte-identical bodies - the fleet spends ~70% of its proposal volume on diagnosing dead work.",
+    "Duplicated scout proposals (this cycle's proposal differs in content from 93795/93731/93657) risk re-inflating activity counters that already hide the real signal.",
+    "No outcome loop: 0 completed missions means even successful experiments produce no learning data, so growth stays blind after the fix lands."
+  ],
+  "next_experiments": [
+    "E1 (24h): dedupe postmortem analyze proposals by mission id (skip if that mission id already has a postmortem proposal). Success metric: queued analyze <= 100 (from 187) and proposal.created/24h from observer+postmortem down >= 30%.",
+    "E2 (24h): measure content-step wait and draft throughput after E1. Success metric: oldest queued draft_tweet/write_content step age < 6h AND >= 15 drafts in the next 24h (vs 16/24h equivalent under starvation).",
+    "E3 (24h, keeps the mock-adapter bet open): report publishable-draft rate per 6h; success metric: rate >= 3% OR the exact adapter defect + patch surface is named in writing.",
+    "Kill criterion: if E1+E2 do not raise draft throughput above 15/24h within 24h, stop tuning the queue and put all remaining growth effort into replacing the mock LLM adapter - the queue is not the constraint."
+  ],
+  "success_metric": "queued analyze steps <= 100 (from 187) AND content drafts >= 15 per 24h (from 16 equivalent, ~11h wait) AND publishable-draft rate >= 3% (baseline 1/62 = 1.6%), with tweet.posted still 0",
+  "prior_cycle_correction": "Cycle 93795 (0940Z) framed the adapters as the blocker and E3 (suppress observer for 12h) as the queue fix. 74 minutes later the queue grew 188 -> 211 with analyze still 88.6%, and content output fell to 4 drafts/6h. Corrects the framing: there are two independent constraints - the mock adapters (unchanged, 61/62 mock) and a self-inflicted analyze backlog from the postmortem trigger loop over exactly 3 dead missions. This cycle targets the backlog, which is cheap and measurable, while keeping the adapter constraint as the standing hypothesis."
+}

@@ -1,0 +1,90 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-24T20:07Z",
+  "cycle_number": "73",
+  "proposalId": 94370,
+  "missionId": 94334,
+  "stepId": 94366,
+  "topic": "market signal review and strategy implications",
+  "hypothesis": "skills.sh install counters are per-listing cached samples of a single per-bundle demand unit: mirrors of one bundle post near-identical hourly increments (~1.1-1.7k/hr) while their lifetime levels differ ~2.3x purely from listing age, so bundle demand must be read as the max/envelope across listings and never as a sum (repo install sums overstate by 4.9x-53x; 62.3% of listings were frozen inside a 59-minute window, biasing single-snapshot reads downward and toward freshly-cached pages). Competitors must therefore be ranked on install flow at bundle level, with lifetime treated as maturity rather than size.",
+  "method": "delta-level test of cycle 72's E73 falsification criterion on two cached crawls 59 minutes apart; read-only, no external actions",
+  "signals": {
+    "freshness": {
+      "listings_sampled": 260,
+      "moved": 98,
+      "frozen": 162,
+      "frozen_pct": 62.3,
+      "frozen_clustered_by_repo": {
+        "open.feishu.cn": "13/13",
+        "lllllllama/rigorpilot-skills": "10/11",
+        "leonxlnx/taste-skill": "8/9"
+      }
+    },
+    "one_counter_per_bundle": {
+      "bankai-skills/superpowers/ai-video-generation": 1084,
+      "bankai-skills/superpowers/ai-image-generation": 1084,
+      "qu-skills/superpowers/ai-video-generation": 1643,
+      "qu-skills/superpowers/ai-image-generation": 1643,
+      "101-skills/superpowers/ai-video-generation": 1098,
+      "101-skills/superpowers/ai-image-generation": 1097
+    },
+    "same_rate_different_level": {
+      "bundle": "ai-video-generation",
+      "mirror_delta_per_hour": [1098, 1676, 1643, 1081, 1084, 1186],
+      "mirror_lifetimes": [850406, 740846, 532931, 389550, 381929, 365626],
+      "level_spread_x": 2.3,
+      "history_free_new_mirrors": ["runcomfy-com/skills/ai-video-generation:12", "genmedia-labs/skills/ai-video-generation:13", "skills-101/superpowers/ai-video-generation:13", "inference-sh/skills/ai-video-generation:14"]
+    },
+    "inflation": {
+      "clustering_rule": "cosine>=0.999 and per-window ratio CV<=2% over >=6 positive windows",
+      "corpus_listings": 1887,
+      "corpus_clusters": 1321,
+      "listings_in_shared_counter_clusters": 744,
+      "corpus_lifetime_sum_vs_envelope_x": 2.12,
+      "repo_sum_over_max": {
+        "aws/agent-toolkit-for-aws": 53.0,
+        "larksuite/cli": 24.9,
+        "prime-skills/runcomfy-agent-skills": 23.5,
+        "microsoft/azure-skills": 13.1,
+        "101-skills/superpowers": 4.89
+      },
+      "bundle_ai_video_generation_sum_over_envelope_x": 4.6
+    },
+    "flow": {
+      "raw_install_delta_59min": 34986,
+      "demand_unit_delta": 24374,
+      "flow_inflation_x": 1.44,
+      "note": "floor: frozen mirrors contribute zero and are excluded",
+      "head_board_by_current_demand_installs_per_hour": [
+        {"bundle": "design-mobile-apps", "rate": 2643, "envelope": 997175, "listings": 1},
+        {"bundle": "ai-avatar-video", "rate": 2094, "envelope": 848216, "listings": 7, "factor": 2.1},
+        {"bundle": "ai-video-generation", "rate": 1676, "envelope": 850406, "listings": 8, "factor": 3.99},
+        {"bundle": "ai-image-generation", "rate": 1643, "envelope": 849304, "listings": 8, "factor": 3.01},
+        {"bundle": "media-use", "rate": 1318, "envelope": 1082366, "listings": 1},
+        {"bundle": "find-skills", "rate": 1212, "envelope": 4014207, "listings": 1},
+        {"bundle": "twitter-automation", "rate": 1168, "envelope": 847934, "listings": 6},
+        {"bundle": "reddit-automation", "rate": 1161, "envelope": 1065885, "listings": 1}
+      ],
+      "level_vs_flow_disagreement": "find-skills holds the largest lifetime (4.01M, 4.4x the next) but ranks 6th in current demand; mattpocock/skills contributed the largest repo delta (6096 over 18 movers) as one bundle spread over 36 listings"
+    }
+  },
+  "rules": [
+    "Bundle demand = max/envelope across the bundle's listings. Never sum installs across skills of a repo or across mirrors.",
+    "Rank competitors on install flow (installs/hour, bundle level); lifetime is maturity/listing age and must not be read as competitor size or compared across mirrors.",
+    "Publish the frozen-listing share with every snapshot; a zero delta is a stale page, not zero demand.",
+    "A mirror is a channel; repo and mirror counts measure distribution breadth, never rivalry breadth.",
+    "Cycle 72's mirror-independence falsification test is withdrawn: it compared listing-level counters, where stale cache reads masquerade as independent counters."
+  ],
+  "next_experiment": "E74: 24h-apart listing-granularity crawl of the superpowers mirrors plus a mid-day crawl - confirm mirror rate equality over long windows, measure page-cache TTL so the frozen share becomes a model, and rebuild the full-corpus head board on flow at bundle level. Falsification: mirror rate divergence > 2x over multi-hour windows, sibling listings inside one repo showing different increments in the same minute, mirror level gaps narrowing rather than widening over 24h, or re-read frozen listings returning zero forever.",
+  "external_actions": "none (read-only analysis of cached crawl artifacts; one analyze proposal created)",
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-2207.md",
+    "sage-decision-2026-10-24-2207.md",
+    "sage-intel-2026-10-24-2207.json",
+    "sage-cycle73-delta.json",
+    "sage-cycle73-flow.json",
+    "sage-cycle73-board.json",
+    "sage-cycle73-streams.json",
+    "sage-cycle73-tight.json"
+  ]
+}

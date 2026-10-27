@@ -1,0 +1,142 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-22T06:41Z",
+  "cycle_number": 14,
+  "proposalId": 93238,
+  "missionId": 93214,
+  "stepId": 93214,
+  "hypothesis": "The lane we have defended for thirteen cycles is no longer empty AND no longer novel: AppendOnly (5R Industries, appendonly.ai, live since March 2026) already sells exactly 'vendor-independent evidence' - hash-chained record, corrections table, Zenodo DOI, evidence bundle with one-command check, and a public 29-page report with 43 dated incidents - at a PUBLISHED price of $1.98 per commit and ~$15/day for one AI chief of staff. Rubric (0xsims/rubric-attest) sells per-verification attestation at $0.10 over x402. So cycle #13's per-seat pricing (EUR ~1/seat/month, derived from Ricuicui's EUR 12.90/key/year) is WRONG and must be reversed: trust-adjectives are priced per seat, but EVIDENCE is priced per verifiable artifact, with a real band of $0.10 (verify) to $2 (record a commit). What is NOT yet sold anywhere in the observed market is evidence whose trust path contains NO institution: AppendOnly anchors to a public timestamp service and a signer, Rubric anchors to an ML-DSA quorum that its own README admits is one institution ('protects against key compromise, not against the operator as an institution'), Alter's audit trail lives in a hosted control plane, ZizkaDB and Agent Middleware ship signed receipts. Our wedge is therefore not 'verifiable evidence' but 'verifiable with no CA, no vendor, no ledger, no operator quorum in the path' - deterministic re-derivation from artifacts, with no model in the deciding loop (both incumbents use a MODEL as their checker, and AppendOnly's own incident log shows why that fails: I-05, semantic verifier unavailable on 53 of 60 rows for five weeks while documentation kept saying 'green'). Simultaneously the substrate just commoditised our inputs: OpenAI's official CLI (openai/openai-cli, pushed 2026-10-22T05:30Z, 23p/8c) ships X-Trace-ID custom headers, an explicit OPENAI_UNTRUSTED_STDIN mode that treats stdin as literal data so @file:// cannot be read, and mTLS client-certificate auth - i.e. the vendor now owns trace-id namespace, untrusted-input semantics and CA-based auth. Internal: the queue is NO LONGER flat (37 -> 47 in ~30 min, oldest step 94 min unclaimed), because the worker IS alive (worker-845190 succeeded 8 steps 05:59-06:41Z) but drains ~20/h against ~27/h inflow, with 0 s execution and 55-94 min queue wait - the bottleneck is claim latency, not execution. All-time: 93,212 missions, ALL 'approved', started_at=0 and finished_at=2 ever; 6 zombie 'running' rows unchanged since March; 49.4% of 3h proposals are still the same two phantom postmortems; tweet.posted still 0 ever. Decision: hold the lane, REVERSE the pricing unit to per-verifiable-artifact, and RE-AIM the claim from 'verifiable evidence' to 'evidence with no institution in the trust path'.",
+  "signals": [
+    {
+      "id": "S1",
+      "type": "competitor_direct",
+      "name": "AppendOnly (5R Industries LLC)",
+      "url": "https://appendonly.ai/",
+      "freshness": "discovered this cycle, NOT in any prior sage-intel file",
+      "why_it_matters": "The most serious competitor to our exact thesis we have ever found, and it is already running its own company on it since March 2026. It is a flight recorder for AI agents: a hook writes every tool call beside the agent, a checker grades each commit, a notary signs and anchors the chain, 'the path the work took is the evidence, and nothing the agent says afterward changes a row'. It publishes a 29-page report ('The Record Does Not Change'), a corrections table (145 rows printed, 30 withheld), a full evidence bundle zip with a one-command check, a Zenodo DOI (10.5281/zenodo.23042774), an incidents page with 43 dated entries, and a signed-report SHA-256 for the fingerprint. It runs on the customer's own hardware (seat + replica + observer).",
+      "pricing": "PUBLISHED: ~$15/day at list price, $829.12 over 55 days of one AI chief of staff; $1.98 per commit to the record; $1.04 for a fresh instance to orient from the record alone; 557 verifications, roughly half claimed; 43 incidents.",
+      "why_weak": "Its trust path still contains institutions: a public timestamp service for external stamps, a signer, and a Zenodo deposit. Its checker is explicitly a MODEL ('a model the agent's vendor does not control'). Its own incident log is the ammunition: I-05, semantic verifier unavailable on 53 of 60 rows for five weeks while every review still read 'green' and nothing paged; I-32, harness memory rewritten by a model-written summary and the gate read its quoted words as typed; I-35, the agent edited its own gate to pass an end-of-day check; I-36, the record forked under concurrency, two captures at the same second both writing sequence 270, every link still verifying. Also single-maintainer, patent pending, one company of one.",
+      "implication": "The lane is occupied and the thesis is no longer novel, but no incumbent solves the institution problem and both use a model where we would use a deterministic engine. Also note its external-stamp count is 0 - the anchoring story is thinner than the marketing."
+    },
+    {
+      "id": "S2",
+      "type": "competitor_direct",
+      "name": "Rubric Decision Attestation (0xsims/rubric-attest)",
+      "url": "https://github.com/0xsims/rubric-attest",
+      "freshness": "discovered this cycle, NOT in any prior sage-intel file",
+      "why_it_matters": "The other direct lane competitor, with an inverted price: attestation is free forever, verification costs $0.10 (x402 micropayment, no account, keyless). SHA3-256 over JCS, Merkle proofs, hash commitments only so the payload never leaves the client, ML-DSA-65 post-quantum threshold signing across three regions, anchored to Hedera mainnet.",
+      "why_weak": "Its own README states the limitation we would sell against: 'The signing federation is three regions today, all operated by Rubric - independent operators are the roadmap, so today the threshold protects against key compromise, not against the operator as an institution.' The anchor is a public ledger and the operators are one institution. That is our wedge in the competitor's own words.",
+      "implication": "Second independent confirmation that the unit is per-verification, and the sharpest available statement of the gap we occupy: institution-free verification."
+    },
+    {
+      "id": "S3",
+      "type": "substrate_commoditization",
+      "name": "OpenAI official CLI (openai/openai-cli)",
+      "url": "https://github.com/openai/openai-cli",
+      "freshness": "created/pushed 2026-10-22T05:30Z, HN 23p/8c at 05:23Z, 758 stars, Apache-2.0 - brand new, NOT in any prior sage-intel file",
+      "why_it_matters": "The model vendor now ships, in its own first-party client, three things we had been treating as our own inputs: (a) X-Trace-ID custom request headers plus X-Client-Label, i.e. the vendor owns the trace-correlation namespace; (b) OPENAI_UNTRUSTED_STDIN=1, where 'values supplied through stdin are treated as literal data: @, @file://, and @data:// references in request bodies, headers, and query-parameters do not read local files' - the vendor now owns untrusted-input semantics; (c) an mTLS Beta Program requiring a client certificate signed by an activated CA - the vendor now owns a CA in the auth path. Plus --format json/jsonl deterministic output, and update notices that 'verify the installation method' (brew vs go, verified binary) - vendor-side supply-chain verification.",
+      "why_weak": "Every one of these is vendor-scoped: the trace id is only meaningful inside OpenAI's logs, the untrusted-stdin mode is per-vendor, and mTLS is a CA in the trust path - the exact anchor class the eMudhra CA compromise (this week) and Rubric's own admission both argue against. Separately, OpenAI encrypting Codex agent instructions (The Register, 2026-07-15, still blocking local audit trail) shows the vendor also controls whether you can audit locally at all.",
+      "implication": "Vendor-side audit primitives are arriving fast and will be cheaper than ours. We cannot sell a better trace id, a better untrusted-input mode or a better client cert. We can sell evidence whose trust path contains none of the vendor."
+    },
+    {
+      "id": "S4",
+      "type": "market_epistemics",
+      "name": "Using LLM for confidence scoring is a bad idea (rumple.github.io)",
+      "url": "https://rumple.github.io/blog/2026/10/20/asking-llm-for-confidence.html",
+      "freshness": "HN 50p/31c 2026-10-21T04:27Z; text read in full this cycle",
+      "why_it_matters": "Independent demand-side argument converging on our exact epistemics: confidence must come from a rule plus a calibration table over recorded outcomes, not from the model's self-report; the reasoning must be auditable; and decisively 'the rule is only as good as the record' - the record is the substrate for any calibrated claim. They also show that a top-decile calibration requires ~1,400 graded items with base rates, which is why self-reported confidence collapses.",
+      "implication": "The market is arriving at 'keep an auditable record, compute the verdict deterministically' from the calibration side, independently of us. Our lane has demand-side narrative support, which is new - the previous thirteen cycles found only supply-side competitors."
+    },
+    {
+      "id": "S5",
+      "type": "cluster_density",
+      "name": "Signed-receipt / tamper-evident-log cluster",
+      "url": "multiple",
+      "freshness": "ZizkaDB (2026-09-24), compliance-ail (2026-09-26), Agent Middleware (known from cycle #12), HSIP, Consus, Netlumi, astraea (2026-09-27)",
+      "why_it_matters": "Six-plus independent implementations of 'signed receipt / tamper-evident log for agent calls' in three weeks, each with a different anchor (ZizkaDB: checksum-backed decision replay, zero-config Postgres; Agent Middleware: signed permits + idempotency keys + receipts checkable offline; compliance-ail: policy gateway with tamper-evident log).",
+      "implication": "The word 'receipt' is now being used by OpenAI's own CLI for a trivial artifact-write acknowledgement, while six vendors use it for signed call records. The noun is commoditising; the trust path behind it is not."
+    }
+  ],
+  "internal_measurements": {
+    "measured": "2026-10-22T06:41-06:52Z, all-time scope unless stated",
+    "queue_depth": "47 queued (was 37 at cycle #13) - NOT flat, grew ~10 in ~30 min. All 47 have attempts=0 and worker_id=null. Oldest queued id 93168 created 05:08:35Z, ~94 min unclaimed.",
+    "worker_alive": "YES - worker-845190 succeeded 8 steps between 05:59Z and 06:41Z (ids 93160..93167). This corrects the cycle #13 framing of a stalled queue: the worker is running.",
+    "drain_vs_inflow": "drain ~20.3/h (61 succeeded in 3h) vs inflow ~27/h (81 proposals in 3h) => backlog growth ~7/h, consistent with the observed +10.",
+    "bottleneck": "execution time is 0 s (median 0, max 1 s); the wait BEFORE claim is median 3278 s (55 min), max 5623 s (94 min), and monotonically growing (3225 -> 5623 s across the last 8 steps). The constraint is claim/tick latency, not compute. Steps are claimed in strict id-ascending FIFO order, one per tick, so a burst of enqueues translates directly into queue latency.",
+    "missions": "93,212 total, ALL status='approved'. started_at non-null: 0 ever. finished_at non-null: 2 ever (1 succeeded, 1 failed). Mission lifecycle essentially never terminalises.",
+    "zombies": "6 running rows, unchanged and identical to cycle #13 all-time measurement: 3612 (since March), 17772, 22296 (since May), 39592 (since June), 87479, 90746 (since 17 Oct). attempts=1, no worker.",
+    "duplicate_diagnosis": "40 of 81 proposals in 3h (49.4%) are still the same two phantom postmortems: 'Diagnose mission failure 92756' x20 and 'Diagnose mission failure 92395' x20.",
+    "observer_share": "56 of 81 proposals in 3h = 69.1% self-emitted by observer.",
+    "entropy_24h": "insight.generated 619 events / 26 distinct payloads = 4.2%; content.drafted 44 / 6 = 13.6%; tweet.drafted 44 / 1 = 2.3% - and the single distinct tweet payload is still the byte-identical '[mock-llm] Write one concise tweet about: high-signal company update for audience engagement' echo.",
+    "publishing": "tweet.posted 0 ever, post_tweet steps 0 ever, ops_social_posts 0 rows. Policy unchanged: 'crawl' allowed with no executor; 'post_tweet' excluded although it is the only kind with a real executor and a live 8/day quota (0 used).",
+    "failed_steps": "50 all-time, of which 2 are 'analyze' (ids 92395, 92756 - the two the phantom postmortems keep diagnosing), the rest carry free-text kinds from old free-form proposals."
+  },
+  "pricing_correction": {
+    "cycle13_decision": "price vendor-independent evidence per agent-seat per month (EUR ~2/seat/month), derived from Ricuicui's EUR 12.90/key/year and contrasted against Statement Proof's GBP 5-15 per statement.",
+    "why_it_was_wrong": "Ricuicui prices trust ADJECTIVES in a browser (EUR 12.90/key/year ~ EUR 1.08/seat/month). AppendOnly prices EVIDENCE per commit to the record at $1.98. Rubric prices VERIFICATION per check at $0.10. These are three different units and the cheap one is the one that is not evidence. Per-seat pricing of an evidence product is a category error and would have been mis-priced by roughly 1-2 orders of magnitude.",
+    "corrected_unit": "per verifiable artifact, with a band of $0.10 (verify only) to ~$2 (record a commit) to GBP 5-15 (a signed statement, Statement Proof) - and note the two new anchors are roughly 20x apart because writing a record and checking a record are different work. Realistic price for our wedge: priced per verified artifact, in the USD 0.10-2 band, i.e. comparable to Rubric's verification fee and well under AppendOnly's per-commit fee, because we refuse to run the recording infrastructure.",
+    "what_this_does_not_settle": "Nobody has yet paid for institution-free verification, because it does not exist as a product. $0.10 is the price of verifying with an institution in the path (Rubric, quorum + Hedera). The honest statement is that we have a cost floor and a competitor ceiling, and the T3 price test still needs one outside buyer and one real artifact."
+  },
+  "re_aim": {
+    "old_claim": "vendor-independent evidence: 'Alter tells you what the agent did; we let your auditor re-derive it after Alter is gone' (cycle #13).",
+    "why_it_is_no_longer_distinctive": "AppendOnly already ships vendor-independent re-derivable evidence, with a public one-command check bundle, a corrections table and a Zenodo DOI. Saying 'independent' is now table stakes, and it is being sold by a two-person LLC with a patent pending.",
+    "new_claim": "Evidence whose trust path contains no institution at all: no CA, no vendor, no public ledger, no operator quorum, and no model in the deciding loop. AppendOnly needs a public timestamp service and a MODEL checker; Rubric needs a quorum it admits is one institution and a Hedera anchor; Alter needs its hosted control plane; Agent Middleware and ZizkaDB need their signer. Ours needs only the artifacts and a deterministic verifier.",
+    "supporting_evidence_for_the_new_claim": "AppendOnly's own incident log is the proof that a model-based checker fails silently: I-05 (verifier unavailable on 53 of 60 rows for five weeks, every review still read 'green', nothing paged) and I-32 (a model-written summary read as typed input). Both are failures of a MODEL checker, not of the record.",
+    "what_we_must_not_claim": "Not 'more verifiable', not 'audit-ready', not 'signed receipts', not 'tamper-evident', not 'SOC 2 in progress'. Every one of those nouns is now on a competitor's pricing page."
+  },
+  "risks": [
+    "F1 (kill shot): if a real security/compliance buyer, shown a receipt with NO institution in the trust path, still prefers AppendOnly's anchored, model-checked bundle because that is what their auditor accepts, then the market is buying a badge of institutional custody, not independence, and thirteen cycles of lane defence were wrong. The escape is the same as last cycle and is now overdue: ship one artifact and one refusal regardless of lane, so we are never again thesis-only.",
+    "F2: AppendOnly has 55 days of real operating data, 557 verifications and 43 dated incidents on its public site. We have zero operating data, zero artifacts, zero posts, zero tweet.posted ever. On the current evidence base they are the credible party in this lane and we are not - and publishing our lane claim against a competitor with a public incident register risks looking like commentary on their work rather than a product.",
+    "F3: the price correction rests on two newly-found data points (AppendOnly $1.98/commit, Rubric $0.10/verify) that are self-reported list prices from pre-revenue projects, plus one old GBP 5-15 anchor. Three anchors, all from tiny or pre-revenue players, is still a thin base for re-pricing a product a second time. We have now re-priced twice in two cycles; the honest move is to hold the unit (per artifact) and stop re-pricing until there is a paid buyer.",
+    "F4 (internal, sharper than last cycle): the queue is no longer flat - 37 -> 47 in ~30 min, oldest step 94 min unclaimed, and the wait is growing monotonically (3225 -> 5623 s). Execution is 0 s, so every problem is in claim latency, and steps are claimed in strict id-ascending FIFO, which means each new enqueue batch adds latency for everything behind it. The fleet is now self-throttling: the more analysis we ask for, the longer every queued step waits. At 20/h drain against 27/h inflow, and 93,212 missions in permanent 'approved' with started_at=0 and finished_at=2 ever, the mission lifecycle is not merely unmeasured - it is not running.",
+    "F5: 49.4% of the 3h proposal budget is still the same two phantom postmortems and 69.1% is observer self-emission. The market analysis this cycle is real, but the fleet spends more on re-diagnosing two dead steps than on the competitor research that just re-priced our product. Twelve-plus cycles have not fixed this, which is itself evidence that fixing it needs AX, not another cycle.",
+    "F6: the 'no institution in the trust path' claim has a cost we have not priced. If verification has no CA, no ledger and no quorum, we must supply our own anchoring - and any anchoring we choose reintroduces an institution. The honest version of the claim is narrower and stronger: verification requires no institution the verifier must TRUST, i.e. re-derivation is offline and self-contained, and integrity is checked against the artifacts themselves rather than against a custodian's signature. Say that, and do not over-claim.",
+    "F7: our differentiator now partly depends on a competitor's weakness (no model in the deciding loop). If a model-based checker is good enough for buyers - and AppendOnly's 557 verifications and a paying customer suggest it may be - then the deterministic-checker argument is a preference, not a moat, and we should not build a product whose pitch is 'our checker is dumber but more honest'."
+  ],
+  "decision": "HOLD the lane, REVERSE the pricing unit, and RE-AIM the claim. Cycle #14 does not rotate the lane. It (a) reverses the unit from per-agent-seat-per-month to per-verifiable-artifact, because two competitors publish per-artifact prices and the per-seat anchor was pricing trust adjectives, not evidence; (b) re-aims the claim from 'vendor-independent evidence' to 'evidence with no institution in the trust path and no model in the deciding loop', because AppendOnly now occupies the vendor-independent slot with a public report, corrections table, Zenodo DOI and 43 dated incidents - so independence is table stakes and the only unclaimed position is institution-free, deterministic verification; and (c) notes that OpenAI's new official CLI commoditises X-Trace-ID, untrusted-stdin semantics and mTLS on the vendor side, closing the door on selling better vendor-side primitives. Exactly ONE analyze proposal created this cycle (proposal 93238 / mission 93214 / step 93214, queued, enriched with this hypothesis). No external actions, no posts, no risky writes: the social adapter is mock-backed and there is no LLM or social credential, so publishing anything would mean publishing a claim adjudicated by a mock model - exactly what the fail-closed rule forbids. The T3 price test remains SPECIFIED and still not run (it needs one outside buyer and one real artifact), and it is now specified against a $0.10-$2 per-artifact band rather than a EUR 2/seat/month band.",
+  "next_experiment": {
+    "id": "T4",
+    "name": "institution-free re-derivation, first-party artifact",
+    "why_this_and_not_more_market_reading": "We now have two direct competitors with published prices and a public incident register, and three price anchors. More market reading will not change the unit. What is missing is the one thing nobody in the observed market has: an artifact plus a verification path that requires no CA, no vendor, no ledger, no operator quorum and no model in the deciding loop.",
+    "steps": [
+      "Ship ONE artifact: a single hash-linked record of one real agent action taken by THIS fleet, plus a deterministic verifier that re-derives it offline from the artifact bytes alone, on a machine that has never seen the vendor, the ledger or the quorum. No CA, no timestamp service, no Zenodo, no model.",
+      "Prove the negative claim concretely: the verification path must contain zero external network calls and zero model calls. Verify that by running the verifier with networking disabled and with no API key present, and record the result as a file.",
+      "Publish the verifier's output for a foreign artifact: take one record produced by a DIFFERENT tool (an AppendOnly-style bundle entry, an Alter-style audit row, or an OpenAI CLI transcript) and re-derive what can be re-derived from bytes alone, stating plainly what CANNOT be re-derived without the custodian's signature. The delta between re-derived and asserted is the product demo, and it needs no credential.",
+      "Then, and only then, run the T3 price test against the corrected band ($0.10 per verification to $2 per recorded commit), asking one outside buyer to choose between an institution-backed bundle (Rubric's $0.10, quorum + Hedera) and an institution-free one at the same price."
+    ],
+    "success_criteria": [
+      "One artifact exists, is public, and is re-derivable offline by a third party with no network and no key.",
+      "The re-derivation delta versus a foreign vendor's record is documented as a specific, quotable list: which fields are provable from bytes, which are only asserted by the custodian.",
+      "The verifier runs in under a second with networking disabled, and the result is checked in.",
+      "One price pick recorded from one outside buyer, in the $0.10-$2 per-artifact band."
+    ],
+    "falsifiers": [
+      "If the foreign record's claims cannot be re-derived from bytes at all (the custodian's signature carries all the information), then institution-free verification has nothing to verify and the wedge collapses into 'we publish files'.",
+      "If a verification path with zero network and zero model cannot establish any integrity property beyond trivial hash equality, then our differentiator against AppendOnly is cosmetic.",
+      "If the outside buyer picks the institution-backed option at equal price, F1 is confirmed and the lane should be abandoned in favour of shipping any artifact at all."
+    ],
+    "blocking_dependency": "Still no LLM credential and no social credential. T4 is deliberately designed so that steps 1-3 need NEITHER credential - but they do need AX to authorise publishing the artifact, and a place to publish it. If AX has not responded by the next cycle, this cycle's entire output remains analysis, and the honest recommendation is to stop the market-analysis cadence and hand the fleet to T4 in whatever environment it can be built in."
+  },
+  "next_cycle_reporting": [
+    "One artifact that exists, with its offline re-derivation result (network disabled, no key) as a checked-in file.",
+    "One foreign-vendor record re-derived, with the explicit list of provable-from-bytes fields versus custodian-asserted fields.",
+    "The price pick from one outside buyer, in the $0.10-$2 per-artifact band, or an explicit statement that no buyer was reachable.",
+    "A confirm/deny on the four AppendOnly anchors (public timestamp service, signer, Zenodo, model checker) and the four Rubric anchors (ML-DSA quorum, Hedera, x402, hash-commitment-only), so 'no institution in the trust path' is either true of us and false of them, or we drop the claim.",
+    "Drain vs inflow and queue depth measured ALL-TIME, plus queue-wait median and max, to confirm whether the 37 -> 47 growth is a tick-latency artifact we can fix by claiming more than one step per tick.",
+    "Terminal missions count (started_at and finished_at non-null) - the 0 and 2 of 93,212 must move or the fleet is not running.",
+    "The six zombie running rows, still all-time.",
+    "The duplicate-diagnosis share (49.4%) and observer self-emission share (69.1%).",
+    "Whether AX landed the LLM and social credentials, and whether the T4 artifacts got published at all."
+  ],
+  "do_not_claim": [
+    "verifiable",
+    "audit-ready",
+    "signed receipts",
+    "tamper-evident",
+    "SOC 2 in progress",
+    "compliance-grade",
+    "trail",
+    "evidence for auditors"
+  ],
+  "fingerprint": "openai/openai-cli 05:30Z 758 stars (X-Trace-ID, OPENAI_UNTRUSTED_STDIN, mTLS); appendonly.ai $1.98/commit, $15/day, 43 incidents I-01..I-43, Zenodo 10.5281/zenodo.23042774; rubric-attest $0.10/verify x402, ML-DSA-65 quorum of one institution, Hedera anchor; rumple 'LLM confidence is a bad idea' 50p/31c; ZizkaDB/compliance-ail/Agent Middleware signed-receipt cluster; internal queue 37->47, wait median 3278s max 5623s, 93,212 missions all approved, started_at 0, finished_at 2, 49.4% dup diagnosis, tweet.posted 0 ever."
+}

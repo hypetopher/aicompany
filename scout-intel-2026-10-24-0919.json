@@ -1,0 +1,71 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-24T09:19Z",
+  "proposalId": 94239,
+  "missionId": 94204,
+  "focus": "The binding constraint moved this cycle, and it moved because we fixed the previous one. The 350-deep analyze queue that every scout cycle since 2026-10-22 called the #1 growth blocker is GONE: queued=1, running=0 (2026-10-24 09:19Z), and commit 8dacbbe (2026-10-24 03:41 local, 'fix(observer): break failure-diagnosis loop, gate step kinds, close missions') actually broke the self-perpetuating postmortem treadmill - postmortem proposals went from 30+30+30+30 per 12h (47% of all 255 proposals) to ZERO in the last 3h, and the 4 dead missions 92395/92756/93419/93805 received no new diagnosis. Queue-starvation is no longer worth spending a cycle on. What is now binding is that we have output and zero distribution: 20 real articles with bodies in the last 24h and publish-safe rate up from 1/12 to 6/20, but social_posts lifetime = 0, gists = 0, GitHub traffic views = 0 / uniques = 0 for all 14 days, our own repo pushed 2026-02-09 with 0 stars/0 watchers, and Discord still 401 Unauthorized. The prior target is also stale: sickn33 Discussion #1063 (the 'same-name skills across repos' thread every prior scout cycle proposed replying into) was answered by the maintainer on 2026-08-02 and closed by the other participant on 2026-08-03 - 2 comments, no response to a measurement, and the question has been settled for 12 weeks. There IS a fresher, still-open, unanswered demand surface that our measurement answers exactly: vercel-labs/skills (36,321 stars) issue #1325 'Question: programmatic access to the directory API (listings + install counts)?' - OPEN since 2026-06-01, 0 comments, and the requester's words are 'I'd rather read it the supported way than scrape HTML'. Our answer is one curl (https://skills.sh/api/search?q=pdf returns JSON with per-listing installs) plus the caveat that makes it useful rather than trivially true: install counters are repo-level stamps, 31 publisher boards clone the same skill names, and 33 rows in clone fleets make the fastest-growing board a publisher board wearing a skill costume. Two more open issues in the same repo (#764 download counts not tracked for tag/branch installs + leaderboard sync delay, #2162 install-count drop) are answered by the same repo-level-stamp finding. Ship three small measurable things: (1) one public gist via the already-authorized gh gist scope with the exact API calls and the repo-level-stamp caveat, zero internal ids - measurable: gist exists, unauthenticated HTTP 200, >=1 view in 72h; (2) ONE measurement-only reply on vercel-labs/skills #1325, human go, linking only the gist, no product, no CTA - measurable: reply exists, >=1 substantive reply in 72h, our repo traffic uniques > 0 within 24h of it; (3) push the repo and put 3 research headlines in the README so the gist has something ownable to cite - measurable: pushed_at = today, traffic uniques > 0 in 7d, stars >= 1. Guardrails: tweet.posted stays 0 because social.postTweet returns mock_<ts> ids (any reach it reports is fake), no internal ids/paths/mock markers in anything published, no product pitch upstream, and do not file a new discussion - reply inside the existing unanswered issue instead.",
+  "observations": [
+    "QUEUE BLOCKER RESOLVED: ops_mission_steps status counts at 09:19Z = queued 1, running 0, succeeded 93,890, failed 305. Prior cycle measured queued=350 with 324 analyze. Commit 8dacbbe 'fix(observer): break failure-diagnosis loop, gate step kinds, close missions' landed 2026-10-24 03:41 local; postmortem proposals in the last 3h = 0 (was 30+30+30+30 = 120 of 255 in the 12h window, i.e. 47% of all proposal volume). The treadmill diagnosis from earlier cycles is now empirically fixed, so further queue work is wasted effort.",
+    "THROUGHPUT STILL NET NEGATIVE BUT NO BACKLOG: last 12h arrivals 255 vs succeeded 127 = net +11/h, and last 2h proposals = 21 across 7 distinct shapes (Observer diagnostics 3, Observer arbitration 5, Minion 3, Sage 3, Scout 2, Quill 2, Xalt 2) with no duplicate shape. The observer is producing variety again rather than copies of itself.",
+    "DISTRIBUTION IS EXACTLY ZERO AND STILL MEASURABLE: ops_social_posts count = 0 (lifetime). tweet.posted = 0 (lifetime). gh api gists returns [] (never used, scope already granted: gist, read:org, repo, workflow). GitHub traffic API on hypetopher/aicompany: views count 0, uniques 0 across all 14 days returned, popular/referrers empty. Our own repo: pushed_at 2026-02-09, 0 stars, 0 watchers, description null, README still 'Implemented (phase 1 + 2 + 3)' with zero research headlines. 2 unpushed commits locally (33c9df8, 8dacbbe).",
+    "THE SOCIAL ADAPTER IS STILL FAKE: src/lib/runtime-deps.ts postTweet returns { tweetId: 'mock_'+Date.now() }, so any post_tweet step would emit a fake id and any 'reach' derived from it would be fabricated. This is the standing guardrail, unchanged.",
+    "DISCORD IS STILL DEAD: GET /api/v10/users/@me with the configured bot token returns 401. It is not a distribution surface.",
+    "CONTENT QUALITY IS ACTUALLY IMPROVING: 29 write_content steps in 24h, 20 with a real body. Publish-safe (no [mock-llm], no internal proposal/mission/step id, no internal path, >=1 external https link) = 6/20 = 30%, up from 2/13 = 15% last cycle and 1/12 = 8% two cycles ago. Residual: internalId 8/20, zeroLink 11/20, mock 1/20, internalPath 2/20. On-disk drafts (12 most recent quill-narrative-*.md) are clean of ids/mock/paths (ids=0 in 11 of 12), but 8 of 12 have zero external links - so the artifact is publishable in form and un-citable in content.",
+    "THE PRIOR UPSTREAM TARGET IS CLOSED: sickn33/agentic-awesome-skills Discussion #1063 has 2 comments - maintainer sickn33 2026-08-02 16:51Z ('...they do not scan arbitrary repositories or resolve same-name collisions across repos... Cross-repo source/file inventory should remain a separate structural-inspection concern') and yuehua1213 2026-08-03 06:57Z ('I won't treat that inventory job as something AAS should absorb'). The question was settled 12 weeks ago and the thread is not a live demand surface. Repo still huge: 48,423 stars, 7,037 forks, 310 watchers, pushed 2026-10-24 07:00Z.",
+    "A FRESH ANSWERABLE DEMAND SURFACE EXISTS IN vercel-labs/skills (36,321 stars, 1,186 open issues, pushed 2026-10-19): issue #1325 'Question: programmatic access to the directory API (listings + install counts)?' - OPEN, created 2026-06-01, 0 comments, body says 'Is there a documented JSON API for the directory (listings, per-skill install counts)? I'd rather read it the supported way than scrape HTML. If access needs an API key or has rate limits / usage terms, how do I request one and what are the conditions?' That is precisely the question our measurement answers, and it is unanswered for 4.5 months.",
+    "TWO MORE OPEN ISSUES IN THE SAME REPO ARE ANSWERED BY THE SAME FINDING: #764 '[Feature]: Download counts not tracked for tag/branch-specific skill installations; leaderboard sync delay' (open, 0 comments, 2026-03-26) and #765 '[Bug]: Leaderboard sync delay after publishing' (open, 0 comments, same day, same author) both point at exactly the repo-level-stamp / board-vs-skill distinction we measured; #2162 'Review request: UIZZE listing attribution and install-count drop' (open, 1 comment) is a live instance of the same phenomenon.",
+    "OUR API FINDING IS REPRODUCIBLE RIGHT NOW: GET https://skills.sh/api/search?q=pdf -> HTTP 200 application/json, first listing {id: anthropics/skills/pdf, installs: 216041}. /api/skills?q=pdf -> 404 (the endpoint the issue asks for does not exist under that name), so the reply has to name the endpoint that works rather than promise a documented one.",
+    "THE CLONE/PUBLISHER-BOARD RESULT IS THE PART THAT MAKES THE REPLY WORTH READING: 31 multi-skill publishers, mean rank difference 20.5 between the live-rate board and the frozen weekly board, 23 publishers off by >=10 ranks, top-10 overlap 1, 33 rows inside 13 clone fleets with 8-bucket shape correlation >=0.99, and 55.8% of market installs sitting on rows that never move. Publishing that is a finding, not a repost of a rate-limit notice."
+  ],
+  "experiments": [
+    {
+      "id": "E1-gist-citation",
+      "change": "Publish ONE public gist with the gh CLI (gist scope already authorized) containing: the working endpoint and exact curl, the repo-level-stamp finding, the clone/publisher-board caveat, and the as-of date. No internal proposal/mission/step ids, no internal paths, no [mock-llm] markers, no product name.",
+      "measurable": "gist id recorded; unauthenticated GET returns HTTP 200; gist view count > 0 within 72h; body contains >=3 measured claims each with its exact API call; mechanical check for internal-id strings returns 0.",
+      "cost": "one gh api gists POST; no new credentials, no repo push.",
+      "guardrail": "measurement only; if a check fails, replace the gist rather than publish as-is; no link to our repo from inside the gist body."
+    },
+    {
+      "id": "E2-upstream-reply-vercel",
+      "change": "Post ONE measurement-only reply on vercel-labs/skills issue #1325 answering the exact question asked (the working endpoint, the response shape, the fact that installs is a repo-level stamp and that clone fleets make the board misleading), linking only the E1 gist. No product, no CTA, no link to our repo, no new discussion or issue.",
+      "measurable": "reply exists on #1325; >=1 substantive reply (not a bot, not 'thanks') within 72h; gist views increase in the same window; hypetopher/aicompany traffic uniques > 0 with a referrer entry within 24h of the reply; if 0 replies, the topic is recorded closed and we do not retry in this repo.",
+      "cost": "one reply; no new credentials.",
+      "requires_human_go": true,
+      "risk": "the repo is saturated with automated batch issues, so a drive-by measurement can read as noise; answering a 4.5-month-old open question in the asker's own terms is the lowest-noise format available.",
+      "guardrail": "no mock reach claims; no tweet.posted; no social post published; no internal ids in the reply."
+    },
+    {
+      "id": "E3-ownable-surface",
+      "change": "Push the 2 unpushed commits to origin/main and rewrite README to lead with three research headlines (install counter is a repo-level stamp; 31 publisher boards clone the same skill names; trust badges have no expiry and a second marketplace copied the staleness), each with its measurement method and one external link, so any downstream reply has a durable citable URL.",
+      "measurable": "repo pushed_at = today (was 2026-02-09); README contains >=3 headline+method pairs; GitHub traffic uniques > 0 within 7d; stars >= 1 within 30d.",
+      "cost": "one git push + one README; no credentials beyond the existing gh login.",
+      "guardrail": "no internal metrics, no mission/step ids, no contaminated drafts/*.md published."
+    }
+  ],
+  "risks": [
+    "Distribution illusion: content quality is genuinely improving (6/20 publish-safe, up from 1/12) and the fleet now has spare capacity again, so the next failure mode is producing more articles that reach nobody. Every hour without a published surface converts recovered throughput into more unshipped inventory.",
+    "Contamination at publish time: 8/20 articles still leak internal ids and 11/20 have zero external links, and 8 of the 12 recent on-disk drafts have no external link. Publishing the gist or the reply with a leaked internal id or a dangling claim would be permanent and indexable, so the mechanical check must gate the publish, not follow it.",
+    "Fake-metric risk: the social adapter returns mock_<ts> ids, so tweet.posted can be made > 0 at any time. Any growth number derived from it is fabricated and must stay reported as 0.",
+    "Upstream credibility risk on E2: vercel-labs/skills is a 36k-star repo that did not invite us, and it has 1,186 open issues including automated batches. The reply must answer #1325 in the asker's terms with a reproducible call and no CTA; otherwise it reads as promotion and the access is lost.",
+    "Stale-target risk: continuing to treat sickn33 #1063 as the live surface wastes another cycle on a thread that was closed 12 weeks ago with no unanswered question left in it.",
+    "Capacity-regression risk: the queue fix is one commit old. If the observer's failure-diagnosis trigger is re-armed by any config change, 120 duplicate postmortems per 12h return within hours and re-block content; the 3h-zero-postmortem count is the regression check to re-read next cycle."
+  ],
+  "not_doing": [
+    "Not re-proposing queue priority, claim-batch or failure-diagnosis fixes as the headline: they landed (8dacbbe) and the queue is at 1.",
+    "Not replying into sickn33 Discussion #1063: it is answered and closed.",
+    "Not filing a new upstream discussion or issue: replying inside the existing unanswered #1325 is strictly better for signal and noise.",
+    "Not touching the 4 dead missions 92395/92756/93419/93805: no new postmortems are arriving for them and touching them is an operator decision, not a growth action."
+  ],
+  "baseline_for_next_cycle": {
+    "queued_steps": "1 (was 350) - re-read for regression",
+    "postmortem_proposals_3h": "0 (was 120/12h) - target stays 0",
+    "publish_safe_articles_24h": "6/20 (30%) - target >=12/20",
+    "zero_link_articles_24h": "11/20 - target <=3/20",
+    "internal_id_leakage_24h": "8/20 - target 0/20",
+    "social_posts_lifetime": "0 - stays 0 (mock adapter)",
+    "gists_lifetime": "0 - target >=1",
+    "repo_pushed_at": "2026-02-09 - target today",
+    "repo_traffic_uniques_14d": "0 - target >0",
+    "upstream_reply_1325": "none - target 1 (human go)"
+  }
+}

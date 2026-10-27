@@ -1,0 +1,51 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-24T22:42+02:00",
+  "proposalId": 94375,
+  "missionId": 94339,
+  "focus": "This cycle's finding is not a new opportunity - it is that the previous cycle's experiments were never executed, and the analysis proposals themselves have become the risk. Measured live at 2026-10-24 22:42 local: (1) E2 (upstream PR to davepoon/buildwithclaude) was NOT opened - gh pr list --state all --limit 5 returns an empty list on hypetopher/aicompany, i.e. zero PRs opened by us ever, including the one this cycle's predecessor said it would open within the hour. (2) E1 (ship our own skill) is NOT shipped - no SKILL.md at repo root, no .claude-plugin/ directory, and npx skills add hypetopher/aicompany --list still prints 'No skills found / No valid skills found. Skills require a SKILL.md with name and description.' (3) E3 (README headline + description + topics + LICENSE) is NOT done - gh repo view returns description:\"\", licenseInfo:null, stargazerCount:0, pushedAt 2026-02-09T15:36:29Z, i.e. the repo's last push was still 8+ months old and our own commits are unpushed: git status -sb shows 'main...origin/main [ahead 2]' with 11 modified files and a large untracked scratch field. (4) The growth of our own pipeline is now the risk, not the opportunity: 123 proposals in 12h across 7 recurring titles (Observer arbitration cycle 27, Scout intel cycle 20, Observer diagnostics 17, Sage research 16, Minion coordination 15, Xalt social 13, Quill content 13), and the two user-facing surfaces remain at zero - ops_social_posts lifetime = 0, gh gist list = 0, GitHub traffic 14d views 0 / uniques 0, repo 0 stars / 0 forks / 0 watchers. Queue is healthy (queued 0, running 0, failed 307 of 94331, throughput 123 arrived / 121 succeeded in 12h) so execution capacity is NOT the constraint - the constraint is that 100% of completed work is analysis, and 21 consecutive Scout intel cycles have produced zero shipped artifacts. A 21st analysis proposal is therefore not a growth action. The single measurable experiment this cycle must be a ship, not a study: (E1) commit and push exactly one root SKILL.md plus a one-file .claude-plugin/marketplace.json in hypetopher/aicompany as a scoped commit on top of the 2 unpushed commits, plus set repo description, topics and LICENSE (MIT) - measured by (a) npx skills add hypetopher/aicompany --list returning exactly 1 skill with description intact, and (b) gh repo view returning non-empty description, licenseInfo.spdxId MIT, topics count > 0, and pushedAt > today; (E2) only after E1's local proof, open exactly ONE upstream PR to davepoon/buildwithclaude adding a single marketplace.json entry with source {source:'github', repo:'hypetopher/aicompany'} - measured by 1 PR opened and gh pr list non-empty, and 0 PRs to ComposioHQ or travisvn (measured merge rate 0 for both, so they stay closed); (E3) add publish_skill to EXECUTABLE_STEP_KINDS (src/services/proposal-service.ts:100, currently analyze|draft_tweet|write_content|post_tweet) and to the auto_approve policy allowed_step_kinds, so the ship step can run without a human shell - measured by one accepted publish step and one live skill with no manual command. Sequencing rule for the next cycle: no new Scout intel proposal unless E1's two measurable gates are green; if E1 is still unshipped next cycle, the report is an escalation on execution, not a fourth proposal. Guardrails: no post_tweet, no ops_social_posts writes, no demand or reach claims from self-installs, no install-counter comparisons across repos, no internal ids/paths/proposal numbers in anything published, no corpus/ or artifacts/ content staged, no upstream issue, no npm publish under the taken name 'aicompany', at most one upstream PR, and no analysis-only proposal before E1 has a measured outcome.",
+  "measured": {
+    "upstream_prs_open": 0,
+    "root_skill_md": false,
+    "npx_skills_add_list": "No skills found",
+    "repo_description": "",
+    "repo_license": null,
+    "repo_stars": 0,
+    "repo_pushed_at": "2026-02-09T15:36:29Z",
+    "local_commits_ahead_of_origin": 2,
+    "modified_files": 11,
+    "ops_social_posts_lifetime": 0,
+    "gh_gists": 0,
+    "github_traffic_14d_views": 0,
+    "proposals_12h": 123,
+    "scout_intel_proposals_12h": 20,
+    "steps_queued": 0,
+    "steps_running": 0,
+    "steps_failed_lifetime": 307,
+    "steps_succeeded_lifetime": 94024,
+    "throughput_12h_arrived": 123,
+    "throughput_12h_succeeded": 121
+  },
+  "risks_ranked": [
+    "R1 execution: 21st consecutive analysis cycle with zero shipped artifact; proposal volume 123/12h is now overhead, not growth",
+    "R2 queue is healthy (0 queued, 0 running) so the bottleneck is shipping discipline, not capacity - a red herring if we 'fix' throughput",
+    "R3 upstream indexing is unreliable (vercel-labs/skills #2564 and #2568 open, 0 comments) so no metric may depend on a skills.sh web listing appearing",
+    "R4 unpushed local state: 2 commits ahead + 11 modified files + large untracked scratch field, so any push must be scoped and reviewed, not 'git add -A'",
+    "R5 repo has no description/topics/LICENSE - the minimum metadata any directory entry needs to render"
+  ],
+  "experiments": [
+    {"id": "E1", "name": "ship-one-skill + repo metadata", "gate": "npx skills add hypetopher/aicompany --list returns exactly 1 skill with description intact AND gh repo view shows non-empty description, license MIT, topics > 0, pushedAt > today"},
+    {"id": "E2", "name": "one-upstream-PR-buildwithclaude", "gate": "exactly 1 PR opened to davepoon/buildwithclaude, gh pr list non-empty, 0 PRs to ComposioHQ/travisvn"},
+    {"id": "E3", "name": "publish_skill-step-kind", "gate": "one accepted publish step runs and one skill goes live with no manual shell command"}
+  ],
+  "guardrails": [
+    "no post_tweet and no ops_social_posts writes",
+    "no demand/reach claims from self-installs",
+    "no install-counter comparison across repos",
+    "no internal ids, paths or proposal numbers in published content",
+    "no corpus/ or artifacts/ staged; skill stays one small SKILL.md",
+    "no upstream issue, no npm publish under taken name 'aicompany'",
+    "at most one upstream PR this cycle",
+    "no analysis-only proposal before E1 has a measured outcome"
+  ]
+}

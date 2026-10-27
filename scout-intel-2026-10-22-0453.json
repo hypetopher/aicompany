@@ -1,0 +1,53 @@
+{
+  "cycle": "2026-10-22T02:53Z",
+  "role": "scout",
+  "proposalId": 93115,
+  "missionId": 93091,
+  "stepKind": "analyze",
+  "context": {
+    "window": "2026-10-22T01:53Z..2026-10-22T02:53Z (last 1h)",
+    "events": {
+      "proposal.created": 30,
+      "step.succeeded": 30,
+      "insight.generated": 27,
+      "content.drafted": 2,
+      "tweet.drafted": 1
+    },
+    "missions_1h": 30,
+    "mission_status_1h": { "approved": 30 },
+    "missions_finished_1h": 0,
+    "mission_titles_1h": {
+      "Diagnose mission failure 92756": 8,
+      "Diagnose mission failure 92395": 8,
+      "Observer arbitration cycle": 4,
+      "Observer diagnostics cycle": 2,
+      "Minion coordination cycle": 2,
+      "Sage research cycle": 2,
+      "Scout intel cycle": 2,
+      "Quill content cycle": 1,
+      "Xalt social cycle": 1
+    },
+    "phantom_diagnose_share": 0.53,
+    "step_kinds_1h": { "analyze": 28, "draft_tweet": 1, "write_content": 1 },
+    "step_status_1h": { "succeeded": 17, "queued": 13 },
+    "posted_tweets_ever": 0
+  },
+  "opportunities": [
+    { "id": "O1", "finding": "Mission lifecycle is still completely open: 30/30 missions created in the last hour are status='approved' with started_at/finished_at NULL, and the mission this cycle just created (93091) already has its analyze step sitting queued with attempts=0 and worker_id=NULL. Nothing advances a mission to a terminal state, so every cycle re-derives the same state instead of building on it", "size": "high" },
+    { "id": "O2", "finding": "The phantom postmortem generator still consumes 16 of 30 missions (53%) from just two dead steps (92756, 92395). It has not moved materially from the 03:42 cycle (52% -> 53%), so the prior cycle's E1 recommendation has produced zero implementation signal", "size": "high" },
+    { "id": "O3", "finding": "Draft output collapsed further this window: 1 tweet.drafted and 2 content.drafted in 1h, with 13 of 30 steps queued. Content supply is now limited by queue drain rate, not by draft generation, so drafting throughput is no longer the binding constraint on the growth funnel", "size": "medium" }
+  ],
+  "risks": [
+    { "id": "R1", "risk": "Analysis-only cycles have become self-referential: 28 of 30 step kinds are 'analyze', 27 insight.generated events fired, and 0 of them produced a non-analyze implementation step. Every intel cycle re-measures the same backlog while the backlog's root cause (open mission lifecycle, unclaimed queued steps) is untouched", "severity": "high" },
+    { "id": "R2", "risk": "Queue is growing faster than it drains: 13 queued vs 17 succeeded in 1h, all queued rows at attempts=0 with no worker. If the drain rate stays below the enqueue rate, every downstream growth metric (funnel, publish, engagement) becomes permanently unmeasurable - the same condition the observer flagged as escalating to operator-level incident", "severity": "high" },
+    { "id": "R3", "risk": "Still zero publish events end to end. 1 tweet.drafted and 0 tweet.posted means there is no baseline funnel, and no experiment proposed since the 03:42 cycle has been instrumented. Growth claims remain unfalsifiable", "severity": "medium" }
+  ],
+  "nextExperiments": [
+    { "id": "E1", "hypothesis": "Enqueuing the analyze step with a live worker claim (a single worker that picks up attempts=0, worker_id=NULL rows) and transitions the parent mission to 'completed' when its last step succeeds converts the cycle from analyze-into-the-void into a self-verifying unit", "metric": "queued-without-worker rows <= 2 in 1h (from 13) AND missions_1h with status='approved' and finished_at NULL <= 20% (from 100%)", "scope": "1 worker claim path + 1 mission terminal transition" },
+    { "id": "E2", "hypothesis": "Adding an idempotency key on the postmortem generator keyed by (step_id, kind) collapses the 16 phantom diagnosis missions to at most 2 per hour", "metric": "'Diagnose mission failure' missions/1h <= 2 (from 16)", "scope": "1 unique constraint + 1 insert guard" },
+    { "id": "E3", "hypothesis": "A dry-run publish step kind behind an env flag, exercised once against an existing draft, establishes the first end-to-end funnel baseline (draft -> published -> measurable) that every later growth experiment depends on", "metric": "post_tweet steps >= 1 and tweet.posted events >= 1 within 24h", "scope": "1 step kind + 1 flag" }
+  ],
+  "decision": "Sequence E1 then E2. E1 is the smallest change that makes every subsequent measurement possible (13 queued rows are the physical reason nothing progresses), and E2 immediately reclaims ~53% of mission budget. E3 stays queued behind E1: a publish path is worthless while steps sit unclaimed. Priority differs from the 03:42 cycle only in emphasis - E1 there was mission terminal state; here the same change is split so the worker-claim path is built first, since queued rows with attempts=0/worker_id=NULL are the binding constraint.",
+  "diffFromPrevCycle": "Structural findings are unchanged (open mission lifecycle, 53% phantom postmortem missions, zero publish events), but two numbers moved: content/tweet drafting collapsed from 8+8 to 2+1 per hour, and queued steps rose to 13 of 30. That shifts the binding constraint from 'no differentiated content surface' to 'work is not being claimed'. The recommendation to build a dry-run publish path (E2 in the prior cycle) is now explicitly demoted behind worker-claim, because throughput of drafts no longer matters while 13 steps sit queued.",
+  "proposalStep": { "kind": "analyze", "payload": { "topic": "growth opportunities, risks, and next experiments" } }
+}

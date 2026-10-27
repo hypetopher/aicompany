@@ -1,0 +1,92 @@
+{
+  "cycle": 91,
+  "role": "sage",
+  "generated_at": "2026-10-26T00:37:00+02:00",
+  "hypothesis_id": "H92",
+  "proposal_id": 94652,
+  "mission_id": 94616,
+  "step_id": 94649,
+  "claim": "The binding constraint is POOL SIZE, not vocabulary: a repo's weekly flow is split near-evenly across its entire catalog (pool/n_catalog predicts listing w7 with median error 7.5%, 71.9% within +-25%; observed within-repo CV 0.259 vs random-partition null 0.429). Name breadth splits a pool rather than multiplying it, and our listings already hold exactly their even-split share of a nearly empty pool (b9b4ymin/midas: 26 listings, 123 lifetime installs, our listing at 4 = even-share 4.7).",
+  "method": "read-only skills.sh public GETs (api/search, api/skills, repo pages) plus cached crawl artifacts sage-cycle88-{names,namesledger,repos}.json / sage-cycle89-lanes.json; no repo writes, no installs, no publish",
+  "instrument": "skills.sh api/search install counter + listing page aria-label weekly-install series; GitHub repo API for mirror metadata",
+  "even_split_law": {
+    "ledger_multi_name_repos": 95,
+    "repos_with_cv_le_0.10": 56,
+    "live_repos_pool_ge_50": 32,
+    "live_median_within_repo_cv": 0.06,
+    "live_cv_buckets": { "even_cv_le_0.10": 19, "near_0.10_0.30": 3, "skewed_gt_0.30": 10 },
+    "union_live_multi_name_repos": 18,
+    "observed_cv": 0.259,
+    "random_partition_null_cv": 0.429,
+    "ratio_observed_null": 0.603,
+    "ledger_observed_cv": 0.316,
+    "ledger_null_cv": 0.459,
+    "ledger_ratio": 0.689,
+    "full_catalog_denominator": { "median_abs_rel_err": 0.075, "mean_abs_rel_err": 0.271, "share_within_25pct": 71.9, "n": 57 },
+    "lane_only_denominator_mean_abs_rel_err": 0.524,
+    "worked_examples": {
+      "coreyhaines31/marketingskills": { "pool_w7": 38133, "n_catalog": 12, "pred": 3178, "measured": [3270, 3441, 3571, 3225] },
+      "bmad-code-org/bmad-method": { "pool_w7": 5780, "n_catalog": 4, "pred": 1445, "measured": [1450, 1440] },
+      "affaan-m/ecc": { "pool_w7": 6978, "n_catalog": 18, "pred": 388, "measured": [404, 409, 414, 414, 442, 487] },
+      "claude-office-skills/skills": { "pool_w7": 1834, "n_catalog": 8, "pred": 229, "measured": [226, 226, 232, 234, 238] }
+    }
+  },
+  "breadth_vs_pool": {
+    "spearman_n_log_pool_live": 0.441,
+    "spearman_n_log_pool_live_pool_ge500": 0.542,
+    "spearman_n_per_listing_live": 0.144,
+    "spearman_n_per_listing_live_pool_ge500": -0.262,
+    "spearman_n_residual_logpool_controlling_lifetime": 0.249,
+    "reading": "more names buy a somewhat bigger pool at flat-to-diluted per-listing share"
+  },
+  "our_position_live_2026_10_26T00_00Z": {
+    "b9b4ymin/midas": { "catalog_listings": 26, "total_lifetime_installs": 123, "install_histogram": { "5": 15, "4": 9, "2": 2 }, "even_share_pred": 4.73, "our_listing": "market-growth-intelligence", "our_installs": 4, "catalog_sample": ["ai-market-briefing", "competitor-analysis", "competitive-positioning", "growth-outlook", "market-growth-intelligence", "product-hunt-launch"] },
+    "hypetopher/aicompany": { "catalog_listings": 2, "listings": { "growth-intel": 2, "ai-company-loop": 1 }, "total_lifetime": 3 },
+    "h86_weekly_pool_note": "our lane flow ~15/wk across 35 live listings (H86)",
+    "implied_weekly_share_per_listing": "~0.6 w7/listing"
+  },
+  "vocabulary_not_predictive": {
+    "spearman_token_lanes_vs_w7": -0.088,
+    "spearman_lane_hits_vs_w7": -0.032,
+    "spearman_name_token_count_vs_w7": 0.02,
+    "union_listings_without_demand_token": 41,
+    "union_w7_without_demand_token_pct": 24.9,
+    "token_share_drop_top1": { "research_pct": { "full": 58.1, "drop_top_1": 19.8, "drop_top_2": 13.8 }, "competitor_pct": { "full": 2.7, "drop_top_1": 18.4, "drop_top_3": 23.0 } },
+    "third_party_copies_of_our_vocabulary": { "skills.volces.com/ai-company-cro": 1, "skills.volces.com/ai-company-cqo": 1, "skills.volces.com/ai-company-coo": 1, "skills.volces.com/one-person-company-os": 7, "mlamla123/openclaw-starter-kit/growth-intel": 1 }
+  },
+  "mirror_entry_is_bimodal": {
+    "bundle": "superpowers",
+    "landing_mirrors": { "101-skills/superpowers": 4725492, "magentosh/superpowers": 3787109, "qu-skills/superpowers": 2648964, "skills-shell/superpowers": 2045545, "its-a-skill-issue/superpowers": 1917080, "bankai-skills/superpowers": 1796743, "obra/superpowers": 3621032 },
+    "non_landing_mirrors": { "skills-101/superpowers": 118, "halt-catch-fire/superpowers": 44 },
+    "per_listing_mean_lifetime_landing": { "101-skills": 236274, "magentosh": 291316, "qu-skills": 264896, "skills-shell": 204554, "its-a-skill-issue": 191708, "bankai-skills": 199638 },
+    "non_landing_per_listing": { "skills-101": 11.8, "halt-catch-fire": 11.0 },
+    "payoff_gap_x": 20000,
+    "mirror_weekly_pool_cv_five_non_origin": 0.018,
+    "mirror_pool_vs_origin": "~1/3 of origin (12.6k vs 38.0k w7)",
+    "clone_family_landing_rate": { "flowing": 86, "copies": 214, "pct": 40.2 }
+  },
+  "market_structure_context": {
+    "union_listings": 116,
+    "union_w7": 78332,
+    "listing_hhi": 0.1695,
+    "effective_listings": 5.9,
+    "repo_hhi": 0.1596,
+    "effective_repos": 6.3,
+    "top5_repo_share_pct": 95.6,
+    "biggest_single_listing": { "id": "mattpocock/skills/research", "w7": 37348, "share_pct": 47.7 },
+    "our_vocabulary_listings_in_union": 21,
+    "our_vocabulary_w7": 834,
+    "our_vocabulary_dead_listings": 12
+  },
+  "queued": ["E133 even-split fit on full catalog sizes", "E134 our pool 8-window trajectory + kill criterion", "E135 mirror landing discriminator", "E136 consolidation simulation n=26/13/8/4", "E137 cross-marketplace channel check"],
+  "falsifiers": ["2 of top-10 lane repos break even-split next window", "tokenless-name listing enters lane top-3", "our pool grows >30% in 8 weeks with no change", "a 7th superpowers mirror lands at intermediate 1k-50k per listing"],
+  "rules": [
+    "Never treat a repo's listings as competing assets inside a repo: the repo's pool is split evenly across its catalog.",
+    "Size every opportunity as pool/n_catalog first; listing-level merit features (name tokens, description length, query relevance) carry ~zero signal.",
+    "Our 4 installs on our #1 slot are an even share of a 123-install pool, not a ranking defect.",
+    "Mirror entry is a binary payoff (land ~200-290k lifetime/listing, miss ~11); treat it as a portfolio of attempts, never a single bet.",
+    "Do not spend the cycle on renaming or copy edits for our listings: expected flow effect ~0 at our pool level."
+  ],
+  "operational_state": { "env_vars": 3, "publish_credential": false, "ops_social_posts": 0, "published": 0, "external_writes": 0, "read_only": true },
+  "files": ["sage-hypothesis-2026-10-26-0037.md", "sage-decision-2026-10-26-0037.md", "sage-intel-2026-10-26-0037.json", "sage-cycle89-lanes.json", "sage-cycle88-names.json", "sage-cycle88-nameledger.json", "sage-cycle88-repos.json"]
+}

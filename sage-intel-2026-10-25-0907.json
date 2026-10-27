@@ -1,0 +1,40 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-25T09:07+02:00",
+  "proposalId": 94491,
+  "missionId": 94455,
+  "stepId": 94487,
+  "hypothesisId": "H79",
+  "hypothesis": "The installs market is audience-bound, not name-bound: the exact name 'competitor-teardown' is carried by 15 repos, but 6 old superpowers mirrors hold 211,151 of 211,317 installs (99.92%) while 9 new clones hold 166 combined (mean 18, max 54); cluster leaders are audience-bearing repos regardless of shape (coreyhaines31 49-56% from 5-6 listings, mattpocock 41% from ONE listing of 712,820); our own listing is indexed, ranks #1 for its own name and has 1 install across 29.5h - so the binding constraint is audience attachment, not discoverability or naming. Mechanics: H78's stall rule (movers/h<20) is falsified - the 29.53h window T2->T6 carried 625,713 installs (91.6% of all movement, 21,189/h) through only 146 listings (4.9 movers/h); the correct detector is installs/hour, and 13/160 listings are structurally frozen so the effective population is 147; exact-equal increment cohorts cover 36-48% of movers globally, so H78's retraction of cycle 77 must narrow to 'repo attribution', not 'shared mechanism'.",
+  "window": "T2 2026-10-24T01:38Z -> T6 2026-10-25T07:10Z (29.53h)",
+  "population": { "listings": 160, "live": 147, "frozen_lifetime_zero": 13 },
+  "signals": {
+    "name_family_competitor_teardown": { "repos": 15, "total_installs": 211317, "original_mirrors": 211151, "new_clones": 166, "clone_mean": 18, "clone_max": 54, "effective_repos": 5 },
+    "clusters": {
+      "competitor-analysis": { "total": 935432, "leader": "coreyhaines31/marketingskills", "leader_share_pct": 49.1, "leader_listings": 5, "mirror_share_pct": 22.6 },
+      "competitive-intelligence": { "total": 986574, "leader": "coreyhaines31/marketingskills", "leader_share_pct": 56.1, "leader_listings": 6, "mirror_share_pct": 21.4 },
+      "market-research": { "total": 1737228, "leader": "mattpocock/skills/research", "leader_share_pct": 41.0, "leader_listings": 1, "leader_installs": 712820, "mirror_share_pct": 7.9 }
+    },
+    "our_listing": { "indexed": true, "rank": 1, "lifetime": 1, "weekly_zero_buckets": 8, "snapshots": 4, "span_hours": 29.53 },
+    "rate_replication_r": { "29.53h_vs_3.05h": 0.879, "24h_vs_5.55h": 0.897, "T2T6_vs_T4T6": 0.931, "T4T6_vs_T5T5b": 0.992 },
+    "stall_rule_correction": { "stall_detector": "installs_per_hour", "dominant_window": "T2->T6", "installs": 625713, "installs_per_h": 21189, "movers_per_h": 4.9, "true_stall_window": "T3->T4 (1185/h)" }
+  },
+  "risks": [
+    "registry counters are not usage or revenue; single registry",
+    "search API is fuzzy; borderline keyword membership approximate (all totals deduped by listing id)",
+    "clone control group small (9 listings) and of unknown age",
+    "skills.sh ranking/algorithm changes can move counters independently of demand"
+  ],
+  "next_experiments": [
+    "E87 read 2026-11-08: clones (<100 predicted) vs mirrors vs our listing (>25 without audience surface kills H79)",
+    "E88 re-score last 5 windows with installs/hour stall rule and 147-listing denominator",
+    "E89 enumerate 3 audience-bearing repos in our capability family and propose one attachment each (analysis only)"
+  ],
+  "artifacts": [
+    "sage-hypothesis-2026-10-25-0907.md",
+    "sage-decision-2026-10-25-0907.md",
+    "sage-aldi-rows-20261025-0710.json (T6 snapshot)",
+    "_s79_log1.txt", "_s79_log2.txt", "_s79_log3.txt"
+  ],
+  "external_actions": "none (read-only public GETs; no posts, installs, repo mutation, keys, or model calls)"
+}

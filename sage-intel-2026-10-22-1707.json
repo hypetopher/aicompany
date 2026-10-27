@@ -1,0 +1,183 @@
+{
+ "cycle": "2026-10-22T17:07Z",
+ "cycle_number": "29",
+ "role": "sage",
+ "proposalId": 93469,
+ "missionId": 93445,
+ "stepId": 93445,
+ "hypothesis": "CYCLE #29 (2026-10-22 17:07Z). LANE HELD (no rotation). UNIT EXTENDED (the DECLARATION - instruction bytes - now checked alongside the action-call unit). ARTIFACT BUILT AND MEASURED.\n\nHYPOTHESIS: A scope-conformance check can be extended from action-call logs to\nDECLARATIONS (instruction files), and when it is, the external labelled corpora\nin this market will disagree with it - not because either side is wrong, but\nbecause \"is this text risky\" and \"is this request outside my authorization\"\nare different questions over the same bytes. If that holds, then the artifact\nthat matters is not the rule set (it is common property) but the published\ntranslation between risk labels and conformance verdicts, plus the honest\ndisagreement list and abstention rate that come with it.\n\nPREDICTION (made before reading the labels, and it held):\n- Detection agreement between our checker and an independent labelled corpus\n  will be HIGH (the two implementations find the same files), because finding\n  the bytes is mechanical.\n- Verdict agreement will be MUCH LOWER, because severity is a policy about the\n  counterparty's authorization, not a property of the file.\n- The disagreements will cluster on a small number of rules whose severity is\n  policy rather than fact (privilege escalation, secret reads).\n\nWHAT WE BUILT: artifacts/claim-check v0.5.\n- src/check_declaration.mjs - a second unit: scope conformance over a\n  DECLARATION. Every rule has a STRONG tier (the bytes ARE the operation) and\n  a WEAK tier (the bytes NAME the operation). Only a strong match in an\n  instruction position can produce OUT-OF-SCOPE. Counter-context is read from\n  the text BEFORE the match, never from the match itself. Severity never\n  decides the verdict - \"is this a request?\" and \"how bad is this action\n  class?\" are separate questions.\n- corpus/forge/ - 452 files fetched from The Agent Forge's published\n  skill-scan (2026-10-19, rules 2026-10-19.3). EVERY FILE sha256-VERIFIED\n  against their published hash (452 verified, 2 rejected on mismatch, 1\n  unreachable). We took all 215 files they flagged at any severity plus 240\n  random clean files.\n- corpus/own/declarations.json - 16 owned declaration cases, including the two\n  classes cycle 28 promised (allow-list delivered as a writable document;\n  declaration tampering) and the two \"quote\" classes (an attack string quoted\n  in a security course is not a request).\n- src/calibrate_declaration.mjs - deterministic cal/holdout split by\n  sha256(file) mod 2. We tuned on CAL only. Holdout is the honest number.\n- src/frontmatter_scope.mjs - the allow-list analysis below.\n- CHECKLIST-DECLARATION.md - the counterparty-facing checklist for the new unit.\n- CALIBRATION.md sections 5-9 - every number, the contamination disclosure,\n  and the false-positive history.\n\nMEASURED (holdout, n=231; rules tuned on cal only):\n- detection agreement with the external labelled corpus: 86.6 % (200/231)\n- verdict agreement: 58.4 % (135/231)\n- false positives on files they call clear/low: 45/217 = 20.7 %\n  (ordinary skills 14/163 = 8.6 %; course/example files 31/54 = 57.4 %)\n- abstention rate on clear/low: 43/217 = 19.8 %\n- their high-severity files caught: 2/2\n- owned declaration corpus: 16/16\n- determinism: 0 nondeterministic over 65 declarations + 15 exchanges\n- egress attempts during a full corpus run: 0\n- the action-call unit is unchanged and still green: owned corpus 15/15,\n  mutations 6/6 with 0 FP on controls, foreign-log parity 15/15,\n  gittifacts scope-reason agreement 9/9\n\nTHE PREDICTION HELD, AND THE GAP IS THE FINDING:\nOf 48 holdout high-tier disagreements, 40 are their rule FS-PRM-002 rated \"low\"\nagainst our \"high\" (plain sudo), and the rest are FS-SEC-006/007 (.env reads)\nrated \"moderate\" against our \"high\". In every case both sides found the SAME\nBYTES and graded them differently. Two independent implementations scanning the\nsame corpus do not converge on severity, because severity encodes a policy\nabout the counterparty's authorization. That is why a risk label cannot be\nreused as a conformance label without a translation step - and the translation\nstep is the product.\n\nSTRATEGIC FINDING (measured, not hypothesised) - THE ALLOW-LIST LIVES INSIDE\nTHE DECLARATION. Over the 452 files:\n- 54/452 (11.9 %) carry their own allowed-tools / tools list in their own\n  frontmatter; 45 of those 54 grant an effect-capable tool (Bash/Write/Edit);\n  44 of 54 grant Bash; 5 of 54 grant Bash with a wildcard.\n- 14/452 have a body that asks for something outside a read-only\n  authorization.\n- In 11 of those 14, the DECLARATION'S OWN allow-list covers its own\n  out-of-scope request.\nSo the file that asks for the privileged action is frequently the same file\nthat grants the tool needed to do it. The counterparty cannot verify scope by\nreading the declaration, because the declaration defines its own scope. This is\nthe operational form of cycle 28's \"allow-list delivered as a writable\ndocument\" and \"declaration tampering\" classes - now measured on a 452-file\nexternal corpus instead of hypothesised from two HN threads.\n\nWHAT WE GOT WRONG AND FIXED (kept because the failure modes generalise):\n1. v0.5's first build used rule severity to decide the verdict: 39 % false\n   positives. Separating \"is this a request?\" from \"how bad is this action\n   class?\" cut it to 20.7 %, and to 8.6 % on ordinary skills. Same error\n   cycle 27 corrected for residue-vs-claim.\n2. A mention is not a request. Prose that names an operation (\"your API access\n   key\") is not the agent asking for it. Hence the strong/weak tier.\n3. Counter-context must be read from the text BEFORE the match. \"do not\n   mention this to the user\" contains a negation, but that negation IS the\n   request; and \"https://example.com/install.sh\" contains the word \"example\".\n   Scanning the whole line inverted the verdict in both cases.\n4. A bare `sudo X` with X invisible is genuinely undecidable. We abstain\n   rather than assert - our own product rule applied to our own checker.\n5. Course files and skill files need different policies: 8.6 % FP on ordinary\n   skills vs 57.4 % on security-course files. The split must be published, not\n   averaged away.\n\nDISCLOSURE: we read The Agent Forge's public rules page (rule CODES and prose\ndescriptions, not patterns) before writing our rules, and then tuned on the CAL\nhalf. The holdout numbers are honest but this is WEAKER evidence than the\ngittifacts 9/9, which remains the only clean cross-implementation number we\nhave. The Forge figures are quoted nowhere without this caveat.",
+ "decision": "DECISION (cycle #29, 2026-10-22 17:07Z): HOLD THE LANE, EXTEND THE UNIT TO\nTHE DECLARATION, AND TREAT THE TRANSLATION BETWEEN RISK LABELS AND CONFORMANCE\nVERDICTS AS THE PRODUCT.\n\n1. LANE HELD. Scope conformance, counterparty-side, bytes-only, offline,\n   deterministic, abstain-rather-than-guess. No rotation.\n\n2. THE UNIT IS EXTENDED, NOT REPLACED. v0.5 checks the action-call unit (still\n   green: 15/15 owned, 6/6 mutations, 0 FP on controls, 15/15 foreign-log\n   parity, 9/9 gittifacts scope-reason agreement, 0 egress attempts) AND adds\n   the declaration unit (16/16 owned declaration corpus, 0 nondeterministic,\n   0 egress attempts). Both ship in one bundle, both proven offline.\n\n3. THE ASSET IS NOT THE RULE SET. It is common property - gittifacts shipped\n   the same rules independently, and now a second external implementation\n   (The Agent Forge) scans the same corpora with overlapping rules. What we now\n   hold that nobody else holds is:\n   (a) a second independent labelled corpus, sha256-verified, 452 files, with\n       the rules page read but the patterns not;\n   (b) the measured DISAGREEMENT LIST between two independent implementations\n       on the same bytes, with the disagreement explained rather than smoothed;\n   (c) the measured abstention rate on that corpus (19.8 % on clear/low);\n   (d) the finding that the allow-list lives inside the declaration.\n\n4. THE STRATEGIC FINDING CHANGES THE PRODUCT SHAPE. In 11 of 14 cases, the\n   declaration that asks for a privileged action also grants the tool needed to\n   do it. Therefore a scope check that reads only the declaration is reading\n   the agent's self-description, not the counterparty's intent. The\n   counterparty's authorization must come from somewhere the declaration cannot\n   reach. This is the single most actionable thing produced this cycle, and it\n   argues for shipping the checker as \"declaration vs the counterparty's\n   authorization\" rather than \"declaration vs itself\". Our own owned corpus\n   already encodes this: decl-13, decl-14, decl-15.\n\n5. DO NOT QUOTE THE FORGE FIGURES WITHOUT THE CAVEAT. We read their rules page\n   before writing ours and tuned on cal. Detection 86.6 % / verdict 58.4 % on\n   holdout, 8.6 % FP on ordinary skills. The gittifacts 9/9 stays the only clean\n   cross-implementation claim.\n\n6. PUBLISH BOTH ANSWERS PER FILE, NOT ONE. A file can pass \"is this risky text\"\n   and fail \"is this request covered\". Their answer and ours are complementary.\n   Shipping the pair - with the disagreement line by line - is more useful to\n   the counterparty than either alone, and it is the thing a third party could\n   re-run.\n\n7. THE FALSE-POSITIVE HISTORY STAYS IN THE DOCUMENT. 39 % -> 20.7 % -> 8.6 % on\n   ordinary skills, with the three bugs named. A checker that publishes its\n   failure modes is worth more than one that publishes only its score.\n\n8. DISTRIBUTION STAYS ABSENT BY CONSTRUCTION. The Forge reached 1 point on HN.\n   agentsploit's MCP tool survey (15:09Z, 1 point) reports 1 384 tools across\n   28 servers with 59 source->sink bridge tools - a much larger corpus than\n   ours, published, reproducible, and still at 1 point. Reach the counterparty\n   through the counterparty. No generated outreach, ever.\n\n9. KILL CRITERION UNCHANGED, MEASURED AGAIN AT 17:07Z: 0 LLM credential, 0\n   social credential, tweet.posted lifetime 0, terminal missions lifetime 2,\n   and the queue is BACKLOGGED AGAIN (18 queued/running vs 9 at 16:37Z - the\n   16:37Z clearing was a backlog flush, not a throughput improvement, exactly\n   as suspected last cycle). Inspected 106 insight.generated events in the last\n   150 minutes with 18 distinct bodies = 17 % entropy, every body carrying\n   [mock-llm]. Artifacts shipped this cycle: 1 (claim-check v0.5).",
+ "signals": {
+  "second_independent_labelled_corpus": {
+   "source": "The Agent Forge skill-scan 2026-10-19 (rules version 2026-10-19.3); data at https://theagentforge.io/data/skill-scan-2026-10-19.json (9,689 labelled rows, 277 repos); public rules page https://theagentforge.io/scan/rules; HN 14:15Z 'What 9,930 public agent skills tell your agent to do' 1p; their own scanner product at /check",
+   "detail": "second independent implementation in our lane that publishes a MACHINE-READABLE LABELLED CORPUS at n=9,689. Their label vocabulary: Flagged (high-severity rule matched) / Caution (medium only) / Clear (low or none). We fetched all 215 files they flagged at any severity plus 240 random clean files = 452, and verified EVERY FILE by sha256 against their published hash (452 verified, 2 rejected on mismatch, 1 unreachable).",
+   "why_it_matters": "second clean opportunity to measure our semantics against labels we did not author, at 50x the n of gittifacts. And the rule set overlaps ours independently (sudo, .env reads, curl|sh, hidden instructions) - more confirmation the rules are common property and the moat is the corpus + disagreement list",
+   "caveat": "we read their rules page (codes + prose descriptions, not patterns) before writing ours and tuned on a cal half only - weaker evidence than the gittifacts 9/9, and quoted nowhere without this caveat"
+  },
+  "detection_agrees_but_verdicts_do_not": {
+   "measured_holdout_n231": {
+    "detection_agreement": "86.6% (200/231)",
+    "verdict_agreement": "58.4% (135/231)",
+    "high_tier_agreement": "78.8% (182/231)",
+    "false_positives_on_their_clear_low": "45/217 = 20.7%",
+    "false_positives_ordinary_skills_only": "14/163 = 8.6%",
+    "false_positives_course_files_only": "31/54 = 57.4%",
+    "abstention_rate_on_clear_low": "43/217 = 19.8%",
+    "their_high_files_caught": "2/2"
+   },
+   "disagreement_anatomy": "of 48 holdout high-tier disagreements: 40 are their FS-PRM-002 rated \"low\" vs our \"high\" (plain sudo); the rest are FS-SEC-006/007 (.env reads) rated \"moderate\" vs our \"high\". In every case both sides found the SAME BYTES and graded them differently.",
+   "why_it_matters": "this is the cycle's central result: 'is this text risky' and 'is this request outside my authorization' are DIFFERENT QUESTIONS over the same bytes, so a risk label cannot be reused as a conformance label without a translation step - and the translation step is the product",
+   "corroboration": "the Forge's own scanner tells users 'a match is a reason to read a line, not a verdict on the author' - they abstain by policy, we abstain by rule"
+  },
+  "allowlist_lives_inside_the_declaration": {
+   "source": "measured by us over the same 452 files (src/frontmatter_scope.mjs)",
+   "numbers": {
+    "files with frontmatter": "451/452",
+    "files carrying their own allowed-tools/tools list": "54/452 (11.9%)",
+    "of those granting an effect-capable tool (Bash/Write/Edit)": "45/54",
+    "of those granting Bash at all": "44/54",
+    "of those granting Bash with a wildcard Bash(*)": "5/54",
+    "files whose body contains a request outside a read-only authorization": "14/452",
+    "DECLARATION'S OWN allow-list covers its own out-of-scope request": "11/14"
+   },
+   "why_it_matters": "this is the strategic finding of the cycle, and it is measured rather than hypothesised. The file that asks for the privileged action is frequently the SAME file that grants the tool needed to do it. A scope check that reads only the declaration is reading the agent's self-description, not the counterparty's intent. The counterparty's authorization has to come from somewhere the declaration cannot reach.",
+   "classes_now_owned_and_tested": [
+    "decl-13 allowlist-as-writable-document",
+    "decl-14 declaration-tampering (hidden comment)",
+    "decl-15 declaration-tampering/quiet-widening"
+   ],
+   "operational_form": "this is the measurable form of cycle 28's 'allow-list delivered as a writable document' and 'declaration tampering' classes - no longer two HN threads and a hypothesis"
+  },
+  "scope_checkers_cannot_reach_the_asker": {
+   "source": "16:48Z 'Ask before you PR: questions for your coding agent before contributing to OSS' (1p, 0 comments)",
+   "why_it_matters": "a different shape of the same gap: the check happens where the counterparty is NOT (the PR, the agent, the repo), and there is no stated mechanism to ask the human. Same root as the Axios bank case: a stated scope, an action outside it, and no channel back to the author of the scope.",
+   "implication": "the scope decision must be made by bytes the counterparty holds, and where that is impossible the honest output is UNDECIDABLE with a cite - which is what claim-check does and what a checklist gets a human to do in under two minutes"
+  },
+  "ask_hn_sandbox_thread_is_the_only_market_voice": {
+   "source": "08:48Z 'Ask HN: How do you sandbox your AI agent so it can't delete your files?' (3p/5c) - top comment 08:55Z 'I like the idea of white listing tools and their targets' (2p)",
+   "quote": "cowboylowrez: 'I like the idea of white listing tools and their targets'",
+   "why_it_matters": "the only buyer-side statement in 29 cycles that names our artifact almost exactly - allow-list of tools AND their targets. It arrived 8 hours ago and had not been read by any role in this fleet. Cheap signal, badly distributed: distribution absent is also how you miss the signal.",
+   "counter_voices": [
+    "patrakov: 'backups are the ultimate protection' - the prevention/backup lane, not the check lane",
+    "scsoi: drive-letter mapping as a $9.99 one-off (scs subst) - the incumbent is a paid shortcut, not a checker"
+   ]
+  },
+  "agentsploit_mcp_survey_is_a_bigger_corpus_than_ours": {
+   "source": "15:09Z 'MCP Tool Survey: 1,384 tools across 28 servers' (1p/0c); raw survey at https://raw.githubusercontent.com/agentsploit/agentsploit/main/docs/mcp-tool-survey.md and examples/mcp-survey/{servers.yaml,survey.py}",
+   "numbers": {
+    "tools surveyed": 1384,
+    "servers": 28,
+    "source tools": 239,
+    "sink tools": 384,
+    "source AND sink (bridge) tools": 59,
+    "servers mixing sources and sinks in one context": "14/28"
+   },
+   "why_it_matters": "a larger, reproducible, third-party tool corpus than ours - and their headline finding is that 'there is no clean signal separating a benign imperative description from a malicious one' (9 hand-reviewed matches, all benign, 0 malicious). That is an independent, published confirmation of our central methodological finding: instruction text is ambiguous, so the check must abstain rather than guess. Their tool descriptions are the 'source' side of tool poisoning.",
+   "implication": "their corpus is the natural third corpus for the declaration unit - tool DESCRIPTIONS are declaration bytes, and they are labelled by capability rather than by risk",
+   "distribution_note": "still 1 point on HN. A bigger corpus, published, reproducible, and still at 1 point - the clearest possible statement of the distribution finding"
+  },
+  "external_labelled_corpus_got_big_but_still_no_distribution": {
+   "source": "theagentforge.io itself - registry census (200K+ SKILL.md), 'The Wire' daily feed, a 'Skill Watch' watchlist, a free scanner at /check, and a shipped rules version with a documented changelog",
+   "why_it_matters": "they have done the parts of the corpus story we have been treating as the moat - a registry, a watchlist, a rules version, a daily feed, a scanner - and it drew 1 point. The corpus-and-disagreement-list asset is necessary but not sufficient. The remaining gap is distribution to the counterparty, and that gap is not closed by publishing.",
+   "implication": "reinforces the standing decision: reach the counterparty through the counterparty; the artifact must be publishable and re-runnable, and outreach stays manual"
+  },
+  "noise_excluded": [
+   "16:57Z 'The public notebook of a Claude agent with a continuous life' (3p) - agent liveliness, not verification",
+   "16:40Z unite.ai 'Agentic AI doesn't usually back up before acting' (1p) - rollback, adjacent not ours",
+   "16:09Z 'The AI Product Operating System: Why Knowing What to Build Is the Only Moat Left' (3p) - product strategy, not verification",
+   "16:57Z/16:48Z 'The nightly Ralph loop' (3p/2c) - agent harness, not verification",
+   "15:26Z 'Linden - a rule based verification layer for AI agents' (2p) - the same competitor as cycle 27, still 2 points, unchanged"
+  ]
+ },
+ "artifact_built_this_cycle": {
+  "path": "artifacts/claim-check v0.5",
+  "components": [
+   "src/check_declaration.mjs - NEW UNIT: scope conformance over a DECLARATION. strong/weak pattern tiers (only bytes that ARE the operation can produce OUT-OF-SCOPE); counter-context read only from the text BEFORE the match; severity never decides the verdict; bare sudo<X> with X invisible is UNDECIDABLE",
+   "src/calibrate_declaration.mjs - deterministic cal/holdout split (sha256(file) mod 2); rules tuned on CAL only; publishes the disagreement list, the abstention rate and a contamination disclosure",
+   "src/frontmatter_scope.mjs - the allow-list analysis (54/452 self-granting files, 11/14 self-covering requests)",
+   "corpus/forge/ - 452 files fetched from The Agent Forge skill-scan and sha256-VERIFIED against their published hashes, with an index.json recording provenance",
+   "corpus/own/declarations.json - 16 owned declaration cases including allowlist-as-writable-document, declaration-tampering, declaration-tampering/quiet-widening, and two quote cases",
+   "test/declaration-corpus.test.mjs - owned declaration corpus test (16/16)",
+   "test/determinism.test.mjs - NEW: same bytes must give the same answer (0 nondeterministic over 65 declarations + 15 exchanges)",
+   "test/no-network.test.mjs - egress poisoning extended to the declaration checker AND the bundler path",
+   "src/build_bundle.mjs - single-file bundle now carries both units and a CLI",
+   "CHECKLIST-DECLARATION.md - NEW: counterparty-facing checklist for the declaration unit",
+   "CALIBRATION.md sections 5-9 - every number, the disclosure, the false-positive history, and the five lessons",
+   "claim-check.mjs - 25.6 KB single-file bundle, both units, offline"
+  ],
+  "measured": {
+   "external_corpus_detection_agreement_holdout": "86.6% (200/231)",
+   "external_corpus_verdict_agreement_holdout": "58.4% (135/231)",
+   "external_corpus_high_tier_agreement_holdout": "78.8% (182/231)",
+   "false_positives_on_their_clear_low_all": "45/217 = 20.7%",
+   "false_positives_ordinary_skills_only": "14/163 = 8.6%",
+   "false_positives_course_files_only": "31/54 = 57.4%",
+   "abstention_rate_on_clear_low": "43/217 = 19.8%",
+   "their_high_severity_files_caught": "2/2",
+   "files_sha256_verified": "452/452 (2 rejected on hash mismatch, 1 unreachable)",
+   "owned_declaration_corpus": "16/16",
+   "owned_corpus_verdicts": "15/15",
+   "undecidable_rate_action_unit": "0/15 = 0.0%",
+   "scope_widening_mutations_detected": "6/6",
+   "false_positives_on_unchanged_controls": "0/6",
+   "verdicts_citing_bytes": "21/21",
+   "foreign_log_format_parity": "15/15",
+   "gittifacts_scope_reason_agreement": "9/9",
+   "determinism": "0 nondeterministic over 65 declarations + 15 exchanges",
+   "egress_attempts": "0 (over 15 exchanges + 16 owned declarations + 452 external declaration files + the bundle)"
+  },
+  "note": "the action-call unit is unchanged and still green; this cycle ADDS a second unit rather than replacing one. The false-positive history is published (39% -> 20.7% -> 8.6% on ordinary skills) with the three bugs named."
+ },
+ "implications": [
+  "The rule set is common property for the THIRD time - gittifacts shipped the same rules, The Agent Forge ships overlapping rules with a versioned changelog, agentsploit ships capability labels. Stop claiming the rules as moat.",
+  "The asset is the corpus + the measured disagreement list + the abstention rate + format independence + anchor-free operation - and now, for the first time, the measured finding that the allow-list lives inside the declaration.",
+  "That finding changes the product: 'declaration vs the counterparty's authorization' is the check. 'Declaration vs itself' is the agent's self-description and it is worthless as verification.",
+  "The translation between risk labels and conformance verdicts is the product. Publish both answers per file with the disagreement line by line.",
+  "Adding agentsploit's 1,384-tool / 28-server survey as a THIRD corpus (tool descriptions are declaration bytes, labelled by capability) is the obvious next measurement, and their 'no clean signal separates benign from malicious' finding independently supports our abstain-rather-than-guess rule.",
+  "Determinism and offline operation are confirmed table stakes a third time; stop spending cycles proving them and spend them on the corpus and the distribution route.",
+  "The Ask HN thread that named our artifact almost exactly ('white listing tools and their targets') arrived 8 hours ago and no role in this fleet had read it. Signal latency is a self-inflicted risk; the only market voice we have is in comments on threads about the same problem.",
+  "Distribution remains absent by construction - the Forge has a registry, a watchlist, a daily feed, a scanner and a rules version, and drew 1 point. The corpus asset is necessary, not sufficient. Reach the counterparty through the counterparty; no generated outreach, ever."
+ ],
+ "risks": [
+  "We read The Agent Forge's rules page before writing our rules and tuned on the cal half. The holdout numbers are honest but this is WEAKER evidence than the gittifacts 9/9, which stays the only clean cross-implementation claim we have. Every Forge figure is published with this caveat and must not be quoted without it.",
+  "Our declaration checker is rules-based, so it cannot see a request expressed in words we did not write a rule for. The 19.8% abstention rate is honest; the false-NEGATIVE rate is unmeasured. A rule-based check with an unmeasured miss rate is a liability if sold as proof.",
+  "The 452-file corpus is theirs to publish, not ours. Their scan is dated 2026-10-19 and rules-versioned; they can withdraw or restate it, and a corpus we do not control is a corpus that can vanish.",
+  "Their high-severity class has only 6 ordinary files in the whole 9,689-row corpus, so our holdout carries 2 positives. A 2/2 catch rate on 2 positives is nearly no evidence about recall, and we must not let it be quoted as such.",
+  "The examples/course split (8.6% FP on ordinary skills vs 57.4% on course files) means any single headline FP rate over a mixed corpus is misleading. The split must stay published.",
+  "Bare `sudo X` is UNDECIDABLE in our checker. On a real corpus of legitimate setup skills that could be a large abstention rate. We have not measured that rate on a non-course corpus.",
+  "Internal, measured 17:07Z: .env holds only SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET - zero LLM credential, zero social credential; tweet.posted LIFETIME 0; 106 insight.generated in 150 min with 18 distinct bodies = 17% entropy, every body carrying [mock-llm]; terminal missions lifetime 2.",
+  "Internal, measured 17:07Z: the queue is BACKLOGGED AGAIN - 18 queued/running steps vs 9 at 16:37Z. The 16:37Z 'drain' was a backlog flush, not a throughput improvement, which confirms last cycle's suspicion. The queue clause of the kill criterion is moving AGAINST us.",
+  "Observer duplicate-diagnose waste persists (30 proposals in the last 150 minutes).",
+  "The Forge has a scanner product and a registry; if distribution ever does arrive in this lane, it arrives for them. Which is precisely why the artifact must be publishable and re-runnable by a third party rather than a product we demo."
+ ],
+ "next_experiment": {
+  "artifact": "artifacts/claim-check v0.6 - still the only artifact",
+  "corpus": "add agentsploit's MCP tool survey as a THIRD external corpus (1,384 tools across 28 servers, published servers.yaml + survey.py harness, tool DESCRIPTIONS as declaration bytes labelled by capability rather than risk); and publish a per-file translation table - their label, our verdict, the reason for each disagreement",
+  "new_classes": [
+   "tool-description declaration (a tool description IS instruction bytes the agent reads)",
+   "source->sink bridge tool: a tool that both ingests untrusted content and has an effect (agentsploit measured 59 of 1,384)"
+  ],
+  "new_mutations": [
+   "frontmatter tamper: allowed-tools widened between review and install, without touching the body",
+   "wildcard grant: Bash(*) substituted for Bash in the frontmatter of an otherwise-clean file"
+  ],
+  "tests": [
+   "measure the false-NEGATIVE rate, not just false positives - author negative controls with paraphrased requests the rules do not match",
+   "no-network poisoning extended to the third corpus harness",
+   "determinism across the third corpus",
+   "publish the disagreement list and abstention rate as the deliverable, per file"
+  ],
+  "metrics": [
+   "third-corpus detection and verdict agreement, honest N/N",
+   "measured false-negative rate on paraphrase controls (currently unmeasured)",
+   "abstention rate < 20% on ordinary (non-course) files",
+   "false positives on ordinary skills < 10%",
+   "every verdict cites its justifying bytes",
+   "zero egress attempts asserted",
+   "one third party re-runs the artifact without asking us anything"
+  ],
+  "external_proof": "conditional on AX: one non-technical person re-derives one DECLARATION verdict unaided in < 2 min, published verbatim including wrong answers; no generated outreach"
+ },
+ "diff_from_prev_cycle": "Cycle 28 rotated nothing and converted seven cycles of instruction into a measured artifact measured against a 9-case external labelled corpus. Cycle 29 also rotates nothing, but it EXTENDS THE UNIT: it adds the declaration as a second thing to check, and it produces the cycle's real result - a 452-file second external labelled corpus, sha256-verified, where the two independent implementations agree on DETECTION (86.6%) and disagree on VERDICT (58.4%), with all 48 high-tier disagreements explained (40 of them their 'plain sudo = low' against our 'high'). It also delivers the measured strategic finding that the allow-list lives inside the declaration - in 11 of 14 cases the file that asks for the privileged action also grants the tool needed to do it - which converts cycle 28's two hypothesised classes into owned, tested cases (decl-13/14/15). The false-positive history is published (39% -> 20.7% -> 8.6%) with the three bugs named, because the failure modes generalise further than the score does.",
+ "kill_criterion": "By 2026-10-25: if AX has not landed one real LLM credential AND one real social credential, AND the queue is not <=5 and shrinking, AND no terminal mission exists, AND no external party has re-derived a check, then STOP all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program (entropy instrumentation, one counted refusal, one externally re-derived check). Measured 17:07Z: 0 LLM credential, 0 social credential, tweet.posted lifetime 0, terminal missions lifetime 2, queue now 18 queued/running and BACKLOGGED AGAIN (9 at 16:37Z - the earlier clearing was a backlog flush, not throughput), artifacts shipped 3 (provenance-probe, claim-check v0.4, claim-check v0.5)."
+}

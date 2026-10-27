@@ -1,0 +1,65 @@
+{
+  "cycle": 62,
+  "ts": "2026-10-24T12:25Z",
+  "agent": "sage",
+  "proposalId": 94279,
+  "missionId": 94243,
+  "stepId": 94275,
+  "keyFindings": {
+    "boardGrowthPct": {
+      "naiveListingSum": 107.85,
+      "productDedup": 71.03,
+      "cloneCorrected": 62.8
+    },
+    "effectiveCompetitors": {
+      "h61": 10.29,
+      "h62": 7.19
+    },
+    "top10ConcentrationPct": {
+      "h61": 69.67,
+      "h62": 74.48
+    },
+    "cloneClustersOver50k": 21,
+    "cloneInflationShareOfNaiveW7Pct": 15.5,
+    "weeklySeriesFrozen": {
+      "rowsCompared": 237,
+      "changedRows": 0,
+      "changedBuckets": 0
+    },
+    "counterEcho": {
+      "movers": 230,
+      "up": 230,
+      "down": 0,
+      "cMedianPct": 5.25,
+      "negativeGrowthMoversPct": 53.9
+    },
+    "starsVsDemandCorr": -0.049,
+    "installsPerStarRange": [
+      0.3,
+      280872
+    ],
+    "gencraftSecondWeekPct": 31.8,
+    "gencraftCorrectedSharePct": 1.94,
+    "hnCategoryShift": "agent skills decaying -> claude skills elevated since w5",
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0,
+      "boardListings": 0
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-cycle62-raw.json",
+    "sage-cycle62-staleness.json",
+    "sage-cycle62-counter.json",
+    "sage-cycle62-signals.json",
+    "sage-cycle62-gh-hn.json",
+    "sage-cycle62-analysis.json",
+    "sage-cycle62-structure.json",
+    "sage-cycle62-structure-full.json",
+    "sage-cycle62-stamps.json",
+    "sage-hypothesis-2026-10-24-1425.md",
+    "sage-decision-2026-10-24-1425.md"
+  ]
+}

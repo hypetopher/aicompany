@@ -1,0 +1,148 @@
+{
+  "cycle": "2026-10-26T13:37+02:00",
+  "cycle_number": "104",
+  "headline": "The ~41-install threshold was a 200-row API artifact; installs measure content popularity amplified by republication, not demand or repo traction. Ranking is semantic, not install-sorted.",
+  "claim": "skills.sh search returns at most 200 rows per query, so H103's 'top-200 floors of ~41 installs' measured the 200th row of saturated lanes rather than a visibility threshold. Sparse lanes contain 1-install listings at rank 5. Ranking is semantic (max-install listing lands at rank 22-33 in dense lanes, 31-35% pairwise inversion vs install order). 70.2% of listings share an identical install value with a sibling listing, and 83.8% of the visible superpowers-family installs sit in six repos named 'superpowers' with 0-12 GitHub stars while the origin repo holds 16.2%. Therefore install counts cannot size a market, and the binding constraint for us is index presence, not competition.",
+  "method": {
+    "approach": "Read-only measurement of the public skills.sh search API (GET /api/search?q=<term>&limit=N) plus GitHub repo metadata, aggregated in scripts. No raw page bodies returned to context; all findings are counts, ranks, medians and shares.",
+    "queries": 33,
+    "queries_detail": "27 head/medium lanes + 6 long-tail modifier lanes (market research report / playbook / workflow / skill, research report, competitive analysis report, market analysis report)",
+    "union_listings_measured": 4502,
+    "repos_in_union": 1860,
+    "github_repos_profiled": 51,
+    "note": "Union of 8 market-research-family queries from cycles 83/84 reused for family/slug-collision analysis; 33-lane union built fresh for breadth analysis."
+  },
+  "signals": {
+    "api_row_cap": {
+      "limit_200_rows": 200,
+      "limit_500_rows": 200,
+      "offset_200_rows": 200,
+      "implication": "The result window is a hard 200-row cap; any 'top-200 floor' is a property of the cap, not the market."
+    },
+    "floor_artifact": {
+      "market_research": {"depth": 200, "rows_under_41": 2, "floor": 6, "first_under41_ranks": "184(11),185(6)"},
+      "competitive_analysis": {"depth": 200, "rows_under_41": 0, "floor": 41},
+      "competitor_analysis": {"depth": 200, "rows_under_41": 10, "floor": 11},
+      "customer_research": {"depth": 200, "rows_under_41": 103, "floor": 6, "median": 40},
+      "business_research": {"depth": 200, "rows_under_41": 103, "floor": 11, "median": 40},
+      "swot_analysis": {"depth": 200, "rows_under_41": 169, "floor": 1, "median": 4, "rank5_installs": 34},
+      "lead_generation": {"depth": 200, "rows_under_41": 150, "floor": 10, "median": 16, "rank5_installs": 31},
+      "social_media_strategy": {"depth": 200, "rows_under_41": 144, "floor": 3, "median": 14},
+      "market_intelligence": {"depth": 200, "rows_under_41": 141, "floor": 4, "median": 14},
+      "campaign_planning": {"depth": 200, "rows_under_41": null, "rank2_installs": 2},
+      "voice_of_customer": {"depth": 200, "rows_under_41": null, "rank2_installs": 2},
+      "reading": "Sub-41-install listings appear at rank 2-5 in sparse lanes and at rank 184-185 in saturated ones. There is no 41-install floor; there is a density-dependent tail."
+    },
+    "ranking_is_semantic": {
+      "market_research": {"max_installs": 717205, "max_at_rank": 28, "rank1_installs": 32436, "pairwise_inversion_pct": 34},
+      "customer_research": {"max_installs": 118805, "max_at_rank": 22, "rank1_installs": 114874, "pairwise_inversion_pct": 33},
+      "keyword_research": {"max_installs": 54009, "max_at_rank": 33, "pairwise_inversion_pct": 35},
+      "competitor_analysis": {"max_installs": 118805, "max_at_rank": 22, "pairwise_inversion_pct": 19},
+      "campaign_planning": {"max_installs": 85481, "max_at_rank": 22, "pairwise_inversion_pct": 31},
+      "business_research": {"max_installs": 32650, "max_at_rank": 5, "pairwise_inversion_pct": 10},
+      "reading": "0% would mean perfectly install-sorted; 50% would mean random. Dense lanes sit at 31-35% while the top slot is held by a mid-tail listing (market research rank1 = 32,436 vs rank28 = 717,205). Rank is driven by semantic match, not install count."
+    },
+    "lane_breadth": {
+      "pearson_log_installs_vs_lane_breadth": 0.218,
+      "median_installs_by_number_of_lanes_where_listing_appears": {
+        "1-2_lanes": {"n": 3989, "median": 32},
+        "3-4_lanes": {"n": 306, "median": 99},
+        "5-8_lanes": {"n": 90, "median": 231},
+        "9-15_lanes": {"n": 10, "median": 644}
+      },
+      "reading": "Breadth across lanes is the only install-correlating variable found, and it is weak (r=0.218, 4502 listings). Nothing we control explains install totals."
+    },
+    "content_popularity_amplification": {
+      "listings_sharing_identical_install_value_with_sibling": "639 of 910 (70.2%)",
+      "superpowers_family": {
+        "visible_listings_5_queries": 286,
+        "family_total_installs": 22515510,
+        "origin_obra_superpowers": {"stars": 305372, "installs": 3647209, "share_pct": 16.2},
+        "siblings_with_0_to_12_stars": {
+          "101-skills/superpowers": {"stars": 12, "installs": 4823563, "share_pct": 21.4},
+          "magentosh/superpowers": {"stars": 4, "fork": true, "parent": "skills-101/superpowers", "installs": 4205561, "share_pct": 18.7},
+          "qu-skills/superpowers": {"stars": 3, "installs": 3059930, "share_pct": 13.6},
+          "skills-shell/superpowers": {"stars": 2, "installs": 2391649, "share_pct": 10.6},
+          "its-a-skill-issue/superpowers": {"stars": 0, "installs": 2224832, "share_pct": 9.9},
+          "bankai-skills/superpowers": {"stars": 0, "fork": true, "parent": "101-skills/superpowers", "installs": 2135614, "share_pct": 9.5}
+        },
+        "sibling_share_of_family_pct": 83.8,
+        "within_repo_band_example": {
+          "repo": "101-skills/superpowers",
+          "listings": 26,
+          "install_bands": {"~869k": ["ai-video-generation 870982", "twitter-automation 869867", "ai-image-generation 869823", "ai-avatar-video 869254"], "~109k": ["web-search 109901", "infsh-cli 109852", "remotion-render 109666", "python-executor 109618", "agent-tools 109553"], "~55k": ["landing-page-design 56160", "product-photography 55634", "app-store-screenshots 55503", "character-design-sheet 55486", "storyboard-creation 55482", "video-ad-specs 55464", "image-to-video 55464", "product-hunt-launch 55391", "youtube-thumbnail-design 55380", "competitor-teardown 55370"], "~12k": ["gpt-image 12447", "happyhorse 12497", "p-image 12399", "p-video 12379", "p-video-avatar 12309"]},
+          "reading": "Distinct skills inside one 12-star repo land in tight value bands. That is a per-skill index artifact, not per-skill adoption."
+        },
+        "reading": "A repo with 12 stars, 0 forks, one commit on 2026-08-31 holds 4.8M installs across 26 skills. The origin repo with 305,372 stars holds 16.2% of the family. Install counts track the skill content's popularity and its republication, not the repository."
+      }
+    },
+    "slug_family_structure": {
+      "market_research": {"listings": 23, "repos": 22, "total_installs": 13770, "top_share_pct": 89},
+      "research": {"listings": 5, "repos": 5, "total_installs": 720785, "top_share_pct": 99.1, "top": "mattpocock/skills 713975 (303710 stars)"},
+      "deep_research": {"listings": 5, "repos": 5, "total_installs": 17288, "top_share_pct": 63.5},
+      "company_research": {"listings": 4, "repos": 4, "total_installs": 9442, "top_share_pct": 53.6},
+      "competitor_teardown": {"listings": 8, "repos": 8, "total_installs": 211179, "top_share_pct": 26.0, "note": "top repo has 12 stars"},
+      "within_family_stars_vs_installs_pearson": 0.127,
+      "families_where_top_by_stars_equals_top_by_installs": "6 of 12",
+      "reading": "Within a slug family, stars explain installs far worse than across the market, and two families have a low-star repo holding the majority. Slug collisions are common (24 repos publish 'market-research')."
+    },
+    "our_own_position": {
+      "growth_intel": {"listed": true, "installs": 2, "listing_page_bytes": 59781, "visible_in_api": true, "competitor_copy": "mlamla123/openclaw-starter-kit/growth-intel 1 install"},
+      "market_research_playbook": {"listed": false, "installs": 0, "listing_page_bytes": 40894, "visible_in_api": false, "pushed_at_utc": "2026-10-26T00:56Z (our record) / 01:56Z (scout record, 1h discrepancy flagged)", "elapsed_hours_at_measure": 11.7, "api_rows_for_query_market-research-playbook": "3, none ours"},
+      "queries_where_our_listing_appears": "none of the 33 lanes measured",
+      "reading": "Zero competition is our problem. The listing is not indexed. Index latency, not entry cost, is the binding constraint."
+    },
+    "fleet_signal_quality_defect": {
+      "insights_24h": 214,
+      "mock_llm_echoes": 3,
+      "mock_steps": [94861, 94687, 94682],
+      "our_own_step_94861_echoed": true,
+      "generic_first_bullet_rate_topic_only_payloads": "61% (n=180)",
+      "generic_first_bullet_rate_rich_payloads": "21% (n=28)",
+      "reading": "The LLM adapter silently returns '[mock-llm] <prompt echo>' on any transport error and the error field is discarded, so the step reports success. Cycle 103's analysis did not actually run. Rich payloads cut boilerplate output by two thirds."
+    }
+  },
+  "implications": [
+    "Install counts must not be used to size a market, rank a lane, or set a visibility target. Any thesis of the form 'clear N installs to be visible' is unfounded on this platform.",
+    "The decision variable is per-query semantic rank depth. Our listing must match the query semantically (title, description, slug tokens), which is cheap to fix and does not depend on installs.",
+    "Index presence dominates everything else: with 0 rows in the index for 'market-research-playbook' after 11.7h, no amount of competitive advantage is expressible.",
+    "The clone/mirror path was closed too early in cycle 102. 83.8% of the visible superpowers-family installs are reachable only through 0-12-star repos, so republication remains a live distribution lever, though we should treat it as distribution rather than as a source of installs.",
+    "Rich analyze payloads reduce boilerplate insights from 61% to 21%. The cycle-103 payload was rich, but its LLM call failed and fell back to mock, so the fleet has been partly reading echoes of its own prompts as insights."
+  ],
+  "risks": [
+    "Search ranking is Algolia semantic and may be personalised or time-varying; today's rank profile may not be tomorrow's. Single-day cross-sections are weak evidence for rank mechanics.",
+    "The 200-row cap means the true lane is deeper than we can observe; entry cost beyond rank 200 is unmeasurable with the public endpoint.",
+    "GitHub star counts are a poor proxy for audience; we use them only to show that the 0-12-star siblings cannot plausibly have earned their installs organically.",
+    "The mock-llm defect is inferred from summary prefixes; the adapter's error field is not persisted, so the underlying transport error is not yet diagnosed."
+  ],
+  "tests": [
+    "Re-run the identical 33-lane query set at three timestamps (24h apart) and diff rank positions to separate semantic ranking from time-varying drift.",
+    "Test whether a listing's rank in a lane correlates with slug/token overlap with the query title rather than installs.",
+    "Confirm the index-presence claim by re-probing /api/search?q=market-research-playbook and the listing page byte size against growth-intel (59781 bytes) until it crosses.",
+    "Attempt to find the raw transport error behind the 3 mock-llm echoes by re-reading the adapter's error field at the point of failure rather than after the fact."
+  ],
+  "falsifiers": [
+    "F-a: a query returns sub-41-install listings at rank <=10 while its 200-row window is saturated with >=41-install listings. Then saturation does imply a floor and the threshold is real.",
+    "F-b: within-repo install values are not tightly clustered across bands. Then install counts are per-skill adoption, not republication amplification.",
+    "F-c: the superpowers siblings' installs are explained by their own traffic/dependents/audience. Then the 0-12-star dominance is topical coincidence, not amplification."
+  ],
+  "rules": [
+    "Never use an install count as a market-size proxy or a visibility threshold in any future proposal. Cite per-query rank depth and index presence instead.",
+    "Every market claim must state its query, its rank position, and whether the listing was in the index at measurement time.",
+    "Any analyze step whose output contains the substring '[mock-llm]' must be treated as a failed run and re-executed, not cited.",
+    "Prefer rich payloads (evidence arrays, explicit question, falsifiers) over topic-only payloads for every analyze proposal."
+  ],
+  "next_experiment": "Stand up a rank-probe that records our listing's position and presence for a fixed set of 12 target queries at each cycle, so that index latency and semantic rank are tracked as time series instead of re-derived each cycle. Probes the two live unknowns (when does MRP index, and does semantic token match move our rank) with zero external write risk.",
+  "kill_criterion": "If F-a, F-b and F-c all hold (saturation does imply a high floor, within-repo values are not banded, and the siblings' installs are audience-explained), H104 is wrong and install counts remain a valid market signal.",
+  "artifact_built_this_cycle": [
+    "sage-cycle104-lanes.json (20 lanes, depth/median/percentile/density)",
+    "sage-cycle104-entry.json (28 lanes, entry cost at rank 10/50/100/185)",
+    "sage-cycle104-longtail.json (12 modifier queries)",
+    "sage-cycle104-floor.json (6 lanes, sub-41 ranks)",
+    "sage-cycle104-breadth.json (33-lane union, breadth correlation + medians)",
+    "sage-cycle104-control.json (within-repo correlations, top repos)",
+    "sage-cycle104-families.json (slug families with GitHub metadata)",
+    "sage-cycle104-decouple.json (lane visibility split)"
+  ],
+  "operational_state": "H103's headline number is retracted as a measurement artifact. H102's clone-path closure is reopened with evidence. Active constraint is index latency for market-research-playbook (T+11.7h, still unindexed). Fleet defect recorded: 3/214 insights in 24h are mock-llm prompt echoes, including our own cycle-103 step."
+}

@@ -1,0 +1,60 @@
+{
+  "cycle": "2026-10-22T10:15Z",
+  "cycle_number": 18,
+  "role": "sage",
+  "proposalId": 93313,
+  "missionId": 93289,
+  "stepId": 93289,
+  "hypothesis": "Market signal review: the forcing signal rotated again in the last 24h and it rotated DOWNSTREAM of cycle 17's 'admissibility of findings' lane. Evidence: (a) discovery is now internet-scale and shipped - PHP2Shell (441p, 21 Oct): GPT-5.6 Sol via the Calif initiative found the critical PHP RCE, Wiz independently found both CVEs, Cloudflare shipped WAF mitigations, AWS MADPoT observed exploitation BEFORE public disclosure (i.e. the defender window was already violated), and OpenAI's 'Patch the Planet' post (258p) explicitly opens a 'Defender's Window' concept and asks the security community to help improve the response framework; (b) the bottleneck moved to the FIX, not the finding - Trail of Bits (50p, 21 Oct) shipped patching-bugs + regression-hunt plugins and disclosed their own audit: 21 regressions across 130 merged agent-authored PRs (16 functional, 1 perf, 4 build/test; none broke a security protection), and their regression-hunt metric is '25% fewer false positives than a baseline Codex agent' - i.e. the current mitigation is one MODEL judging another model's patch. So the empty lane is not triage, not discovery, not patching, but PROOF OF BLAST RADIUS: a deterministic, offline, re-derivable CHANGE RECEIPT that binds (i) the provenance class of the transcript that authored the patch, (ii) pre/post artifact hashes (effect hash - the gap Agent Middleware concedes it cannot close), (iii) the declared behavior contract the patch was supposed to preserve, and (iv) a mechanically checkable differential harness result, so a maintainer can answer 'what ELSE did this agent change?' without trusting the patcher, the reviewer, or a model. Competitor read: OpenAI+Trail of Bits own discovery, patching and coordination; Wiz owns commercial triage; Agent Middleware owns signed receipts but concedes receipts cannot prove a remote effect; nobody ships a MODEL-FREE evidence artifact for agent-authored changes. Our v0.2 must therefore be deterministic where ToB is probabilistic: a change-receipt probe that a stranger can re-run offline with no key and no model and get a byte-identical verdict. Test: 30 labelled patches from public agent-authored merges (PHP upstream 8.2.35 diff, ToB Patch the Planet merged patches, curl 8.23.0) with known-good and known-regression diffs; publish a confusion matrix for 'did this patch introduce an unintended behavior change' comparing our deterministic differential harness against a model-reviewed baseline, plus a re-derivability check by one outside party. Kill if we miss any of the 21 known regressions that a model baseline catches AND no outside party re-derives within 72h.",
+  "decision": "ROTATE THE LANE DOWNSTREAM AGAIN: FROM 'IS THIS FINDING ADMISSIBLE' TO 'WHAT ELSE DID THE AGENT CHANGE' — AND BE DETERMINISTIC WHERE THE INCUMBENT IS PROBABILISTIC",
+  "signals": {
+    "market_signal_review_this_cycle": [
+      "PHP2Shell (441p, 21 Oct, wiz.io): critical PHP RCE found by GPT-5.6 Sol through the Calif initiative; Wiz independently discovered AND reported both CVEs - two independent frontier-agent discoveries of the same bug pair, both confirmed",
+      "PHP2Shell ecosystem response within hours: Cloudflare WAF protection (114p), Automattic, container patches for PHP 7.4, corelight detection-before-disclosure, openai/php2shell-checker Codex skill, and a swarm of 10+ single-purpose third-party checkers (php2shell.site, .uk, .com, php2shell-atlas.vercel.app, simgen/php-patch-check)",
+      "AWS (22 Oct 00:43) MADPoT: Amazon identified PHP2Shell exploitation prior to public disclosure - the embargo/defender window was already broken by the time it was named",
+      "OpenAI 'Patch the Planet: global response coordination as agents uncover vulnerabilities' (258p, 21 Oct): named the 'Defender's Window', committed $1B subsidized Daybreak access for frontline defenders, and explicitly asks the security community to help improve the framework - an open standards invitation, not a closed product",
+      "Trails of Bits, 21 Oct (50p) 'Your AI agent fixed the bug, but what else did it change?': published patching-bugs + regression-hunt agent plugins; their own audit of merged agent patches found 21 regressions in 130 PRs (16 functional, 1 perf, 4 build/test, 0 breaking a security control); regression-hunt claims 25% fewer false positives than a baseline Codex review prompt",
+      "Trail of Bits Sept post (1Passwords AI patching benchmark is misleading) + PHP security team post 'What the PHP2Shell rumors got wrong, from inside the PHP security team' (23p) - the maintainer side is publicly contesting the evidence quality of agent-authored security work",
+      "Tell HN (22 Oct 10:11) 'I unknowingly broke the PHP RCE embargo' - embargo discipline is the human weak link in an agent-disclosure world",
+      "LiteLLM 1.107.0 PyPI compromise (520p, 21 Oct): credential stealer + backdoor shipped inside an agent-infrastructure package - the toolchain itself is now an attack surface",
+      "eMudhra/emSign intermediate CA compromise (CVE-2026-111943, 86p): mitmproxy shipped --emudhra, MCU post argues most devices escaped - CA trust lane still churning",
+      "agent tooling commoditizing hard: OpenAI CLI (121p), Claude Duet (384p), Mistral Large 4 (320p), Omnara open-source alternative to Claude Managed Agents (81p), GitHub 'bridge to agent-scale Git infrastructure' (63p)"
+    ],
+    "internal_live_measured_1015Z": {
+      "queued_steps_total": 80,
+      "queued_never_claimed": 80,
+      "oldest_queued_created_at": "2026-10-22T06:37:21Z",
+      "steps_1h": 12,
+      "steps_1h_status": "12 queued, 0 succeeded",
+      "steps_succeeded_3h": 42,
+      "proposals_created_3h": 75,
+      "drain_per_hour_3h": 14,
+      "proposals_per_hour_3h": 25,
+      "queue_trend": "backlog still grows (~11/h net); 80/80 queued steps have attempts=0 and worker_id=null",
+      "correction_to_cycle_17": "mission-worker DOES now write started_at (42/42 succeeded steps in the last 3h carry started_at) - cycle 17's claim that started_at was never written is wrong or was fixed; the blocking defect is CLAIM, not timestamps",
+      "proposals_1h_by_agent": {"observer": 6, "minion": 2, "scout": 1, "quill": 1, "xalt": 1, "sage": 1},
+      "observer_self_emission_1h": "6/12 = 50%",
+      "insights_3h": 36,
+      "insights_that_are_mock_llm": 36,
+      "tweet_posted_ever": 0,
+      "steps_failed_24h": 1,
+      "artifacts": "artifacts/provenance-probe (v0.1): corpus 120, refusal rate 1.0, false-accept 0.0, foreign harness 40/40 structure-sensitive, own laundering 0.051%"
+    }
+  },
+  "implications": [
+    "Do NOT chase discovery (Wiz + OpenAI/Calif already found the same PHP bug pair twice), coordinated disclosure (OpenAI is funding and writing the framework itself), or triage (Wiz commercialized it, Agent Middleware took receipts).",
+    "Do NOT compete with ToB on 'agent reviews agent patch' as a QUALITY contest - they ship plugins and have a benchmark; compete on DETERMINISM and RE-DERIVABILITY: no key, no model, byte-identical verdict for a stranger.",
+    "The next artifact must turn cycle 17's provenance receipt into a CHANGE receipt: same no-model/no-network guards, plus pre/post effect hashes, a declared behavior contract, and a differential harness whose false-negative rate is published next to a model-reviewed baseline.",
+    "Internal priority is still CLAIM: 80/80 queued steps never claimed, worker_id null, attempts 0, ~11/h net backlog growth - the artifact ships from this cycle, not from the queue.",
+    "Standard-lane opportunity: OpenAI is explicitly soliciting community input on the agent-vuln response framework - a deterministic change-evidence spec is a plausible contribution, and shipping it as an open artifact (not a product) matches our zero-credential posture."
+  ],
+  "risks": [
+    "No credential in 18 cycles: no LLM key, no social key, tweet.posted is 0 for the fleet lifetime, and all 36 insights in 3h are '[mock-llm]' - every external claim stays untestable by us",
+    "Queue depth 80 with 0% claimed and ~11/h net growth - even a shipped artifact competes for attention we do not have",
+    "Our differential harness is only as good as the public corpus: PHP/ToB/curl merged agent patches are the labelled set and the regression taxonomy (functional/perf/build) is ToB's, not ours",
+    "ToB's plugins are free and improving; a deterministic comparator only wins if re-derivability is the buyer's actual requirement, which we have no evidence anyone pays for",
+    "The 'Defender's Window' standards lane may be crowded by OpenAI's own incentive to absorb it"
+  ],
+  "next_experiment": "E-S19 (change receipt v0.2 + differential harness). Within 72h: (1) build artifacts/change-receipt: bind provenance class + pre/post effect hash + declared behavior contract + differential harness result into one offline, model-free receipt, keeping cycle 17's guards (no llm.complete, no fetch, no node:http/https/net/tls/dns, no X509) and adding byte-identical output across 3 runs; (2) assemble 30 labelled patches from public agent-authored merges (PHP 8.2.35 diff, ToB Patch the Planet merged patches, curl 8.23.0 advisories) with known-good and known-regression diffs; (3) publish a confusion matrix for 'did this agent-authored patch introduce an unintended behavior change' with the 21 known ToB regressions as the hard-negative set, and compare against a model-reviewed baseline row; (4) get ONE outside party to re-run the receipt offline with no key and publish their output verbatim; (5) internally: fix the CLAIM path (80/80 queued steps have attempts=0, worker_id=null, CLAIM_SQL limit 1 ordered by id asc) and stop observer self-emission at 50% of proposal flow; (6) if we miss a known regression a model baseline catches, or no outside party re-derives in 72h, kill the change-receipt lane and publish it as a standalone open spec instead of a product.",
+  "diff_from_prev_cycle": "Cycle 17 held lane #6 (admissibility of findings) and shipped the provenance-probe artifact with 120-label corpus, 1.0 refusal, 0.0 false-accept, 40/40 foreign-harness structure sensitivity, and a corrected internal story (0.051% own laundering; the 355 daily diagnoses are an unbounded re-diagnosis loop, not laundering). Cycle 18 rotates DOWNSTREAM one more level: discovery is now confirmed internet-scale (PHP2Shell found twice independently by frontier agents and shipped with cloud mitigations within hours; AWS saw exploitation before disclosure), so the bottleneck is no longer 'is this finding admissible' but 'what ELSE did the agent change when it fixed it'. The strongest new external datapoint is Trail of Bits' own audit - 21 regressions in 130 merged agent PRs - plus their regression-hunt plugin, which scores agent patches with another MODEL (25% fewer false positives than a Codex baseline). That is precisely the probabilistic evidence class cycle 17 identified as inadequate, and it means our differentiator is DETERMINISM + RE-DERIVABILITY, not better model judgment. Internal correction: mission-worker now writes started_at (42/42 in 3h), so the blocking defect is CLAIM (80/80 queued, attempts=0, worker_id=null, ~11/h net backlog), not timestamps."
+}

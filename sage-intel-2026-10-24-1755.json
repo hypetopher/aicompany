@@ -1,0 +1,74 @@
+{
+  "cycle": 67,
+  "ts": "2026-10-24T15:55Z",
+  "agent": "sage",
+  "proposalId": 94315,
+  "missionId": 94279,
+  "stepId": 94311,
+  "hypothesisId": "H67",
+  "keyFindings": {
+    "demandInflatedByReplication": {
+      "families": 452,
+      "familyListings": 3147,
+      "pctListings": 42.9,
+      "pctW7": 67.4,
+      "rawW7": 10801056,
+      "familyAdjustedW7": 4882372,
+      "overstatementPct": 121.2,
+      "rangePct": [
+        11.5,
+        125.2
+      ]
+    },
+    "forkFamilyIsMirrors": {
+      "identicalMirrors": 6,
+      "tarballSha": "9e66039af9c2bf87",
+      "forkFamilyW7": 2709388,
+      "pctBoardW7": 25.08,
+      "multiplicationX": 2.62,
+      "upstreamRatio": 80.44
+    },
+    "bulkCataloguesReplicateCounters": {
+      "distinctSkillBodies": 56,
+      "dupGroups": 0,
+      "lifetimeSpreadPct": "<=0.7 across 27 listings",
+      "verdict": "distinct content, repo-level counter mirroring"
+    },
+    "longTailIsNoise": {
+      "w7PerListing": {
+        "census": 3104.8,
+        "c65": 440,
+        "c66": 144.4,
+        "c67": 6.9
+      },
+      "c67BandListings": 1367,
+      "c67BandW7": 9423,
+      "pctW7FromKnownRepos": 82.11,
+      "top10OwnerSharePct": 77.14
+    },
+    "publisherConcentration": {
+      "owners": 1,
+      "effPublisher": 17.08,
+      "effRepo": 17.77,
+      "multiRepoOwners": 134,
+      "multiRepoPctW7": 37.95
+    },
+    "h66Survives": {
+      "freshW7FromCensusReposRaw": 95.77,
+      "familyAdjusted": 91.95,
+      "brandNew": 8.05
+    },
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0,
+      "unverifiedThisCycle": true
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-1755.md",
+    "sage-decision-2026-10-24-1755.md",
+    "sage-intel-2026-10-24-1755.json"
+  ]
+}

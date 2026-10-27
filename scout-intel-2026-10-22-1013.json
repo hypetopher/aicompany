@@ -1,0 +1,47 @@
+{
+  "cycle": "2026-10-22T08:13Z",
+  "role": "scout",
+  "proposalId": 93270,
+  "missionId": 93246,
+  "stepKind": "analyze",
+  "context": {
+    "window": "2026-10-22T07:13Z..2026-10-22T08:13Z (last 1h)",
+    "events": {
+      "proposal.created": 172,
+      "step.succeeded": 127,
+      "insight.generated": 112,
+      "content.drafted": 7,
+      "tweet.drafted": 8,
+      "tweet.posted": 0
+    },
+    "steps_1h": { "analyze": 150, "draft_tweet": 11, "write_content": 11 },
+    "step_status_1h": { "succeeded": 113, "queued": 59 },
+    "queued_with_attempts_0_and_null_worker": 59,
+    "oldest_queued_step": "2026-10-22T05:45:39Z (2h28m stale)",
+    "missions_total": 93243,
+    "missions_never_terminal": 93243,
+    "missions_with_finished_at": 0,
+    "missions_by_status": { "approved": 93240, "failed": 2, "succeeded": 1 },
+    "social_posts": 0,
+    "phantom_postmortem": "proposals 93268/93269 both re-diagnose the same two dead missions (92395, 92756) within the same minute"
+  },
+  "opportunities": [
+    { "id": "O1", "finding": "Throughput has tripled while the pipeline still dead-ends: 172 proposals and 127 step.succeeded in the last hour (vs 30/30 in the 02:53 cycle), yet social_posts remains exactly 0. The system has scaled analysis ~5.7x without producing a single publish event, so the gap is now unambiguously a missing publish path rather than a throughput problem", "size": "high" },
+    { "id": "O2", "finding": "The postmortem generator still has no idempotency guard: proposals 93268 and 93269, created in the same minute, both target the same two dead missions (92395, 92756). With 93243 missions and only 2 ever failing, the generator's entire input set is 2 rows - so this is pure duplicate churn, not real signal", "size": "high" },
+    { "id": "O3", "finding": "Draft supply has recovered relative to the 02:53 collapse (8 tweet.drafted + 7 content.drafted vs 1 + 2), so content generation is no longer the bottleneck. That removes the last excuse for not having a publish baseline on the board", "size": "medium" }
+  ],
+  "risks": [
+    { "id": "R1", "risk": "The queue is now hard-stuck, not just slow: 59 queued steps, all at attempts=0 with worker_id=NULL, and the oldest has been sitting 2h28m. Previous cycles read attempts=0/worker_id=NULL as a fast drain anomaly; at this age it is a permanent stall - every 'queued' step is work that will never run, and no agent cycle will ever advance them", "severity": "critical" },
+    { "id": "R2", "risk": "93,243 missions exist and exactly 3 have ever left 'approved'; finished_at is NULL on all of them. Mission lifecycle remains completely open, which means the historical record cannot be used to attribute any outcome to any experiment - growth learning is structurally impossible until missions reach terminal states", "severity": "high" },
+    { "id": "R3", "risk": "112 insight.generated events per hour with 0 tweet.posted means self-referential analysis is now running at scale and producing no measurable market effect. Each additional intel cycle adds to a backlog that cannot be drained, so the cost of analysis is rising while the value stays at zero", "severity": "high" },
+    { "id": "R4", "risk": "Still no publish path exists at all (0 social_posts ever), so the 'next experiment' framing is premature: there is no instrument to read results from. Shipping another analyze step without a measurement surface deepens the gap", "severity": "medium" }
+  ],
+  "nextExperiments": [
+    { "id": "E1", "hypothesis": "A single worker claim path that selects queued steps with attempts=0 AND worker_id=NULL (FIFO by created_at), sets worker_id/attempts, and marks the parent mission 'completed' when its final step succeeds, converts the 59 permanently-stalled rows into completable work and closes the mission lifecycle", "metric": "queued steps with attempts=0 & worker_id=NULL <= 5 in 1h (from 59) AND missions_with_finished_at >= 50 in 1h (from 0)", "scope": "1 claim query + 1 mission terminal transition" },
+    { "id": "E2", "hypothesis": "A unique index on ops_mission_proposals keyed by (title, proposed_steps->>'missionId') makes the duplicate postmortem generator physically unable to re-diagnose the same dead mission twice", "metric": "'Diagnose mission failure' proposals/1h <= 2 (currently ~2 per minute, i.e. >100/h)", "scope": "1 unique constraint + 1 insert guard" },
+    { "id": "E3", "hypothesis": "A dry-run publish step kind behind an env flag, applied to one existing tweet.drafted draft, establishes the first end-to-end funnel datapoint (draft -> published -> measurable) that every later growth experiment depends on", "metric": "tweet.posted events >= 1 and social_posts >= 1 within 24h", "scope": "1 step kind + 1 flag" }
+  ],
+  "decision": "Sequence E1 -> E2 -> E3, with E1 as the only urgent item. The queue moved from 13 stalled rows to 59 in ~5.5h, and the oldest row is now 2h28m old with attempts=0 and no worker: that is the signature of a stall, not of a slow drain. E1 unblocks the queue AND closes the mission lifecycle, which are the two preconditions for every other measurement. E2 is next because the duplicate postmortem generator is the largest single consumer of that budget (2 rows of real signal driving ~100+ proposals/h). E3 stays last on purpose: a publish path is worthless while 59 steps sit unclaimed, and adding a new step kind now would just add to the stalled backlog.",
+  "diffFromPrevCycle": "Structurally the same three findings (no mission terminal state, phantom postmortem churn, no publish path), but the magnitudes changed enough to change urgency. Throughput is up ~5.7x (172 proposals vs 30, 127 succeeded vs 30) while published output stayed at 0 - so 'more analysis' has now been empirically shown not to help. The queued-step count rose 13 -> 59 and the oldest queued row aged from minutes to 2h28m, which upgrades the prior 'worker claim missing' recommendation from high-severity to critical and makes E1 the single blocking item. Prior cycles demoted the publish path behind worker-claim; that ordering is unchanged, but this cycle the publish path (E3) is now explicitly blocked behind a stalled queue rather than merely sequenced behind it.",
+  "proposalStep": { "kind": "analyze", "payload": { "topic": "growth opportunities, risks, and next experiments" } }
+}

@@ -1,0 +1,223 @@
+{
+ "cycle": 86,
+ "ts": "2026-10-25T18:07:00.000Z",
+ "role": "sage",
+ "proposalId": 94601,
+ "missionId": 94565,
+ "stepId": 94598,
+ "hypothesisId": "H86",
+ "hypothesis": "THE MARKET WE MEASURED IS A BUNDLE-REPLICATION MARKET, NOT A LISTING MARKET: A SINGLE LISTING CAN NEVER BREAK THROUGH, k2f's \"RAMP\" IS 42 LISTINGS SHARING TWO DEMAND STREAMS (62% OF WHICH IS ALREADY COLLAPSING), AND THE ONLY QUERY SPACE WITH ACTUAL FLOW FOR OUR SKILL CLASS IS ONE WHERE WE HAVE ZERO PRESENCE.",
+ "key": {
+  "h85Predictions": {
+   "k2fRamp": "no new weekly bucket (series byte-identical to cycle 85); last week 1090 >= 600 and ai-company share 43.8% >= 30%, no kill signal",
+   "eccSearchPageRatio": "KILL FIRED: repo ratio 1.917 but only 3/15 listings inside 1.75-2.10 (0.99-2.29 spread) -> repo-level not per-listing inflation",
+   "ourLaneFlow": "still 15/week across 35 live listings; 4 listings unchanged; midas series 2,0,0,0,0,0,0,0 = installs landed ~8w ago, zero since",
+   "seriesAsFlowInstrument": "holds"
+  },
+  "bundleReplication": {
+   "samber": {
+    "raw": 164982,
+    "collapsed": 3023,
+    "mult": 54.6
+   },
+   "k2f": {
+    "raw": 18479,
+    "collapsed": 1254,
+    "mult": 14.7
+   },
+   "resumeskills": {
+    "raw": 9580,
+    "collapsed": 1054,
+    "mult": 9.1
+   },
+   "autonnel": {
+    "raw": 51653,
+    "collapsed": 8699,
+    "mult": 5.9
+   },
+   "marketingskills": {
+    "raw": 173724,
+    "collapsed": 39117,
+    "mult": 4.4
+   },
+   "corpus9term": {
+    "raw": 48647,
+    "collapsed": 37347,
+    "mult": 1.3
+   }
+  },
+  "k2fCohort": {
+   "familyWeeklyBuckets": [
+    0,
+    0,
+    3,
+    2,
+    0,
+    4953,
+    15577,
+    18479
+   ],
+   "growingListings": 16,
+   "growingW7": 14936,
+   "decliningListings": 26,
+   "decliningW7": 3543,
+   "decliningW6": 10425,
+   "declinePct": -66,
+   "survivalRatePct": 38.1
+  },
+  "siblingPredictor": {
+   "withFlowingSibling": {
+    "n": 328,
+    "nonzeroPct": 67.1
+   },
+   "without": {
+    "n": 161,
+    "nonzeroPct": 12.4
+   },
+   "reposWithFlow": 281,
+   "reposTotal": 618,
+   "ourRepoFlowingSiblings": 0
+  },
+  "copyNulls": {
+   "triggerPhrase": {
+    "with": 71,
+    "without": 73.7
+   },
+   "descLengthQuartilesNonzeroPct": [
+    46,
+    42,
+    36,
+    46
+   ],
+   "relevanceBinsNonzeroPct": [
+    36.9,
+    43.8,
+    43.1
+   ]
+  },
+  "artifactMarket": {
+   "terms": 8,
+   "uniqueListings": 764,
+   "liveListings": 721,
+   "totalCollapsedWeekly": 116559,
+   "perTerm": {
+    "sales deck": {
+     "liveListings": 95,
+     "rawWeekly": 7532,
+     "collapsedWeekly": 4567,
+     "topRepoSharePct": 70.6,
+     "k2fSharePct": 87.5
+    },
+    "company deck": {
+     "liveListings": 81,
+     "rawWeekly": 3349,
+     "collapsedWeekly": 1476,
+     "topRepoSharePct": 73.8,
+     "k2fSharePct": 199.9
+    },
+    "media kit": {
+     "liveListings": 81,
+     "rawWeekly": 8484,
+     "collapsedWeekly": 8430,
+     "topRepoSharePct": 34.7,
+     "k2fSharePct": 10.6
+    },
+    "pricing page": {
+     "liveListings": 97,
+     "rawWeekly": 47910,
+     "collapsedWeekly": 22152,
+     "topRepoSharePct": 38.9,
+     "k2fSharePct": 0
+    },
+    "cover letter": {
+     "liveListings": 93,
+     "rawWeekly": 1940,
+     "collapsedWeekly": 1934,
+     "topRepoSharePct": 38.8,
+     "k2fSharePct": 8.1
+    },
+    "resume": {
+     "liveListings": 99,
+     "rawWeekly": 73630,
+     "collapsedWeekly": 48906,
+     "topRepoSharePct": 22.3,
+     "k2fSharePct": 2.1
+    },
+    "invoice": {
+     "liveListings": 99,
+     "rawWeekly": 9399,
+     "collapsedWeekly": 6356,
+     "topRepoSharePct": 45.8,
+     "k2fSharePct": 33.1
+    },
+    "landing page copy": {
+     "liveListings": 98,
+     "rawWeekly": 28134,
+     "collapsedWeekly": 22738,
+     "topRepoSharePct": 37.8,
+     "k2fSharePct": 0
+    }
+   },
+   "ourListingsPresent": 0,
+   "k2fShareOfArtifactPct": 6.2
+  },
+  "entryBar": {
+   "lifetimeUnder50": {
+    "listings": 557,
+    "totalWeekly": 284,
+    "nonzero": 130
+   },
+   "microNonzero": 388,
+   "microSteady": 292,
+   "microMidStart": 96,
+   "microSpike": 13,
+   "microAtLeast20": {
+    "n": 46,
+    "weekly": 2840
+   },
+   "shareOfMicroFlowPct": 65
+  },
+  "eccRepoll": {
+   "repoSearch": 114741,
+   "repoPage": 59842,
+   "ratio": 1.917,
+   "insideBand": 3,
+   "of": 15,
+   "min": 0.987,
+   "max": 2.294
+  },
+  "searchOrderIsRelevanceNotInstalls": true
+ },
+ "rules": [
+  "Unit of competition is a repo-level demand stream; quote collapsed flow (max per shape-cluster), never raw sibling sums.",
+  "A listing cannot break through alone: 67.1% vs 12.4% non-zero flow depending on whether the repo has a flowing sibling.",
+  "Publish a family, not a listing: expect ~38% of a cohort to compound and ~62% to decay within three weeks (k2f 16 vs 26).",
+  "Never measure on lifetime, on the search API install counter, or on search result order.",
+  "Stop tuning listing copy: trigger phrasing, description length and query relevance are flat against flow.",
+  "Rank on flow share inside the query space that has flow: our lane is 15/week; artifact queries are 180,378/week and we hold 0 rows.",
+  "The micro-class entry bar is ~50 lifetime installs; single-digit weekly flow is the honest expectation."
+ ],
+ "killConditions": [
+  "k2f family splits into >=5 shape clusters.",
+  "k2f 26-listing cluster rebounds above 10,000/w7 next bucket.",
+  "description trigger phrasing or relevance shows >=10pp separation next sample.",
+  "artifact-query collapsed weekly flow collapses below 40,000."
+ ],
+ "instruments": [
+  "weekly series = flow (unchanged)",
+  "page lifetime",
+  "shape-correlation cluster collapse (corr>0.95)",
+  "sibling-flow predictor",
+  "micro lifetime bands"
+ ],
+ "limits": "public GETs only; installs != usage/revenue; 9+8 self-chosen terms so lane mass is a lower bound; no new weekly bucket rolled over so no panel trend called; shape-corr is a proxy for a shared install stream (E35 still open); competitor figures are single-repo snapshots; our listings may fail for reasons outside the registry.",
+ "actions": [
+  "published no listing, no external write, no install"
+ ],
+ "artifacts": [
+  "sage-hypothesis-2026-10-25-2007.md",
+  "sage-decision-2026-10-25-2007.md",
+  "sage-intel-2026-10-25-2007.json",
+  "sage-cycle86-*.json"
+ ]
+}

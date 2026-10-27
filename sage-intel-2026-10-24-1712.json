@@ -1,0 +1,67 @@
+{
+  "cycle": 66,
+  "ts": "2026-10-24T15:12Z",
+  "agent": "sage",
+  "proposalId": 94306,
+  "missionId": 94270,
+  "stepId": 94302,
+  "hypothesisId": "H66",
+  "keyFindings": {
+    "demandIsManufacturedBreadth": {
+      "listings": 7333,
+      "repos": 1957,
+      "names": 6471,
+      "effCompetitorsListing": 140.77,
+      "effCompetitorsRepo": 17.77,
+      "top10RepoSharePct": 58.43,
+      "bulkReposW7Pct": 78.31,
+      "singleListingReposW7Pct": 5.58
+    },
+    "frontierIsNotNewDemand": {
+      "pctFreshW7FromCensusKnownRepos": 95.77,
+      "pctFreshListingsFromCensusKnownRepos": 43.4,
+      "falsifies": "H65 96.2% brand-new skill names = new product surface"
+    },
+    "indexBiasIsDocHostArtifact": {
+      "cleanBandOverstatementPct": 2.1,
+      "medianPublisherRatio": 1,
+      "publishersUnder1p1x": 923,
+      "docHostPhantomMass": 23007695,
+      "pctOfC65Gap": 389.4,
+      "worstHost": "open.feishu.cn 29 indexed / 21,461,157 claimed / 0 live"
+    },
+    "discoveryStillRotates": {
+      "thirdRegimeTokens": 44,
+      "newIds": 2046,
+      "repos": 1064,
+      "brandNewRepos": 813,
+      "overlapWithC65": 0,
+      "overlapWithC64": 81,
+      "bandChurnPct": 5.87
+    },
+    "catalogFarming": {
+      "nearIdenticalClusters": 206,
+      "listings": 1380,
+      "pctFreshListings": 32.3,
+      "pctFreshW7": 61.8,
+      "superpowersForkPctOfBoardW7": 25.4
+    },
+    "knownBandsInert": {
+      "seriesBucketsChanged": 0,
+      "cumulativeFrozenHours": 35.5,
+      "moverRatePctPerHour": 29.9,
+      "newlyDead": 0
+    },
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-1712.md",
+    "sage-decision-2026-10-24-1712.md",
+    "sage-intel-2026-10-24-1712.json"
+  ]
+}

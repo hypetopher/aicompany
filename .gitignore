@@ -4,3 +4,133 @@ dist/
 .DS_Store
 .next/
 reports/
+
+# Local SQLite artifacts
+*.db
+*.db-shm
+*.db-wal
+*.db.bak
+*.db\ 
+
+# Ad-hoc probe scripts and scratch helpers of any flavour.
+# These are throwaway analysis scripts written by role-agent cycles, not
+# product code. Product code lives under src/ and app/ and is re-included
+# below by explicit path.
+*.cjs
+*.mjs
+check-*.cjs
+check-*.js
+check-*.mjs
+check-*.ts
+ce*.cjs
+get_hook_*.cjs
+get_hook_*.mjs
+_sig*.sh
+!src/**/*.cjs
+!src/**/*.mjs
+!src/**/*.js
+!src/**/*.ts
+!app/**/*.cjs
+!app/**/*.mjs
+!app/**/*.js
+!app/**/*.ts
+!scripts/**
+!artifacts/**
+!convex/**
+
+# Role-agent scratch output (prefixed with _)
+_*.cjs
+_*.mjs
+_*.js
+_*.ts
+_*.json
+_*.sh
+
+# Large data dumps produced by analysis cycles (regenerable, huge, noisy)
+missions_snapshot.json
+steps_all.json
+sage*_fullpop.json
+sage*_pop.json
+sage*_ss_sample.json
+sage-cycle*-bundle*.json
+sage-cycle*-counter-clusters.json
+sage-cycle*-analysis*.json
+sage-cycle*-sweep.json
+sage-cycle*-levels.json
+sage-cycle*-board.json
+sage-cycle*-pageseries.json
+
+# Local corpora and scratch workspaces
+corpus/
+scratch/
+tmp/
+proposals/
+drafts/
+cron-output/
+artifacts/claim-check/corpus/
+artifacts/claim-check/reports/
+
+# Per-cycle role scratch output. These are regenerated on every role-agent
+# cycle and carry no product value. The *intel* families
+# (sage-intel-*, scout-intel-*, sage-hypothesis-*, sage-decision-*) are
+# deliberately NOT ignored: those are the published research artifacts.
+observer_diagnostics_*.json
+xalt-proposal-*.json
+xalt-proposal.json
+quill-proposal-*.json
+minion-proposal-*.json
+minion-analysis-*.md
+sage-aldi-*.json
+quill-lint-*.json
+quill-repl-rows-*.json
+draft_tweet_proposal.json
+observer-arbitration-output.json
+all_topics.json
+steps_snapshot.json
+check_mission.js
+fetch_*.js
+get_*.js
+
+# Scratch text/HTML scratchpads written by ad-hoc probe scripts.
+_*.txt
+_*.html
+_*.locs
+_*.log
+
+# Python bytecode from the claim-check lints.
+__pycache__/
+*.pyc
+
+# Throwaway helper scripts kept next to the claim-check sources.
+artifacts/claim-check/*_tmp.mjs
+
+# Per-cycle probe working files. Only the *final* cycle artifact carries a
+# trailing HHMM stamp (e.g. sage-cycle101-index-mechanism.json) and stays
+# trackable; every intermediate dump (rows, panel, raw, lanes, mkt*) does not.
+sage-cycle*.json
+sage-cycle*.html
+sage-cycle*.jsonl
+sage-cycle*.txt
+!sage-cycle*-[0-9][0-9][0-9][0-9].json
+!sage-cycle-2026-10-22-*.json
+sage-cycle70-fetch.log
+
+# Scratch probe payloads written by one-off analysis scripts.
+sage46_*
+sage47_*
+sage48_*
+sage-h49-*
+sage-c10[0-9]-*
+quill-*.json
+quill-*.md
+scout-*.json
+scout-*.md
+scout-*.patch
+!scout-intel-*.json
+observer-output.json
+probe_*.js
+query-*.js
+check_proposal.js
+temp-query.ts
+temp_fetch_hook.js
+supabase/.temp/

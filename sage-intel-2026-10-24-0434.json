@@ -1,0 +1,27 @@
+{
+  "ts": "2026-10-24T02:36:49Z",
+  "role": "sage",
+  "cycle": 54,
+  "hypothesis": "H54: growth surface is rank-1 (multiplier(repo) x shape(skill)); delta-equality retired; growth rate is the actionable competitor metric",
+  "sweep": {"terms": 30, "listings": 2273, "total_installs": 161848336, "surface": "skills.sh api/search", "readOnly": true},
+  "window": {"from": "2026-10-23T22:45Z", "to": "2026-10-24T02:36Z", "hours": 3.9},
+  "live": {"comparable_rows": 2270, "moved_rows": 495, "moved_pct": 21.8, "installs_gained": 277178, "base_installs": 161782665, "growth_pct": 0.171, "families_gaining": 183, "families_total": 654, "growth_hhi": 0.082, "effective_growers": 12.2, "families_for_50pct_gains": 7},
+  "rank1": {"dense_block": "superpowers 7x7", "cells": 43, "r2_log": 0.9994, "rmse_log": 0.0239, "market_fit_r2_log": 1.0, "market_fit_caveat": "sparsity artifact, 495 cells / 183 repos x 445 skills - not evidence", "repo_multipliers": {"skills-shell/superpowers": 1.568, "magentosh/superpowers": 1.4, "qu-skills/superpowers": 1.0, "its-a-skill-issue/superpowers": 0.99, "bankai-skills/superpowers": 0.988, "101-skills/superpowers": 0.972, "obra/superpowers": 1.0}, "residual_spread_after_normalization_median_pct": 4.91},
+  "delta_equality_retired": {"exactly_equal_nonzero_cross_repo_skill_names": 0, "multi_repo_skill_names": 93, "all_zero_multi_repo_skill_names": 71, "trivially_satisfied_pct": 76.3, "null_4draw_min_spread_pct": 23.09, "null_4draw_p1_spread_pct": 160.0, "constant_delta_repo_pairs_market": 2, "repo_pairs_total": 16653},
+  "market": {"host_excluded_rows": 2234, "host_excluded_installs": 150625018, "families": 642, "inflation": 5.178, "hhi_distinct": 0.036, "effective_competitors": 27.8, "top1_distinct": {"family": "vercel-labs/skills", "installs": 4011690, "share_pct": 13.79}, "largest_replication": {"family": "mattpocock/skills", "multiple": 17.78, "rows": 37}, "largest_by_row_sum": {"family": "heygen-com/hyperframes", "installs": 12487493}},
+  "momentum_vs_size": [
+    {"family": "heygen-com/hyperframes", "installs": 12487493, "growth_pct": 0.0, "gain": 2},
+    {"family": "leonxlnx/taste-skill", "installs": 3909907, "growth_pct": 0.0, "gain": 4},
+    {"family": "github/awesome-copilot", "installs": 1447297, "growth_pct": 0.004, "gain": 53},
+    {"family": "gencraft-labs/skills", "installs": 973439, "growth_pct": 2.0, "gain": 19472},
+    {"family": "mbfinotti/advertising-skills", "installs": 148789, "growth_pct": 1.96, "gain": 2922},
+    {"family": "skills-shell/superpowers", "installs": 1913988, "growth_pct": 1.91, "gain": 36554}
+  ],
+  "superpowers_concentration": {"family_gain": 160498, "share_of_market_gain_pct": 57.9, "repos": 9, "unity_repos": 4, "scaled_repos": 2, "dead_mirrors": ["skills-101/superpowers", "halt-catch-fire/superpowers"]},
+  "ops": {"missions_total": 1000, "missions_succeeded": 976, "missions_failed": 22, "missions_approved": 2, "steps_succeeded": 693, "steps_failed": 305, "steps_queued": 2, "steps_running": 0, "tweet_posted": 0, "social_posted": 0, "content_published": 0, "env_keys": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "CRON_SECRET"], "llm_credential": false, "social_credential": false},
+  "decision": "rank-1 factorisation is the de-dup method of record; retire delta-equality; growth rate becomes a first-class competitor metric; publish nothing; kill criterion unchanged",
+  "kill_criterion": {"deadline": "2026-10-25", "status": "unchanged", "measured": "no LLM/social credential, 0 published lifetime, no external re-derivation"},
+  "proposalId": 94183,
+  "missionId": 94148,
+  "stepId": 94180
+}

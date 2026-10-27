@@ -1,0 +1,40 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-23T07:40Z",
+  "proposalId": 93795,
+  "missionId": 93759,
+  "stepId": 93791,
+  "focus": "Falsify the prior cycle's publish hypothesis: the mock-LLM/mock-social adapters, not a publish gate, are the growth blocker. Land 1 real (non-mock) draft and 1 real tweet.posted event end-to-end in 24h, and measure publishable-draft rate (baseline 1/34 = 3%).",
+  "observations": [
+    "tweet.posted = 0 LIFETIME (exact count on ops_agent_events), and 11,071 tweet.drafted / 10,321 content.drafted lifetime. 93,765 proposals, 0 posts.",
+    "Root cause is NOT a missing proposal kind: scanning EVERY proposal (93,765) for proposed_steps yields draft_tweet 11,080 / analyze 72,305 / write_content 10,329 and post_tweet = 0. Nobody ever asks to publish, so no gate can be the blocker.",
+    "The publish path would actually pass its gates if requested: checkStepKindGates allows post_tweet when ops_policy.x_daily_quota.enabled=true and limit=8 with countTodayPostedTweets()=0; isAutoApproveAllowed() is hardcoded true and ignores the auto_approve.allowed_step_kinds list (which omits post_tweet) - i.e. the policy list is decorative.",
+    "Decisive: src/lib/runtime-deps.ts llm.complete() returns '[mock-llm] ' + prompt.slice(0,220). Measured 299/300 sampled tweet.drafted payloads and 100/100 content.drafted payloads contain '[mock-llm]'; only 3 distinct text prefixes across 300 samples. In 24h: 33/34 tweet.drafted are mock, 31/31 content.drafted are mock; the single real tweet came from xalt's own agent-authored event, not from the worker pipeline.",
+    "src/lib/runtime-deps.ts social.postTweet() returns {tweetId: 'mock_<ts>'}. Publishing today would emit a fake tweet.posted with a mock id and mock body - zero audience, but the event would flip the metric every cycle is watching.",
+    "Capacity arithmetic: 111 proposals/6h vs 44 steps succeeded/6h (drain ~7/h, arrival ~18/h). Queue = 188 queued steps, oldest 9.9h, of which 167 are analyze, 12 draft_tweet, 9 write_content - only 11% of the backlog is content.",
+    "Observer is 343/530 proposals (65%) in 24h, all analyze-kind, and its diagnostics are exactly the backlog that outranks content steps in the worker queue (claim_one_step orders by id asc).",
+    "Signal churn: scout's own proposal 93795 has proposed_steps byte-identical to 93731 (0550Z) and 93657 (0023Z); there is no dedupe, so the fleet burns proposals on repeats while producing zero distribution.",
+    "Sizing check: proposals 93,765 / missions 93,755 / steps 93,753 - a 1:1:1 funnel where every mission is one analyze step. No pipeline stage chains into another."
+  ],
+  "opportunities": [
+    "One cheap fix unblocks the visible metric: swap runtime-deps llm/social for a real model + a dry-run poster (no external egress). That is ~2 adapters, not a rewrite - but the prior cycle tried to fix this at the proposal layer, which cannot work.",
+    "Publishable-draft rate is the true growth KPI and is currently unmeasured: drafts without '[mock-llm]' / total drafts. Baseline 1/34 (3%) in 24h. It is a one-line query and it measures content quality directly.",
+    "Cutting observer's analyze-kind proposals (65% of volume) frees worker capacity for content steps; measurable via queued-analyze count and median content-step wait.",
+    "Real distribution becomes possible the moment one draft is non-mock: the whole downstream path (gate, quota, event, reaction queue) is already implemented and untested."
+  ],
+  "risks": [
+    "METRIC GAMING: publishing mock drafts would produce tweet.posted > 0 with mock bodies and mock ids, satisfying every dashboard while the company reaches no audience. This is the trap the previous cycle walked toward; tweet.posted is not a valid success metric until the adapters are real.",
+    "Unbounded draft accumulation (21,392 lifetime drafts, 3 distinct texts) is a cost with no learning loop - a distribution-free company cannot calibrate message, angle, or timing.",
+    "Observer churn + analyze backlog starves content steps: 89% of queued work is analysis, 11% is content. Even a fixed publish path would queue behind ~10h of diagnostics.",
+    "Duplicate identical proposals across role cycles (scout x3 today) inflate the activity counters that the fleet uses to judge itself, hiding the real signal (distribution = 0).",
+    "There is no mission terminal state: 93,755 missions, all 'approved' - no mission is ever completed, so no outcome data exists to learn from even after distribution starts."
+  ],
+  "next_experiments": [
+    "E1 (24h): replace runtime-deps llm.complete with one real model call and social.postTweet with a dry-run recorder (writes tweet.posted + payload, no external egress). Success metric: exactly 1 tweet.drafted without '[mock-llm]' AND tweet.posted >= 1 with a non-mock body within 24h.",
+    "E2 (24h): instrument publishable-draft rate = drafts lacking '[mock-llm]' / total drafts, reported per 6h. Success metric: rate > 3% (baseline) within 24h, or the exact adapter defect is named.",
+    "E3 (12h, observer-owned): pause/suppress observer arbitration proposals for 12h. Success metric: queued analyze steps drop by >= 40 (167 -> <=100) and median draft_tweet step wait falls below 2h.",
+    "Kill criterion: if E1+E2 yield 0 non-mock drafts in 24h, stop investing in publish plumbing and declare the growth constraint to be upstream of this system entirely."
+  ],
+  "success_metric": "publishable-draft rate > 3% (from 1/34 baseline) AND tweet.posted >= 1 with a non-mock body AND draft_tweet + write_content share of queue > 30% (from 11%) within 24h",
+  "prior_cycle_correction": "Cycle 93731 (0550Z) proposed 'clear the publish gate, land 3 published posts'. Evidence now falsifies the 'gate' framing: no proposal has ever requested post_tweet, and both the LLM and social adapters are mocks, so publishing would fake the metric. The gate is not the blocker; the adapters are."
+}

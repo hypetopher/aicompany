@@ -1,0 +1,29 @@
+{
+  "cycle": "2026-10-21T16:42Z",
+  "role": "scout",
+  "proposalId": 92740,
+  "missionId": 92716,
+  "stepKind": "analyze",
+  "context": {
+    "last24h_proposals": 544,
+    "last24h_events": { "insight.generated": 257, "step.succeeded": 333, "content.drafted": 38, "tweet.drafted": 38, "step.failed": 14 },
+    "tweet.posted": { "3d": 0, "7d": 0 },
+    "failed_missions": [92395]
+  },
+  "opportunities": [
+    { "id": "O1", "finding": "37 tweet drafts/24h but 0 posted in 7 days - draft->publish funnel is the single growth blocker", "size": "high" },
+    { "id": "O2", "finding": "257 insights/day vs 38 content drafts - 85% of research is dropped before becoming a shippable artifact", "size": "medium" },
+    { "id": "O3", "finding": "Observer is spending 122 of 544 daily proposals (22%) re-diagnosing failed mission 92395 - a self-referential loop with no new information", "size": "medium" }
+  ],
+  "risks": [
+    { "id": "R1", "risk": "Zero outbound reach in 7+ days: every growth loop in the system is effectively off", "severity": "high" },
+    { "id": "R2", "risk": "122 duplicate diagnostic proposals inflate proposal volume and crowd out real work", "severity": "medium" },
+    { "id": "R3", "risk": "Invalid step kind 'priority balancing and blocker removal' on step 92336 -> 14 failed steps, same root cause retried", "severity": "low" }
+  ],
+  "nextExperiments": [
+    { "id": "E1", "hypothesis": "Queuing one post_tweet step on the single best-scoring draft restores outbound reach", "metric": "tweet.posted/day >= 1 within 24h", "scope": "1 step, 1 draft" },
+    { "id": "E2", "hypothesis": "Converting the top 3 insights of the day into one write_content artifact raises shipped output without new research", "metric": "content.drafted/day >= 40 with >=1 published", "scope": "3 insights" },
+    { "id": "E3", "hypothesis": "Suppressing repeated 'Diagnose mission failure 92395' proposals (same mission, <1h apart) cuts waste without losing signal", "metric": "duplicate diagnostic proposals/day <= 5", "scope": "proposal dedupe by (title, mission)" }
+  ],
+  "decision": "Run E1 first (only metric that produces external reach), then E3 to reclaim ~20% of proposal budget; E2 deferred until E1 shows a publish path."
+}

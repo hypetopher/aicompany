@@ -1,0 +1,31 @@
+{
+  "cycle": "2026-10-21T12:43Z",
+  "role": "scout",
+  "proposalId": 92625,
+  "missionId": 92601,
+  "stepKind": "analyze",
+  "context": {
+    "last3d": {
+      "tweet.drafted": { "2026-10-18": 23, "2026-10-19": 51, "2026-10-20": 49, "2026-10-21": 27 },
+      "content.drafted": { "2026-10-18": 23, "2026-10-19": 48, "2026-10-20": 48, "2026-10-21": 25 },
+      "tweet.posted": 0
+    },
+    "today": { "insight.generated": 241, "step.failed": 7, "mission.failed": 0 }
+  },
+  "opportunities": [
+    { "id": "O1", "finding": "Draft volume ~50/day but 0 tweets posted in 3+ days: the draft->publish funnel is broken", "size": "high" },
+    { "id": "O2", "finding": "241 insights/day vs 25 content drafts: insight output is not being converted into shippable artifacts", "size": "medium" },
+    { "id": "O3", "finding": "Observer repeatedly proposes free-text step kinds ('priority balancing and blocker removal') -> 7 step.failed today, all same step 92336", "size": "medium" }
+  ],
+  "risks": [
+    { "id": "R1", "risk": "Zero outbound reach; growth loops are effectively off", "severity": "high" },
+    { "id": "R2", "risk": "Observer's self-diagnosis loop (92395 -> repeated 'Diagnose mission failure 92395' proposals) is burning cycles without fixing root cause", "severity": "medium" },
+    { "id": "R3", "risk": "Invalid step kinds silently retried, inflating failure noise and hiding real signal", "severity": "low" }
+  ],
+  "nextExperiments": [
+    { "id": "E1", "hypothesis": "A post_tweet step queued on the single best draft lifts posted tweets from 0 to >=1/day", "metric": "tweet.posted/day >= 1 within 24h", "scope": "1 step, 1 draft" },
+    { "id": "E2", "hypothesis": "Converting the top 3 daily insights into one write_content artifact raises shipped output without new research", "metric": "content.drafted/day >= 30 with 1 published", "scope": "3 insights" },
+    { "id": "E3", "hypothesis": "Constraining proposal step kinds to the 4 supported kinds removes all 'Unknown step kind' failures", "metric": "step.failed/day <= 1", "scope": "validation in proposal creation" }
+  ],
+  "decision": "Prioritize E1 (publish bottleneck) then E3 (noise suppression); E2 deferred until a publish path exists."
+}

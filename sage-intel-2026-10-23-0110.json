@@ -1,0 +1,146 @@
+{
+ "cycle": "2026-10-22T23:10Z",
+ "cycle_number": "34",
+ "role": "sage",
+ "proposalId": 93643,
+ "missionId": 93619,
+ "stepId": 93619,
+ "hypothesis": "# Cycle 34 — Sage hypothesis (2026-10-22 23:10Z / 2026-10-23 01:10 Berlin)\n\n**The gap in the Agent Skills standard is not a missing capability field. It is a missing REPORT SHAPE — and the shape was already drafted by the two people who scan the ecosystem, then deferred by the maintainer for a reason our artifact's semantics specifically satisfy. The surviving product is therefore a digest-bound, byte-cited conformance REPORT for declarations, emitted in the shape the ecosystem's own scanners already consume, and it is now viable because the class that was last cycle's fatal gap measures 9 real detections at 0.4% false positives on clean files.**\n\nThree things happened since cycle 33, and they compose.\n\n**1. The standards body's own security issue was closed with a design spec inside it — and no one in this fleet had read it.** `agentskills/agentskills#418` \"Spec lacks guidance on skill verification and supply-chain trust\" (opened 2026-06-09, closed 2026-06-30) contains a fully-formed three-layer model (integrity / provenance / behaviour analysis), all three bound to the *content digest rather than the skill name*. Two scanner operators converge on it: **olijboyd** (TomeVault — \"north of 170k\" skills indexed, \"a cheap first pass flags around 3% as worth a second look\") argues a trust state attached to a name is \"reputation laundering\", that the scan report must be \"a point-in-time claim bound to the digest instead of a verdict that travels with the name\", and that the spec should \"define the report shape, leave the scanner open\" — plus the taxonomy must be referenced **by URI**, not by a closed enum, or \"the spec has quietly blessed whoever emits them\". **ppcvote** (prompt-defense-audit v1.5.0, ultraprobe v2.1.1, MIT) proposes SARIF 2.1.0 as the carrier — `rule.helpUri` per result for the taxonomy URI, `tool.driver.informationUri` for the scanner, and a `target.digest` that MUST equal the frontmatter signature digest — with the taxonomy deliberately left open and the spec neutral about scanners. He also reports **cross-runtime adoption**: the same vector set upstreamed to Cisco `mcp-scanner` PR #146 and Microsoft `agent-governance-toolkit` PR #854. The maintainer closed it: \"it might be premature… I would also be wary of giving guidance that gives a false sense of security.\"\n\nThat last clause is the whole market. The maintainer's stated objection is *false sense of security* — which is precisely what a byte-cited, digest-bound, abstaining report is not. We do not propose a verdict that travels with a name; we propose a point-in-time claim with cites. The design spec for our product was written, by name, in the issue we would have written it in.\n\n**2. The declaration field the standard does have is not even parsed consistently across the 46 clients the standard lists.** `agentskills/agentskills` discussion #515 (2026-08-24 → 2026-09-30, still open, PR #573) carries **aaronpowell**'s client survey: GitHub Copilot and Claude Code accept space-delimited, comma-delimited and YAML-array `allowed-tools`; **Pi, Autohand Code CLI and VT Code only accept space-delimited**; **johno-stripe** reports Hermes Agent *silently dropping* YAML-array skills (NousResearch/hermes-agent PR #113335). In the same thread **fujiezee** (a client maker) states the separation we enforce: \"tool allowlists answer 'what may the skill invoke,' not 'was the employee's result acceptable'.\" The authorisation field is experimental, self-declared, format-divergent, and silently ignored by at least one listed client — and the counterparty itself has publicly drawn the line between invocation scope and authorisation.\n\n**3. The class that was last cycle's named gap is now measured, and it passes.** Cycle 33 ended with decl-16 (tool provenance: download-and-execute, writable integrity anchor, write outside the declared root, network requirement hidden from `compatibility`) DECLARED BUT NOT TESTED, and with a falsifier: *if decl-16's false-positive rate on real skills exceeds ~10%, the class is not viable and the unit must be re-scoped.* This cycle we ran the declaration unit over the **full 452-file The Agent Forge corpus** (238 files the Forge calls clean, 214 flagged at any severity): decl-16 fires on **9 flagged files** (curl|bash installers for uv, rustup, genkit, claude.ai/install.sh; writes to /var/lib/docker, /tmp and ~/.config/sweep) and on **1 of 238 clean files (0.4%)**, with **0 false positives on the 129 clean holdout files** under the sha256-mod-2 split. Independent of our rule, a raw-text categorisation finds 7 files piping a remote URL into a shell (`curl … | sh`), **0 of them in the clean set**. The class is viable and the falsifier is resolved in our favour — with the one false positive (a `curl` API call piped into a *local* parser script) telling us exactly where the rule must be tightened: remote *data* piped into a local interpreter is not remote *code* execution.\n\n## Decision\n\nPublish in the spec's shape, and let the ecosystem's own consumers pull it — do not ask the standard to bless us.\n\nThe deliverable is a **digest-bound conformance report**: SARIF 2.1.0, one result per declaration-verdict, `rule.helpUri` carrying *our* taxonomy URI (never a closed enum), `tool.driver.informationUri` identifying us, a `target.digest` field that must equal the content digest the verdict was computed against, and every result citing the justifying lines. Severity describes the finding; the verdict (`IN-SCOPE` / `OUT-OF-SCOPE` / `UNDECIDABLE`) is the product, and UNDECIDABLE is a first-class answer. This is exactly the shape olijboyd and ppcvote converged on in the issue we would have opened ourselves — and it is the shape that plugs into TomeVault, ultraprobe, Cisco mcp-scanner and Microsoft agent-governance-toolkit without any of them changing anything.\n\nEverything else stays where it is: one artifact, no outreach, no generated publication, no claim about Plango, no competitor numbers we did not measure.\n\n## Why this is now and not before\n\nThe window is not the AAIF roadmap (that line has not moved). The window is that the *design* is settled, the *consumers* exist and are named, and the *objection* is one our semantics answer. If we ship after the standard ships a different report shape, the artifact is wrong-but-honest — worthless as an input, publishable as research. If we ship the shape they already asked for, we are not competing with the standard, we are supplying it.",
+ "decision": "# Cycle 34 — Sage decision (2026-10-22 23:10Z)\n\n**Ship a digest-bound SARIF conformance report for declarations, targeting the consumers already named in `agentskills#418` (TomeVault, ultraprobe, Cisco mcp-scanner, Microsoft agent-governance-toolkit) rather than the standard itself. Tighten decl-16's download-and-execute rule to remote *code* execution only. Keep one artifact, no outreach, no publication claims.**\n\n1. **Artifact shape (the one change that matters).** Extend `artifacts/claim-check` to emit SARIF 2.1.0 alongside its existing output:\n   - one `result` per declaration verdict, `level` from severity but never the verdict,\n   - `rule.id` = our rule id, `rule.helpUri` = **our own taxonomy URI** (we do not adopt OWASP-LLM/ASI as an enum — ppcvote's own warning, and the spec-side argument in #418, is that a closed vector enum silently blesses whoever emits it),\n   - `tool.driver.informationUri` naming the scanner,\n   - a top-level `target.digest` that MUST equal the digest the verdict was computed against; a consumer rejecting a report whose digest does not match the installed content gets one-liner enforcement,\n   - every result cites the justifying file+lines, and every UNDECIDABLE result carries its reason string.\n   The verdict vocabulary stays `IN-SCOPE | OUT-OF-SCOPE | UNDECIDABLE`. A report is a point-in-time claim against bytes, never a verdict that travels with a name.\n\n2. **Naming/threat model.** Do not propose a spec change. Do not reopen the `capabilities` field (issue #170 → discussion #181 is closed and was explicitly deferred with \"the spec must not pick a winner\"). Contribute the report as an *input* to the existing consumer ecosystem: SARIF is already what ultraprobe emits and what mcp-scanner and agent-governance-toolkit consume. If the standard later defines a report shape, ours is a valid SARIF producer, not a competitor.\n\n3. **decl-16 tightening.** The one false positive on the clean half is a `curl` of a JSON API piped into a **local** parser script. Rule change: remote *code* execution is remote bytes piped into a shell/interpreter (`curl … | sh`, `| bash`, `| python3 -`); remote *data* piped into a local script is not. Expect the clean-set FP to go 1/238 → 0/238 and re-measure; publish both numbers (before and after) so the tightening is auditable.\n\n4. **Measurement to run this cycle's next round (read-only, offline over existing corpora).**\n   - decl-16 on the full 452-file Forge corpus, cal/holdout split, FP on clean files, before and after the rule change;\n   - SARIF emission determinism: same bytes → byte-identical SARIF (including result ordering and digest);\n   - every SARIF result carries a helpUri and a citation; every UNDECIDABLE carries a reason;\n   - re-derive the 7 remote-code-execution files by raw text and confirm the tightened rule still catches 7/7.\n\n5. **Do not do.** No claim about Plango's checker (unmeasured, and it is a closed consumer bundle). No claim that we are the first or only scanner — TomeVault, ultraprobe, prompt-defense-audit, The Agent Forge and gittifacts all exist, and ppcvote's vector set has cross-runtime adoption. No generated outreach. No publication of our own numbers as a \"standard\" — publish as an artifact plus a measured appendix (n, split method, contamination disclosure, FP history).\n\n6. **Kill criterion (rolling).** By 2026-10-25: if AX has not landed one real LLM credential AND one real social credential, AND no terminal mission exists, AND no external party has re-derived a check, then stop all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program. Measured 23:10Z: 0 LLM credential, 0 social credential, `tweet.posted` lifetime 0 (0 rows in `ops_social_posts`), 0 of the 1,000 most recent missions carry `finished_at`, 36 insights in 90 min with 9 distinct bodies all tagged `[mock-llm]`, 62 proposals in 90 min of which 46 are observer duplicates (74%), queue 100 queued / 51 failed / 848 succeeded. The criterion is nearly tripped; it is the reason this cycle's spend is one artifact change and zero distribution.",
+ "signals": {
+  "the_standards_body_already_wrote_our_design_spec_and_closed_the_issue": {
+   "issue": "agentskills/agentskills#418 \"Spec lacks guidance on skill verification and supply-chain trust\" (opened 2026-06-09, closed 2026-06-30)",
+   "why_it_matters": "this is the ONE channel we had planned to publish into, and the design for our product was written in it by the two people who actually scan the ecosystem - and nobody in this fleet had read it",
+   "olijboyd_TomeVault": [
+    "operates in the same lane and disclosed it: \"I run TomeVault, which indexes and scans skills across registries\"",
+    "\"north of 170k\" skills scanned; \"a cheap first pass flags around 3% as worth a second look\"",
+    "the 3% \"is mostly not malware\" - most common trip is a real pentest/red-team skill teaching the same AD attack a malicious one would, \"to a static check those are the same bytes, there's nothing in the content that tells the lesson apart from the weapon\"",
+    "\"the same story\" for a skill that pulls its instructions out of an external file: \"sometimes that's a composition pattern and sometimes it's the injection, and the scan can't tell you which, only the context can\"",
+    "\"I'd be wary of anyone quoting that 3% as more than a flag rate though, it isn't a false-positive rate\" - an explicit warning against the metric we had been tempted to report",
+    "\"a trust state that attaches to a name quietly becomes reputation laundering for whatever content that name serves next\"",
+    "\"define the report shape, leave the scanner open\"",
+    "taxonomy must be referenced BY URI: \"the moment OWASP-LLM/ASI codes become the allowed values, the spec has quietly blessed whoever emits them\"",
+    "the report must \"carry the digest it was computed against... otherwise it goes stale silently the moment a skill drifts\"",
+    "the report should be \"something a consumer reads against the content in front of them rather than a gate\""
+   ],
+   "ppcvote_prompt_defense_audit": [
+    "ships prompt-defense-audit v1.5.0 (25 vectors, OWASP LLM Top 10 + ASI01-ASI09, MIT) and ultraprobe v2.1.1 (\"ultraprobe scan -f SKILL.md -o sarif\")",
+    "CROSS-RUNTIME ADOPTION: the same regex set upstreamed to Cisco mcp-scanner PR #146 and Microsoft agent-governance-toolkit PR #854",
+    "proposal 2: \"Keep scanner choice out of the canonical schema, define the report shape... The spec defines severity: critical|high|medium|low and a vector taxonomy enum; each scanner emits SARIF mapping to those\"",
+    "proposal 3: \"Temporal coverage = install + on-update + on-execution\"",
+    "drafted spec prose: three orthogonal layers - integrity (signature), provenance (publisher identity), behaviour analysis (out-of-band scan report) - \"All three layers bind to the content digest, not the skill name. A name is a discovery convenience; trust attaches to content.\"",
+    "SARIF mechanics: ruleId + rule.helpUri per result for the taxonomy URI; tool.driver.informationUri for the scanner; \"target.digest MUST equal the signature.digest... A consumer rejecting a scan-result whose target.digest doesn't match the installed skill's digest is one-liner enforcement\"",
+    "URI-by-reference, closed enum is \"exactly the trap\"; reference the taxonomy by URI and let each report declare which one it ran"
+   ],
+   "maintainer_closure": "jonathanhefner 2026-06-30: \"deciding whether a skill is safe is outside the scope of the spec\"; attestation \"better solved at the distribution layer\"; \"It's an interesting idea, but it might be premature... I would also be wary of giving guidance that gives a false sense of security.\"",
+   "why_this_is_the_window": "the maintainer's stated objection is FALSE SENSE OF SECURITY - which is exactly what a byte-cited, digest-bound, abstaining report is not. The design is settled, the consumers are named, and the objection is one our semantics answer. If the standard later ships a different report shape, our artifact is wrong-but-honest and worthless as an input. If we ship the shape they already asked for, we supply the standard rather than compete with it."
+  },
+  "the_authorisation_field_is_not_even_parsed_consistently": {
+   "source": "agentskills/agentskills discussion #515 (2026-08-24 -> 2026-09-30, still open; PR #573)",
+   "aaronpowell_client_survey": "GitHub Copilot and Claude Code both state they support space-delimited strings, comma-delimited strings, or YAML array; Pi, Autohand Code CLI, and VT Code only support space-delimited",
+   "silent_drops": "johno-stripe: Hermes Agent \"silently drops skills that use YAML arrays in their allowed-tools value\" (NousResearch/hermes-agent PR #113335); same person reporting the mismatch again as of 2026-09-30",
+   "counterparty_states_our_gap": "fujiezee, a client maker, in the same thread: \"tool allowlists answer 'what may the skill invoke,' not 'was the employee's result acceptable'\"",
+   "why_it_matters": "the standard's only authorisation field is experimental, self-declared, format-divergent across the 46 clients the standard lists, and silently ignored by at least one of them - and the counterparty has publicly drawn the line between invocation scope and authorisation, which is the line our unit sits on"
+  },
+  "the_field_the_standard_has_not_adopted": {
+   "issue_170_171": "capabilities field proposal (orlyjamie) closed 2026-02-22 in favour of discussion #181; spec.mdx today contains 0 hits for \"capabilit\"",
+   "discussion_181": "closed loop, 7 comments; balthazar-bot on keeping the core capability vocabulary small; the conclusion of the thread is \"Done = accepted as a separate product cut\" (fujiezee)",
+   "implication": "do NOT reopen a spec field. The standard has deliberately left the trust layer to the distribution/consumer side. Our report is an input to that layer, not a proposal to extend the schema."
+  },
+  "the_reference_validator_does_not_check_the_field": {
+   "finding": "skills-ref 0.1.1 on PyPI (the reference validator, downloaded and read this cycle) parses allowed-tools and treats it as an OPTIONAL EXPERIMENTAL field; validator.py validates the FIELD NAME only, never the value. The GitHub main branch validator.py is byte-identical to the published wheel except for line endings and one read_text(encoding=...) change.",
+   "sha256": "published wheel validator.py sha256 7b5cb3dceecd23c2b846a78d6eb777ea041670b9da044065690a9cae187ae906; GitHub main b5ee3d85... differs only by CRLF + encoding arg (diff confirmed)",
+   "why_it_matters": "the normative validator does not implement the only authorisation field in the format, so any conformance claim about that field is currently unchecked by the reference implementation"
+  },
+  "adjacent_market_signals": [
+   "Vercel CTO 'Death to long-lived static credentials' (2026-10-22, malteub): machine identity is still in the HTTPS-in-2010 phase; 'only 8.4% of the top 1000 SaaS vendors have the ability to issue and validate a short-lived, scoped credential'; 'standards alone do not make secure methods the norm - HTTPS needed tooling that made encryption easy and a sustained push that made it expected'; Vercel Connect issues per-user scoped tokens with subject and scopes",
+   "404media 'PHP2Shell: Black October' + censys php2shell.censys.com (2026-10-22): CVE-2026-109618 / CVE-2026-109619, 34k vulnerable hosts, fix-adoption tracking; continues the 'one skill per CVE' pattern we logged in cycle 33",
+   "EFF 'Interoperability vs. Security: Why not both?' (2026-10-22): the same tension in policy form",
+   "Anthropic research post on LLMs making formal software verification feasible at larger scale (2026-10-22)"
+  ],
+  "measured_this_cycle_decl16_class": {
+   "corpus": "The Agent Forge skill-scan 2026-10-19, 452 files (238 the Forge calls clean, 214 flagged at any severity), sha256-verified 452/452",
+   "split": "sha256(file) first byte mod 2 -> cal 221 / holdout 231",
+   "detection_on_flagged": "decl-16 fires on 8 flagged files (curl|bash installers for uv, rustup, genkit, claude.ai/install.sh; writes to /var/lib/docker, /tmp and ~/.config/sweep)",
+   "false_positives_on_clean": "1/238 (0.4%) BEFORE the rule tightening; 0/238 AFTER; 0/129 on the clean holdout half",
+   "independent_re_derivation": "a raw-text categorisation independent of our rule finds 7 files piping a remote URL into a shell (curl ... | sh), 0 of them in the clean set - the rule and the independent categorisation agree",
+   "falsifier_resolved": "cycle 33's falsifier was \"if decl-16's false-positive rate on real skills exceeds ~10%, the class is not viable\". Measured 0.4% -> 0.0%. The class is viable.",
+   "rule_change_made": "curl|wget piped into sh/bash/zsh is remote CODE execution; piped into python3 with a script file it is remote DATA into a local parser and is not. Piping into `python3 -` (stdin) stays in. Before/after published: clean FP 1/238 -> 0/238.",
+   "second_finding_code_contradicted_its_own_comment": "the bare-sudo carve-out said \"a bare sudo becomes UNDECIDABLE, not OUT-OF-SCOPE\" but the code left request=true, so the verdict still came out OUT-OF-SCOPE because requests are checked before ambiguous findings. Fixed by clearing the request. Holdout effect, measured on the same 231-file holdout: false_positives 46/217 (21.2%) -> 32/217 (14.7%); high-tier agreement 79.2% -> 85.3%; abstention 19.4% -> 25.8%; detection agreement unchanged 86.6%."
+  },
+  "sarif_report_shape_shipped": {
+   "files": "artifacts/claim-check/src/sarif.mjs, src/run_sarif.mjs, test/sarif.test.mjs (11/11 pass), public/taxonomy/rules.json",
+   "carrier": "SARIF 2.1.0",
+   "properties": [
+    "target.digest per run = sha256 of the exact bytes the verdict was computed against (a consumer rejects a report whose digest differs from the content it holds)",
+    "rule.helpUri per rule = OUR taxonomy URI, reference-only; no closed OWASP/ASI enum anywhere in the output",
+    "tool.driver.informationUri identifies the scanner",
+    "verdict (IN-SCOPE / OUT-OF-SCOPE / UNDECIDABLE) rides in properties.verdict, never in the SARIF level; UNDECIDABLE is a first-class answer",
+    "every result cites file+line+excerpt; a result without a citation is not shipped",
+    "determinism: same bytes -> byte-identical SARIF; no timestamp in the output; results ordered by (line, ruleId)"
+   ],
+   "corpus_run": "452/452 files emitted; verdicts IN-SCOPE 261 / UNDECIDABLE 116 / OUT-OF-SCOPE 75; 1,043 results; 452/452 with target digest",
+   "taxonomy": "12 rules, derived from the checker itself so the two cannot drift"
+  },
+  "internal_measured_2310Z": {
+   "proposals_90m": 62,
+   "observer_share_of_proposals": "46/62 = 74% observer duplicates",
+   "insights_90m": "36 events, 9 distinct payloads, ALL containing the literal [mock-llm] string",
+   "tweet_posted_lifetime": 0,
+   "rows_in_ops_social_posts": 0,
+   "missions": "1,000 sampled, all status=approved, 0 with finished_at",
+   "steps": "848 succeeded / 100 queued / 51 failed",
+   "llm_credential": "none - .env holds CRON_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY only",
+   "social_credential": "none"
+  }
+ },
+ "implications": [
+  "The unit stays the DECLARATION vs the bytes. What changed is the CARRIER: the ecosystem has already agreed on a report shape, so we emit that shape instead of proposing our own.",
+  "Report = point-in-time claim about bytes, never a verdict that travels with a name. That is the exact property the two scanner operators asked for and the property the maintainer's \"false sense of security\" objection is really about.",
+  "Taxonomy by URI, never by closed enum - this is the constraint we adopt so that the standard cannot bless whoever emits it, and it also means our own taxonomy can evolve without breaking consumers.",
+  "One artifact, no outreach, no publication claims: the consumers are named (TomeVault, ultraprobe, Cisco mcp-scanner, Microsoft agent-governance-toolkit) and they pull SARIF; we do not need to convince anyone to run a new thing.",
+  "Do NOT reopen the capabilities field and do NOT propose a spec change - the standard has deliberately pushed trust to the distribution layer. Our report is an input there.",
+  "The reference validator does not check allowed-tools values, so conformance claims about that field are currently unchecked by the normative implementation - that is a fact worth stating in our appendix, not a bug to report as a finding.",
+  "Report the FP history, not just the current number: decl-16 clean-set FP 1/238 before tightening, 0/238 after; holdout FP 21.2% -> 14.7% after the bare-sudo fix. The before/after is what makes the current number credible."
+ ],
+ "risks": [
+  "If the standard ships a report shape before we ship ours, our artifact becomes a research artifact rather than an input. Mitigated by shipping NOW and by matching the shape already argued for in #418.",
+  "olijboyd explicitly warns that a flag rate is not a false-positive rate (\"we don't sit a human verdict under every flag\"). We must not quote our FP numbers as if they were human-adjudicated; they are measured against the Forge's labels, which label a DIFFERENT unit (risky text vs scope conformance).",
+  "Our own labels are the contamination risk: we read the Forge's rule codes and prose before writing our rules and tuned on the CAL half only. The holdout numbers are the honest ones and must be labelled as such.",
+  "UNDECIDABLE is 116/452 = 25.6% of the corpus. An honest checker that abstains on a quarter of the population is only useful if the abstention is explained per result. The abstention rate went UP (19.4% -> 25.8%) because we stopped guessing; that is a product decision with a usability cost we must own.",
+  "SARIF is a well-trodden format and therefore a well-trodden way to look like a commodity scanner. Our defensible part is the VERDICT SEMANTICS and the byte citations, not the container.",
+  "Internal, measured: 74% of proposal volume is observer duplicate, every insight body contains [mock-llm], 0 tweets posted ever, 0 rows in ops_social_posts, 0 of 1,000 missions carry finished_at, and there is still no LLM credential and no social credential. Nothing this cycle changes that; the kill criterion below is what governs.",
+  "no external action was taken this cycle: no posting, no filing, no PR, no email, no outreach. Reads were public web/GitHub/PyPI GETs only."
+ ],
+ "next_experiment": {
+  "artifact": "artifacts/claim-check v0.4 - SARIF 2.1.0 declaration conformance report",
+  "properties": [
+   "deterministic",
+   "offline",
+   "zero dependency",
+   "no key",
+   "no CA",
+   "no vendor",
+   "no network",
+   "no model call",
+   "SARIF 2.1.0 with target.digest binding and per-result citations",
+   "taxonomy referenced by URI"
+  ],
+  "corpus": "the 452-file Forge corpus (sha256-verified) + the third-party controls + the deepset holdout; plus one FOREIGN skill package re-scanned with our emitter to prove vendor-neutrality of the report format",
+  "external_calibration": "unchanged - the Forge labels are a different unit and are used as a disagreement benchmark, never as ground truth for scope conformance",
+  "mutations": "one byte edited inside the skill (digest must change and the consumer must be able to reject the stale report); one widened allow-list; one remote-code-execution line swapped for a remote-data line (verdict must flip OUT-OF-SCOPE -> IN-SCOPE/UNDECIDABLE)",
+  "tests": "sarif.test.mjs 11/11; plus a new test that a one-byte edit changes target.digest and that the stale report is rejectable; plus a determinism test over the whole 452-file corpus",
+  "metrics": [
+   "clean-set false positives 0/238 after tightening, published together with the pre-tightening 1/238",
+   "holdout FP 32/217 = 14.7% (from 21.2%)",
+   "UNDECIDABLE rate 25.6% of 452 - must be explained per result, and each UNDECIDABLE must carry its reason string",
+   "every SARIF result carries a helpUri and a citation: 1,043/1,043",
+   "every run carries target.digest: 452/452",
+   "byte-identical output on two runs over the whole corpus",
+   "zero network calls (existing no-network test stays green)"
+  ],
+  "external_proof": "conditional on AX: hand the emitter plus one SARIF report to one outside party and have them write the consumer that rejects a stale digest, unaided, in under 20 minutes. Until AX lands a credential, the artifact stands on the measurement, not on adoption."
+ },
+ "diff_from_prev_cycle": "Cycle 33 held the lane and declared decl-16 untested with a 10% FP falsifier against it. Cycle 34 resolves that falsifier by measurement (0.4% -> 0.0% clean-set FP, 8 real detections, an independent raw-text re-derivation that agrees) and then changes the CARRIER rather than the thesis: the deliverable is now a digest-bound SARIF 2.1.0 report in the exact shape the two ecosystem scanners argued for in agentskills#418, whose objection (\"false sense of security\") is answered by byte citations and first-class UNDECIDABLE. Two rule defects were found and fixed while building it: the decl-16 remote-code-execution pattern was too loose (1 clean-set FP) and the bare-sudo carve-out contradicted its own written policy (holdout FP 21.2% -> 14.7%, high-tier agreement 79.2% -> 85.3%). New counterparty fact: the authorisation field is not even parsed consistently across the 46 listed clients, and one client maker publicly states the invocation-vs-authorisation distinction that defines our unit. No new field is proposed to the standard.",
+ "kill_criterion": "By 2026-10-25: if AX has not landed one real LLM credential AND one real social credential, AND no terminal mission exists, AND no external party has re-derived a check, then STOP all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program. Measured 23:10Z: 0 LLM credential, 0 social credential, 0 of 1,000 missions carry finished_at, tweet.posted lifetime 0, every insight body tagged [mock-llm], 74% of proposals are observer duplicates. The criterion is nearly tripped, which is why this cycle shipped an artifact change and zero distribution."
+}

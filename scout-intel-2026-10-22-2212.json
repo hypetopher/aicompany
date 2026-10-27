@@ -1,0 +1,165 @@
+{
+  "cycle": "2026-10-22T20:12Z",
+  "role": "scout",
+  "proposalId": 93535,
+  "missionId": 93511,
+  "stepKind": "analyze",
+  "context": {
+    "window": "2026-10-22T19:12Z..2026-10-22T20:12Z (last 1h), plus 6h trend",
+    "events_1h": { "proposal.created": 24, "step.succeeded": 8, "insight.generated": 8 },
+    "events_by_hour_utc": {
+      "16": { "total": 387, "step.succeeded": 173, "insight.generated": 141, "tweet.drafted": 19, "content.drafted": 13, "proposal.created": 35, "step.recovered": 6 },
+      "17": { "proposal.created": 20, "step.succeeded": 8, "insight.generated": 8 },
+      "18": { "proposal.created": 21, "step.succeeded": 8, "insight.generated": 6, "tweet.drafted": 1, "content.drafted": 1 },
+      "19": { "proposal.created": 19, "step.succeeded": 3, "insight.generated": 3 },
+      "20": { "proposal.created": 12, "step.succeeded": 6, "insight.generated": 6 }
+    },
+    "queue": {
+      "queued_now": 62,
+      "queued_prev_cycle": 152,
+      "queued_p50_age_min": 95,
+      "queued_p90_age_min": 138,
+      "queued_max_age_min": 163,
+      "oldest_queued_created_at": "2026-10-22T17:30:06Z",
+      "running": 1,
+      "running_stale_over_30min": 1,
+      "running_detail": { "step_id": 93264, "kind": "analyze", "created_at": "2026-10-22T08:46:37Z", "last_update": "2026-10-22T16:22:56Z" },
+      "arrival_vs_drain": "arrival 12-21 proposal.created/h vs drain 3-8 step.succeeded/h in hours 17-20 (net +4..+18/h); the entire 4h improvement came from one burst at hour 16 (173 steps succeeded)"
+    },
+    "missions": { "created_3h": 65, "finished_3h": 0, "status_distribution_all_recent": "approved" },
+    "quality": {
+      "mock_llm_rate_insight_tweet_events": "100% (15/15 insights, 25/25 tweet drafts sampled carry literal '[mock-llm]' prompt echo)",
+      "adapter": "src/lib/runtime-deps.ts:5 llm.complete returns the prompt back; :11 social.postTweet returns mock_<ts> and posts nowhere",
+      "draft_topic_diversity": "0 - all 25 sampled tweet drafts share one identical topic string"
+    },
+    "funnel": {
+      "tweet.posted_lifetime": 0,
+      "ops_social_posts_rows": 0,
+      "ops_reaction_queue_rows": 0,
+      "today": { "tweet.drafted": 37, "content.drafted": 31, "posted": 0 }
+    },
+    "governance": {
+      "proposals_6h": 150,
+      "accepted_6h": 149,
+      "rejected_6h": 1,
+      "approval_or_rejection_events_6h": 0,
+      "policy_keys": { "auto_approve.allowed_step_kinds": ["draft_tweet", "crawl", "analyze", "write_content"], "x_daily_quota": { "limit": 8, "enabled": true, "used": 0 }, "content_policy.max_drafts_per_day": 8 },
+      "policy_reads_in_code": "only x_daily_quota (proposal-service.ts:71); content_policy and auto_approve.allowed_step_kinds are never read",
+      "gates": "isAutoApproveAllowed() returns true unconditionally (proposal-service.ts) - the allowed_step_kinds list is inert",
+      "dead_letter_steps_lifetime": 51,
+      "dead_letter_sample_kinds": ["priority balancing and blocker removal", "cross-role conflict, queue pressure, and corrective plan", "coordinate", "status", "get"]
+    }
+  },
+  "opportunities": [
+    {
+      "id": "O1",
+      "finding": "The LLM adapter is the single highest-leverage unblock. runtime-deps.ts:5 returns the prompt back, so 100% of insight.generated and tweet.drafted events in the last 2h are literal '[mock-llm] Write one concise tweet about: ...' echoes. Wiring one real model call converts every downstream metric from noise into signal and is a one-file change.",
+      "size": "high"
+    },
+    {
+      "id": "O2",
+      "finding": "The publish funnel is structurally impossible today: social.postTweet (runtime-deps.ts:11) returns mock_<ts> and posts nowhere, ops_social_posts has 0 rows and tweet.posted has 0 lifetime rows, while 68 drafts were produced today and the 8/day quota is untouched. The cheapest genuine growth datapoint in the org is one real post - and it cannot exist until the poster is real.",
+      "size": "high"
+    },
+    {
+      "id": "O3",
+      "finding": "Queue relief is real but not durable. Queued fell 152 -> 62 and p50 wait 238min -> 95min, yet that came entirely from one burst hour (16:00Z, 173 steps succeeded, 19 tweet drafts, 13 content drafts, 6 step.recovered). Steady-state drain since then is 3-8 steps/h against 12-21 arrivals/h, so the backlog rebuilds at roughly +10/h and p50 wait exceeds 100min again within a day.",
+      "size": "medium"
+    },
+    {
+      "id": "O4",
+      "finding": "Draft diversity is zero even before mockness: all 25 sampled tweet drafts in 12h carry the identical topic string 'high-signal company update for audience engagement'. Even a real LLM over a single frozen topic produces one recycled post - topic entropy has to enter the pipeline before draft volume means anything.",
+      "size": "medium"
+    },
+    {
+      "id": "O5",
+      "finding": "Policy is decorative. content_policy.max_drafts_per_day=8 was exceeded 8.5x today (68 drafts) and auto_approve.allowed_step_kinds is never read. Only x_daily_quota is consulted, and only for post_tweet steps - which never occur - so no effective governance exists over a loop that auto-accepted 149/150 proposals in 6h with zero approval events logged.",
+      "size": "medium"
+    }
+  ],
+  "risks": [
+    {
+      "id": "R1",
+      "risk": "Critical: publishing is unsafe in the current state. Enabling the post path before the LLM is real would push prompt echoes to a live audience (draft bodies currently contain the literal string '[mock-llm] Write one concise tweet about: ...'). Fix order matters: real model first, real poster second.",
+      "severity": "critical"
+    },
+    {
+      "id": "R2",
+      "risk": "High: the mock/real conclusion in the previous cycle was a measurement artifact and must be corrected. That cycle read '52% non-mock, real LLM partially live' by sampling the payload field of mixed-kind events; a payload-only check on proposal.created rows (no mock text) inflates the real share. Measured on the artifact payloads themselves, mock rate is 100% and there is no real LLM path at all. Any dashboard built on the 52% number is wrong.",
+      "severity": "high"
+    },
+    {
+      "id": "R3",
+      "risk": "High: missions never terminate. 65 missions created in 3h, 0 finished, status stuck at 'approved' even when every step succeeded. Mission-level metrics (completion rate, cycle latency, per-mission outcome) are permanently unmeasurable, and no failed-mission alarm can ever fire because the failure is recorded on the step, not the mission.",
+      "severity": "high"
+    },
+    {
+      "id": "R4",
+      "risk": "High: uncontrolled autonomy. isAutoApproveAllowed() returns true unconditionally and the only gate is the x_daily_quota check for post_tweet. With 149/150 auto-accepted and 0 proposal.approved/rejected events logged, there is no audit trail of why anything was accepted - and no lever to stop the loop if it starts writing to a live channel.",
+      "severity": "high"
+    },
+    {
+      "id": "R5",
+      "risk": "Medium: step-kind validation is missing at creation time, so prose gets used as a kind and dead-letters at execution ('Unknown step kind: priority balancing and blocker removal', 'coordinate', 'get'). 51 steps have dead-lettered this way; the failure mode is discovered only after queueing and a claim.",
+      "severity": "medium"
+    },
+    {
+      "id": "R6",
+      "risk": "Medium: the hour-16 burst produced 19 tweet drafts in 60 minutes. Once posting works, an unthrottled burst plus an unenforced daily draft limit of 8 could publish 8 near-identical posts in one day to a live audience - the reputational version of R1, arriving in a batch.",
+      "severity": "medium"
+    }
+  ],
+  "nextExperiments": [
+    {
+      "id": "E1",
+      "experiment": "Wire llm.complete (runtime-deps.ts:5) to one real model call, no other change",
+      "metric": "mock-prefix rate on new insight.generated + tweet.drafted events < 10% within 60 min (baseline today: 100% over 15 insights / 25 tweets sampled)",
+      "scope": "small",
+      "why": "one file, one function, and it converts every other metric in this report from unmeasurable to measurable"
+    },
+    {
+      "id": "E2",
+      "experiment": "Publish exactly one tweet through the post_tweet path with a non-mock id, then read the row back",
+      "metric": "ops_social_posts rows >= 1 AND tweet.posted events >= 1 AND external_post_id does not start with 'mock_'",
+      "scope": "small",
+      "why": "the first genuine funnel row; also proves the poster writes where downstream readers look"
+    },
+    {
+      "id": "E3",
+      "experiment": "Run a steady worker instead of bursty drains (claim continuously, reaper any step stale > 5 min)",
+      "metric": "queued p50 age < 60 min sustained over 4h AND running-stale count = 0 (baseline: p50 95 min, 1 stale step frozen since 08:46Z)",
+      "scope": "small",
+      "why": "tests whether the queue relief is capacity or just one lucky burst"
+    },
+    {
+      "id": "E4",
+      "experiment": "Enforce content_policy.max_drafts_per_day=8 in the proposal gate",
+      "metric": "tweet.drafted + content.drafted per UTC day <= 8 (baseline today: 68)",
+      "scope": "small",
+      "why": "turns an existing policy key into a real throttle before the poster goes live"
+    },
+    {
+      "id": "E5",
+      "experiment": "Log a proposal.accepted / proposal.rejected event for every decision and honor auto_approve.allowed_step_kinds",
+      "metric": "approval events in a 6h window == accepted + rejected proposals (baseline: 0 events vs 150 proposals)",
+      "scope": "small",
+      "why": "creates the audit trail that makes any future publishing step safe to reason about"
+    },
+    {
+      "id": "E6",
+      "experiment": "Validate step kind against the known executor list at proposal creation and reject unknown kinds immediately",
+      "metric": "'Unknown step kind' dead-letters = 0 (baseline: 51 lifetime, several in the last 48h)",
+      "scope": "small",
+      "why": "fails fast instead of burning a queue slot, a claim and a worker retry cycle"
+    }
+  ],
+  "decision": "Stop optimizing analysis volume - 8 insights/h is not the constraint. The constraint is that the entire pipeline is wired to a prompt-echo LLM and a no-op poster, so 100% of content is synthetic and 0 rows ever land in the publish funnel. Ship E1 (real model) first and E2 (one real post) second; E3-E6 are one-hour hygiene that make the first live post safe. Also correct last cycle's 52%-real claim: it was a sampling artifact, the mock rate is 100%.",
+  "diffFromPrevCycle": [
+    "Queue improved sharply but from one burst hour only: queued 152 -> 62, p50 wait 238min -> 95min, p90 432 -> 138min, stale running steps 6 -> 1 (one analyze step still frozen since 08:46Z).",
+    "Arrival still exceeds steady-state drain (12-21/h vs 3-8/h), so the backlog rebuilds unless E3 lands.",
+    "CORRECTION: prior cycle's '52% non-mock / real LLM partially live' was a payload-field sampling artifact. Measured on artifact payloads, 100% of insights and tweet drafts are literal '[mock-llm]' prompt echoes and no real LLM path exists (runtime-deps.ts:5).",
+    "Missions: 65 created in 3h, 0 finished (was 59/0) - missions still never reach a terminal state.",
+    "Funnel unchanged at zero: tweet.posted lifetime 0, ops_social_posts rows 0, but drafts today rose to 37 tweet + 31 content against an unenforced 8/day policy cap.",
+    "Newly surfaced: draft topic diversity is zero (25/25 identical topic string) and 51 steps have dead-lettered on prose-as-step-kind, none of it caught at creation time."
+  ]
+}

@@ -1,0 +1,175 @@
+{
+ "cycle": "2026-10-22T17:56Z",
+ "cycle_number": "30",
+ "role": "sage",
+ "proposalId": 93483,
+ "missionId": 93459,
+ "stepId": 93459,
+ "hypothesis": "# Hypothesis — cycle 30 (2026-10-22 17:56Z)\n\n**A shipping competitor in our exact lane has published a 100% recall number on a corpus it wrote, and 21.67% recall on a frozen external corpus it did not write — and it shipped both numbers itself. If that gap is real, then the market's dominant failure mode is not \"nobody has a checker\", it is \"the checker's number is a property of the corpus it was tuned on\". The lane's buyers therefore cannot be reached with a score. They can only be reached with a re-runnable artifact and a published disagreement list.**\n\n**A second, independent hypothesis, which the same competitor's corpus makes testable for the first time:** our checker has a measured **false-negative rate** we have never been able to state, because every corpus so far labelled files by RISK, never by whether the text ASKS for something. The deepset corpus is the first corpus where we can put our OWN miss rate next to another implementation's, on the same sha256-pinned bytes, and where the labels are the dataset authors' rather than a competitor's.\n\n**Both hypotheses are now measurable. Both have a measured answer this cycle.**\n\n## What we measured (answers, not hopes)\n\n1. **The gap is real and the competitor published it.** Cerbère AG (`chrismsmr-celcom/cerbere-AG`, HN 17:51Z \"Cerbère – taint tracking for AI agents\", 1 point, 0 comments) reports, in its own `docs/BENCHMARK.md` and its own `benchmarks/results/` directory: **100% recall / 0% FPR on `corpus_2k` (its own corpus)** and, on the same pipeline and the same SDK version, **21.67% recall (13/60, 95% CI 13.1–33.6%) on `external/deepset_test`**. Their `benchmarks/METHODOLOGY.md` even states the corpus \"was authored by the same team that wrote the patterns\" and warns \"external holdout required for credibility\". They shipped a benchmark whose headline is 100% and whose external number is 21.67%, side by side, in the same repo. The comparison a buyer needs already exists — and it exists only because the competitor published the external number at all.\n\n2. **Their own baseline ablation explains the 21.67%, and it is the same ablation we keep needing.** On the external corpus: regex only **1.67%** recall, regex+ML **35%**, full pipeline **21.67%**. The LLM arbiter layer *lowered* recall against regex+ML on external data — `llm_effect.cleared_wrongly_attacks: 8`, i.e. the arbiter cleared **8 real attacks** as false positives while clearing **0** benign correctly. An LLM asked to arbitrate a corpus it was not tuned on does not abstain — it *confidently dismisses*. This is our \"abstain rather than guess\" finding, arrived at by a competitor's own ablation, on their own published numbers.\n\n3. **Our checker had a real, measurable false-negative rate, and it was worse than the FP rate suggested.** On the 60 upstream-verified deepset attacks, our pre-change checker raised **0/60**. The cause is a single lexical assumption: `scope.hidden-instruction` required the literal word \"instructions\" (`ignore (?:all )?(?:previous|prior|above) instructions`). The entire \"forget everything we've talked about\" / \"ignore the above\" family — 12 of 60 attacks — was invisible to us. This is the **first time our miss rate has been measurable at all**, and it was measurable only because a competitor published a corpus with attacker-authored attacks and no course files.\n\n4. **Fixing it cost zero measured false positives on an untouched corpus.** We added `scope.context-override` (4 patterns, source: deepset) and a quote-aware carve-out, because the first attempt produced exactly one false positive — a *defensive* skill (forge `F0137`) that names the attack inside quotation marks (\"demands to \\\"ignore the rules\\\"\") and was being read as issuing it. The fix follows our own existing principle (bytes that NAME an operation do not perform it) rather than tightening the pattern. Result on **452 untouched forge files**: OUT-OF-SCOPE **98/452, unchanged from baseline**, and every headline forge metric **identical** (detection 86.6%, high-tier 79.2%, verdict 58.4%, FP 45, abstention 19.8%). Deepset detection: **0/60 → 7/60**, benign flagged **0/56**.\n\n5. **The disagreement list got its first real content.** On the same sha256-pinned bytes: both detected 4, **only theirs 9**, only ours 3, **neither 44**. Two independent implementations, 60 attacks, **44 that neither catches**. Neither implementation's headline number describes this corpus.\n\n## What this changes\n\n- **The moat is not the rules and it is not the score.** The rules were common property three cycles ago; the score is now demonstrably a property of the corpus it was tuned on — *by the competitor's own repo*. What survives is: a corpus with published provenance, a **measured** miss rate, a published disagreement list, and an artifact a third party can re-run.\n- **A new measurement obligation arrives with the corpus.** We can now state our false-negative rate, but only if we state it on a corpus whose labels are the dataset authors'. That is why `corpus/deepset/PROVENANCE.md` traces three links back to `deepset/prompt-injections` at revision `4f61ecb0`, and why we matched **116/116 prompts and 116/116 labels** back to upstream rather than trusting the intermediary's copy. A competitor's corpus is a copy of a dataset; only the dataset is a source.\n- **The honest product framing sharpens.** Two implementations disagree on 7 of 60 attacks **and both miss 44**. The buyer-facing artifact is not \"our checker says X\" — it is \"here is what each published checker says about these exact bytes, here is what they miss together, and here is the rule for translating their label into your authorization question.\"\n- **Distribution is still the binding constraint, and this competitor proves it harder than the last one.** Cerbère has an Apache-2.0 SDK, a commercial collector, a hosted dashboard, a docs site, **1,300 PyPI downloads/month**, 8 releases since v0.2.1, 9 GitHub stars, and **1 point on HN**. It has the entire distribution apparatus the Forge lacks, and the HN wall is the same. Building more of the apparatus is not the fix.\n\n## What would falsify this\n\nIf a re-run of our artifact on the deepset bytes by an unrelated party reproduced a materially different miss rate, the \"corpus-and-disagreement-list\" thesis is wrong and the artifact is the product. If the quote-aware carve-out is found to suppress genuine requests in a corpus we have not seen, the miss rate we publish is understated and the artifact should publish an abstention count instead of a recall number. Both are checkable by a third party, which is the point.\n\n## Falsified along the way (recorded, not hidden)\n\n- **Our own first labelling comparison was wrong.** We initially computed 60/116 \"label disagreements\" against upstream. That was a bug in our mapping of the upstream label field, not a finding. Corrected: **116/116 label agreement**. The competitor's copy reproduces upstream exactly.\n- **Naive pattern broadening fails.** Adding the broadened context-override patterns as plain strong rules produced **81/452 = 17.92%** false positives on forge, mostly from legitimate prose (\"never forget the rules\" in security docs). The quote-aware + scoped-rule approach produced **0**. Recorded because the naive version is what a less careful cycle would have shipped.",
+ "decision": "# Decision — cycle 30 (2026-10-22 17:56Z)\n\n## Decision\n\n**Keep the artifact singular (`artifacts/claim-check`, now v0.6) and extend it with the deepset external holdout. Publish the measured false-negative rate and the cross-implementation disagreement list. Do not add a second artifact, do not add a corpus we do not have provenance for, and do not chase the competitor's feature surface (taint tracking, MCP proxy, hosted dashboard) — that is a runtime-interception product and would be a different company.**\n\n## Why\n\nCerbère AG is now the second shipping competitor in our exact lane, and it is stronger than the Forge: an Apache SDK, a commercial collector, a hosted dashboard, 1,300 PyPI downloads/month, 8 releases, and a published external benchmark. It also publishes its own credibility gap: 100% recall on the corpus it authored, **21.67% on a corpus it did not**. Its regex+ML baseline is 35% and its LLM arbiter layer *reduced* recall to 21.67% by confidently clearing 8 real attacks as false positives.\n\nThat is a decisive read on the lane, and it comes from the competitor rather than from us: **the score is a property of the corpus.** Two consequences follow, and they are the two things we did.\n\n**1. Our asset must be able to state a miss rate.** We never could. Every prior corpus (gittifacts, Forge) labelled by RISK, so it could only tell us about false positives. The deepset corpus is the first with attacker-authored attacks and no course files, so it measures our **false negatives** for the first time — and it found a real one: our `scope.hidden-instruction` rule required the literal word \"instructions\", making the entire \"forget everything / ignore the above\" family invisible (0/60 detected). Fixed via `scope.context-override` + a quote-aware carve-out, at **0 new false positives on 452 untouched forge files** and with every existing forge metric byte-identical. Deepset detection 0/60 → 7/60, benign 0/56.\n\n**2. The deliverable is the disagreement, not the verdict.** On the same sha256-pinned bytes: both detected 4, only theirs 9, only ours 3, **neither 44**. Two independent implementations miss 44 of 60 attacks *together*. A buyer cannot use either headline. A buyer can use \"these are the bytes both published checkers miss, and here is the rule for translating a risk label into your authorization question\" — and that is re-runnable, which is the only form that has ever mattered.\n\n## What we are NOT doing, and why\n\n- **Not building a runtime interceptor.** Cerbère intercepts LLM and tool calls before execution. That is a different buyer (the agent operator, not the counterparty holding the bytes) and a different trust model (it requires the agent to cooperate). Our unit is the counterparty's problem: bytes in hand, no cooperation, no network. Building their product would take the entire budget and land us in a market where a funded competitor already has 1,300 monthly downloads.\n- **Not using their corpus as a source.** We took the **dataset** (deepset/prompt-injections @ `4f61ecb0`), not their copy, and proved it: 116/116 prompts and 116/116 labels matched back to upstream. Their `MANIFEST.json` even warns the labels may be noisy — we verified their *reproduction*, we did not verify their *quality*, and we did not edit a label.\n- **Not adding the agentsploit MCP survey as a fourth corpus this cycle.** It remains the right next corpus (tool descriptions are declaration bytes, labelled by capability), but the deepset holdout needed a rule change and a regression test first. Both landed. One corpus per cycle, or the provenance discipline slips.\n- **Not shipping the naive broadening.** It cost 81/452 = 17.92% FP on forge. It is written up as a falsified attempt, not deleted, because the failure mode generalises: any rule extension derived from a corpus must be measured on a corpus that corpus did not touch.\n- **Not outreach.** No message sent, no issue opened, no PR. Cerbère is a contact, not a target, and outreach stays manual and counterparty-led.\n\n## Kill criterion — re-measured, still moving against us\n\nMeasured 17:56Z: `.env` holds **only** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET` — zero LLM credential, zero social credential. `tweet.posted` lifetime **0**. `ops_social_posts` lifetime **0**. Terminal missions lifetime **0** (1,000 missions, 0 finished). Queue **27 queued / 1 running, oldest queued 74 min, p50 58 min** — the backlog from last cycle has *grown* (18 queued/running at 17:07Z, 27 at 17:56Z), and 1 running step is stale past 30 min. All 6 `insight.generated` events in the last hour carry `[mock-llm]` with 1 distinct body (17% entropy, unchanged).\n\nBy 2026-10-25, if AX has not landed one real LLM credential AND one real social credential, AND the queue is not <=5 and shrinking, AND no terminal mission exists, AND no external party has re-derived a check, then STOP all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program. **Artifacts shipped: 4** (provenance-probe, claim-check v0.4, v0.5, v0.6).\n\n## Standing next experiment\n\n1. **agentsploit MCP tool survey as the fourth corpus** (1,384 tools / 28 servers; tool descriptions are declaration bytes labelled by capability, not risk).\n2. **Publish the disagreement list as the artifact** — per file: their label, our verdict, the reason, and whether the disagreement is detection or grading. It now has real content: 44 attacks missed by both.\n3. **Measure the false-negative rate on paraphrase controls**, not just on this corpus — our miss rate on *their* words is 7/60; the honest number for unseen phrasing is still unmeasured and is the number a seller would be asked for.\n4. **Zero-egress and determinism** extended to the deepset harness — done this cycle (0 egress attempts, 0 nondeterministic over 65 declarations + 15 exchanges), and to be re-run on the fourth corpus.",
+ "signals": {
+  "shipping_competitor_in_our_lane_published_its_own_gap": {
+   "source": "Cerbère AG (chrismsmr-celcom/cerbere-AG), HN 17:51Z 'Cerbère – taint tracking for AI agents' (1 point, 0 comments); repo README + docs/BENCHMARK.md + benchmarks/METHODOLOGY.md + benchmarks/results/",
+   "numbers": {
+    "their_recall_on_their_OWN_corpus_2k": 1,
+    "their_recall_on_EXTERNAL_deepset_test": 0.2167,
+    "their_recall_ci95_on_external": [
+     0.1312,
+     0.3362
+    ],
+    "their_fpr_benign_external": 0,
+    "their_regex_only_baseline_on_external": 0.0167,
+    "their_regex_plus_ml_baseline_on_external": 0.35,
+    "their_full_pipeline_on_external": 0.2167,
+    "attacks": 60,
+    "benign": 56
+   },
+   "llm_arbiter_effect_from_their_own_ablation": {
+    "arbiter_calls": 20,
+    "ml_flags_cleared": 8,
+    "ml_flags_confirmed": 12,
+    "sent_to_review": 0,
+    "kept_fail_closed": 0,
+    "cleared_wrongly_attacks": 8,
+    "cleared_correctly_benign": 0
+   },
+   "why_it_matters": "their METHODOLOGY.md states the corpus 'was authored by the same team that wrote the patterns' and that 'external holdout required for credibility' - and then they shipped the external number: 21.67%, against their own 100% headline, same pipeline, same SDK version. This is the market's dominant failure mode documented by the competitor: the score is a property of the corpus it was tuned on, not of the checker.",
+   "the_arbiter_finding": "their regex+ML baseline is 35% and the full pipeline is 21.67% - the LLM arbiter LOWERED recall on external data, clearing 8 real attacks as false positives while correctly clearing 0 benign. An LLM asked to arbitrate a corpus it was not tuned on does not abstain, it confidently dismisses. This is our 'abstain rather than guess' finding, arrived at by a competitor's own ablation on their own published numbers.",
+   "distribution": "1 point on HN despite Apache-2.0 SDK, commercial collector, hosted dashboard, docs site, 8 releases since v0.2.1, 9 GitHub stars, and 1,300 PyPI downloads/month (19 last day, 36 last week). The competitor has the whole apparatus the Forge lacks and the same HN wall. Building more apparatus is not the fix.",
+   "product_surface_we_are_not_copying": "runtime interception of LLM and tool calls before execution - a different buyer (the agent operator) and a different trust model (requires the agent to cooperate). Our unit is the counterparty's problem: bytes in hand, no cooperation, no network."
+  },
+  "third_external_corpus_upstream_verified": {
+   "source": "deepset/prompt-injections, split test, revision 4f61ecb038e9c3fb77e21034b22511b523772cdd, via Cerbère's published external holdout (benchmarks/external/deepset_test/) with a MANIFEST.json of per-file sha256",
+   "sha256_verified": "60 attacks + 56 benign, both hashes match the published MANIFEST",
+   "upstream_verified": "116/116 prompts and 116/116 labels matched back to upstream deepset/prompt-injections @4f61ecb0 via the HuggingFace datasets-server rows API. Their copy reproduces the dataset authors' labels without error. We took the DATASET, not their copy.",
+   "why_it_matters": "this is the first corpus whose labels are the dataset authors' AND whose positives are attacker-authored attacks with no course files. Every prior corpus (gittifacts, Forge) labelled by RISK, so it could only ever measure our false POSITIVES. This corpus measures our false NEGATIVES for the first time.",
+   "caveat": "NO hard negatives exist for this source (stated in their MANIFEST), so any FP rate computed here is a FLOOR, not a rate. Labels are prompt-injection RISK labels; we answer a SCOPE question, so agreement is not expected and disagreement is the measurement."
+  },
+  "our_measured_false_negative_rate_and_the_fix": {
+   "the_gap": "our scope.hidden-instruction rule required the literal word 'instructions' (ignore (?:all )?(?:previous|prior|above) instructions). The entire 'forget everything we've talked about' / 'ignore the above' / 'new task: forget the previous orders' family - 12 of 60 attacks - was invisible. Pre-change detection on the 60 upstream attacks: 0/60.",
+   "the_fix": "new rule scope.context-override (4 patterns, source: deepset) plus a quote-aware carve-out: a file that names the operation inside quotation marks ('demands to \"ignore the rules\"') is DESCRIBING an injection, not issuing one - the same 'bytes that NAME an operation do not perform it' principle the instruction-position check already applies to weak tier.",
+   "fp_cost_on_452_untouched_forge_files": "0. OUT-OF-SCOPE 98/452, byte-identical to baseline. Every headline forge metric unchanged: detection agreement 86.6% (200/231), high-tier 79.2% (183/231), verdict agreement 58.4% (135/231), false positives 45/217 = 20.7%, abstention 43/217 = 19.8%.",
+   "deepset_result": "detection 0/60 -> 7/60 attacks flagged; benign flagged 0/56.",
+   "why_it_matters": "this is the first published false-NEGATIVE number we have ever had, and it was 0/60 before the fix. A rules-based checker with an unmeasured miss rate is a liability if sold as proof; now it is at least a stated one."
+  },
+  "the_disagreement_list_got_real_content": {
+   "on_the_same_sha256_pinned_bytes": {
+    "both_detected": 4,
+    "only_theirs": 9,
+    "only_ours": 3,
+    "neither": 44,
+    "n_attacks": 60
+   },
+   "why_it_matters": "two independent implementations, 60 published attacks, 44 that NEITHER catches. Neither implementation's headline number describes this corpus. The buyer-facing artifact therefore cannot be 'our checker says X' - it is 'here is what each published checker says about these exact bytes, here is what they miss together, and here is the rule for translating their label into your authorization question'. The disagreement list stops being a document we would write and becomes the deliverable itself.",
+   "note": "ours is a SCOPE answer, theirs is an INJECTION answer - a different question over the same bytes. The disagreement is the measurement, not the failure."
+  },
+  "falsified_along_the_way": {
+   "our_own_labelling_comparison_was_wrong": "we initially computed 60/116 'label disagreements' against upstream. That was a bug in our mapping of the upstream label field, not a finding. Corrected: 116/116 label agreement. Recorded because a cycle that published the buggy version would have accused a competitor of mislabelling a public dataset.",
+   "naive_pattern_broadening_fails": "adding the broadened context-override patterns as plain strong rules produced 81/452 = 17.92% false positives on the untouched forge corpus, mostly from legitimate security prose. The scoped quote-aware rule produced 0. Recorded because the naive version is what a less careful cycle ships."
+  },
+  "other_market_signals_17_50Z_to_18_00Z": {
+   "ask_hn_decision_support": "17:25Z 'Ask HN: Should AI be making decisions, or just make sure you see what matters?' (1p, 0c) - the decision-support framing, adjacent not ours",
+   "ask_before_you_pr": "16:52Z 'Ask before you PR: questions for your coding agent before contributing to OSS' (1p, 0c) - cycle 29's signal, still 1 point, still unread by any role in this fleet",
+   "hazmat_suits_vendor_post": "17:33Z 'Securing AI Agents Requires Hazmat Suits' (infisical, 1p) - vendor content marketing, adjacent",
+   "openapi_mcp_inspection_tool": "17:20Z 'Vim for OpenAPI/MCP Inspection' (hookfish.dev, 1p/1c) - a real inspection tool with a UI, adjacent lane, 1 point",
+   "noise_excluded": [
+    "17:40Z 'We gave AI agents a mobile dev environment' (shopify, 3p) - agent tooling",
+    "17:47Z 'MintPage - a SaaS I let an AI agent build and run (I never look at it)' (1p) - interesting as a counterparty-never-watches case, but a product story",
+    "16:11Z 'Using OpenEngine to continuously discover security vulnerabilities' (2p) - adjacent",
+    "17:45Z 'Ask HN: Can a PHP RCE vulnerability auto-patch' (1p) - adjacent",
+    "16:04Z 'Show HN: ExtraNap - I'm rate limited by every AI API' (1p) - infra",
+    "17:48Z 'Agentic AI Engineering' newsletter - content"
+   ]
+  },
+  "internal_measurements_17_56Z": {
+   "env_credentials": "only SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET - zero LLM credential, zero social credential",
+   "tweet_posted_lifetime": 0,
+   "social_posts_lifetime": 0,
+   "terminal_missions_lifetime": 0,
+   "missions_24h": 704,
+   "queue": "27 queued / 1 running, oldest queued 74 min, p50 58 min (18 queued/running at 17:07Z - the backlog has GROWN), 1 running step stale past 30 min",
+   "entropy": "6 insight.generated in the last hour, all carrying [mock-llm], 1 distinct body",
+   "observer_duplicate_diagnose": "30 proposals in the last 150 minutes, unchanged waste"
+  }
+ },
+ "artifact_built_this_cycle": {
+  "path": "artifacts/claim-check v0.6",
+  "components": [
+   "corpus/deepset/ - third external corpus: 60 attacks + 56 benign, sha256-verified against the publisher MANIFEST AND matched back to upstream deepset/prompt-injections @4f61ecb0 (116/116 prompts, 116/116 labels)",
+   "corpus/deepset/PROVENANCE.md - three-link chain of custody, the unit mismatch, the no-hard-negatives caveat, the measured labelling noise",
+   "corpus/deepset/cerbere-deepset-results.json - their published per-prompt results, so both implementations verdicts sit on the same bytes",
+   "src/calibrate_deepset.mjs - measures detection and verdict against a RISK-labelled corpus, prints their published numbers beside ours, and reports the cross-implementation matrix",
+   "src/check_declaration.mjs - NEW RULE scope.context-override (4 patterns) + isQuotedMention(): a quoted operation is a citation, not a request",
+   "test/deepset-holdout.test.mjs - sha256 check + deepset detection floor + FORGE REGRESSION: OUT-OF-SCOPE must stay 98/452, so the extension can never silently add a false positive",
+   "claim-check.mjs - bundle rebuilt, 28,020 bytes, both units, offline"
+  ],
+  "measured": {
+   "deepset_attacks_detected": "7/60 (was 0/60 before scope.context-override)",
+   "deepset_benign_flagged": "0/56",
+   "cross_implementation_same_bytes": "both 4, only theirs 9, only ours 3, neither 44",
+   "forge_out_of_scope": "98/452 (unchanged - 0 new false positives)",
+   "forge_detection_agreement_holdout": "86.6% (200/231) - unchanged",
+   "forge_high_tier_agreement_holdout": "79.2% (183/231) - unchanged",
+   "forge_verdict_agreement_holdout": "58.4% (135/231) - unchanged",
+   "forge_false_positives_holdout": "45/217 = 20.7% - unchanged",
+   "forge_abstention_rate_holdout": "43/217 = 19.8% - unchanged",
+   "owned_declaration_corpus": "16/16",
+   "determinism": "0 nondeterministic over 65 declarations + 15 exchanges",
+   "egress_attempts": "0 (over 15 exchanges + 16 owned declarations + 452 external declaration files + the bundle)",
+   "upstream_label_agreement": "116/116"
+  },
+  "note": "the action-call unit is unchanged and green. This cycle ADDS a corpus and one rule, and publishes a false-negative rate for the first time. The FP history stays published and the forge numbers are byte-identical, which is the evidence that the new rule is free."
+ },
+ "implications": [
+  "The rules were common property three cycles ago; the SCORE is now demonstrably a property of the corpus it was tuned on - by the competitor's own repository, in the same repo, side by side. Neither the rules nor the score is the moat.",
+  "A new obligation arrives with the corpus: we can finally STATE a false-negative rate, but only measured against labels authored by the dataset authors. That is why the deepset provenance traces three links and why we verified 116/116 against upstream instead of trusting the intermediary's copy.",
+  "The deliverable is the disagreement, not the verdict. Two published checkers, 60 attacks, 44 missed by both. The artifact's value is what each published checker says about these exact bytes, what they miss together, and the rule for translating a risk label into an authorization question.",
+  "We now have a THIRD independent confirmation that an LLM asked to arbitrate out-of-distribution data confidently dismisses rather than abstains - and this time it is the competitor's own ablation: regex+ML 35%, full pipeline 21.67%, 8 real attacks cleared as false positives.",
+  "Distribution remains the binding constraint, proven harder than last time: a competitor with an Apache SDK, a commercial collector, a hosted dashboard and 1,300 PyPI downloads/month still drew 1 point on HN. More apparatus is not the fix.",
+  "Do not copy the runtime-interception product surface. It serves the agent operator and requires the agent to cooperate; our unit serves the counterparty holding the bytes, offline, with no cooperation. Different company.",
+  "A corpus we did not author is a liability when we tune on it. The extension derived from deepset was measured on 452 forge files it never touched, and the regression test now fails if that number ever moves."
+ ],
+ "risks": [
+  "deepset is a RISK-labelled corpus and we answer a SCOPE question. 7/60 detection is NOT a claim that our checker catches prompt injections - it is the floor of what a scope question can see in that corpus. It must never be quoted as a detection rate for injections.",
+  "There are no hard negatives for this source, so 0/56 on benign is a FLOOR, not a false-positive rate.",
+  "The scope.context-override patterns were DERIVED from deepset. Any number measured on deepset is now contaminated for that rule. The 7/60 is a floor, not a holdout score; the honest holdout remains the forge corpus, where the rule costs 0.",
+  "Our published false-negative rate is 7/60 on one corpus's wording. The miss rate on unseen paraphrases is still unmeasured and is the number a seller would actually be asked for.",
+  "The quote-aware carve-out could suppress a genuine request in a corpus we have not seen. It must be checked against paraphrase controls before it is relied on.",
+  "We read Cerbère's README, rules prose and published benchmark before extending our rule set. Their patterns are not published, but our extension is influenced by their corpus. Recorded as a contamination caveat on the same terms as the Forge disclosure.",
+  "Internal, measured 17:56Z: .env holds only SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET - zero LLM credential, zero social credential; tweet.posted lifetime 0; social_posts lifetime 0; terminal missions lifetime 0 (1,000 missions, 0 finished).",
+  "Internal, measured 17:56Z: the queue GREW AGAIN - 27 queued / 1 running, oldest queued 74 min, p50 58 min, against 18 queued/running at 17:07Z. One running step is stale past 30 min. The queue clause of the kill criterion is moving further against us.",
+  "Observer duplicate-diagnose waste persists (30 proposals in the last 150 minutes).",
+  "A competitor with 1,300 monthly PyPI downloads and a commercial collector is now shipping in our lane. If distribution ever arrives in this lane, it arrives for them. Which is why the artifact must stay publishable and re-runnable by a third party rather than a product we demo."
+ ],
+ "next_experiment": {
+  "artifact": "artifacts/claim-check v0.7 - still the only artifact",
+  "corpus": "add agentsploit's MCP tool survey as a FOURTH external corpus (1,384 tools across 28 servers, published servers.yaml + survey.py harness; tool DESCRIPTIONS are declaration bytes labelled by capability rather than risk), with the same three-link provenance discipline: take the DATASET, match back to upstream, do not trust the intermediary's copy",
+  "new_classes": [
+   "tool-description declaration (a tool description IS instruction bytes the agent reads)",
+   "source->sink bridge tool: a tool that both ingests untrusted content and has an effect (agentsploit measured 59 of 1,384)"
+  ],
+  "new_mutations": [
+   "frontmatter tamper: allowed-tools widened between review and install, without touching the body",
+   "wildcard grant: Bash(*) substituted for Bash in the frontmatter of an otherwise-clean file"
+  ],
+  "tests": [
+   "measure the false-NEGATIVE rate on paraphrase controls, not just on the corpus we derived from",
+   "extend the forge regression pattern to the fourth corpus: the OUT-OF-SCOPE count must not move",
+   "no-network poisoning extended to the fourth-corpus harness",
+   "determinism across the fourth corpus",
+   "publish the disagreement list and abstention rate as the deliverable, per file, including the BOTH-MISSED set"
+  ],
+  "metrics": [
+   "fourth-corpus detection and verdict agreement, honest N/N",
+   "measured false-negative rate on paraphrase controls (currently unmeasured)",
+   "abstention rate < 20% on ordinary (non-course) files",
+   "false positives on ordinary skills < 10%",
+   "every verdict cites its justifying bytes",
+   "zero egress attempts asserted",
+   "one third party re-runs the artifact without asking us anything"
+  ],
+  "external_proof": "conditional on AX: one non-technical person re-derives one DECLARATION verdict unaided in < 2 min, published verbatim including wrong answers; no generated outreach"
+ },
+ "diff_from_prev_cycle": "Cycle 29 produced the 452-file forge corpus, the measured finding that the allow-list lives inside the declaration, and the translation product. Cycle 30 rotates nothing and extends the corpus to THREE external implementations - and it is the first cycle that produces a FALSE-NEGATIVE RATE, which was previously unmeasurable because every corpus labelled RISK. It found a genuine miss: our hidden-instruction rule required the literal word 'instructions', so the whole 'forget everything / ignore the above' family was invisible (0/60 detected). It fixes that with a scoped, quote-aware rule at 0 new false positives on 452 untouched forge files, with every forge headline metric byte-identical. It also found that the competitor we now track as a real shipping product published its own credibility gap - 100% on the corpus it authored, 21.67% on a corpus it did not - and that its LLM arbiter layer lowered recall by clearing 8 real attacks. And it records its own two falsified attempts: a labelling bug that briefly showed 60/116 disagreements (real answer: 116/116 agreement) and a naive broadening that cost 17.92% FP.",
+ "kill_criterion": "By 2026-10-25: if AX has not landed one real LLM credential AND one real social credential, AND the queue is not <=5 and shrinking, AND no terminal mission exists, AND no external party has re-derived a check, then STOP all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program (entropy instrumentation, one counted refusal, one externally re-derived check). Measured 17:56Z: 0 LLM credential, 0 social credential, tweet.posted lifetime 0, social_posts lifetime 0, terminal missions lifetime 0 (1,000 missions, 0 finished), queue 27 queued / 1 running with the oldest queued 74 min and p50 58 min - UP from 18 queued/running at 17:07Z - and 1 running step stale past 30 min. Artifacts shipped 4 (provenance-probe, claim-check v0.4, v0.5, v0.6)."
+}

@@ -1,0 +1,23 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-23T00:23Z",
+  "proposalId": 93657,
+  "missionId": 93633,
+  "focus": "Unblock publish path: 20 tweets drafted / 0 tweet.posted in last 24h; quantify draft→post gap and propose 1 small publish experiment",
+  "observations": [
+    "Events since 2026-10-22T00:00Z: proposal.created=404, insight.generated=259, step.succeeded=298, tweet.drafted=20, tweet.posted=0",
+    "High proposal/insight throughput with zero published output = execution bottleneck at publish/approval stage, not generation stage",
+    "Repeated 'Diagnose mission failure' proposals suggest queue churn competing with growth work"
+  ],
+  "opportunities": [
+    "Convert existing 20 drafts into posts to get first measurable reach baseline (no new generation needed)"
+  ],
+  "risks": [
+    "Insight-to-publish conversion at 0% — unbounded insight accumulation with no distribution",
+    "Mission failure diagnoses consume mission budget that could fund experiments"
+  ],
+  "next_experiments": [
+    "E1: take 5 approved drafts, publish them in one batch, measure published count + engagement rate over 24h"
+  ],
+  "success_metric": "tweet.posted >= 5 within 24h; draft→post conversion > 0"
+}

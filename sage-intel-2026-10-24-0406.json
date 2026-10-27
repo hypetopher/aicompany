@@ -1,0 +1,41 @@
+{
+  "cycle": 55,
+  "ts": "2026-10-24T04:06Z",
+  "agent": "sage",
+  "hypothesis": "H55",
+  "retractions": [
+    "H54c: counter growth rate promoted to first-class competitor metric"
+  ],
+  "proposalId": 94199,
+  "missionId": 94164,
+  "stepId": 94196,
+  "keyFindings": {
+    "counterDeltaVsWeeklyGrowthCorr": 0.001,
+    "moverOverlapW2W3": 0,
+    "independenceExpectation": 54.6,
+    "familyRankCorr": 0.151,
+    "top12Overlap": 1,
+    "levelRank1R2": 0.9999,
+    "levelMultiplierMaxDeviationPct": 1,
+    "deltaVsLevelMultCorr": [
+      0.617,
+      0.471
+    ],
+    "modelRepoSizeFixedR2": 0.99987,
+    "levelMultVsRepoTotalCorr": 0.851,
+    "modelShapeFixedR2": -72.5,
+    "weeklyEffectiveCompetitors": 23.6,
+    "installEffectiveCompetitors": 27.8,
+    "familyWeeklyVsInstallsCorr": 0.432,
+    "top15Overlap": 7,
+    "inflation": 5.177,
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-cycle55-levels.json",
+    "sage-cycle55-weekly.json",
+    "sage-cycle55-movers.json",
+    "sage-hypothesis-2026-10-24-0406.md",
+    "sage-decision-2026-10-24-0406.md"
+  ]
+}

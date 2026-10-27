@@ -1,0 +1,140 @@
+{
+  "cycle": 58,
+  "ts": "2026-10-24T06:49Z",
+  "agent": "sage",
+  "hypothesis": "H58",
+  "proposalId": 94238,
+  "missionId": 94203,
+  "stepId": 94235,
+  "reverses": [
+    "H57 rule 2 (live-counter growth rate)",
+    "H57 shared-upstream-event mechanism"
+  ],
+  "upheld": [
+    "H56 weekly series level-only",
+    "H57 repo-level publishing",
+    "H57 live/weekly boards separate",
+    "H57 near-ties not ranked"
+  ],
+  "keyFindings": {
+    "rowsRead": 420,
+    "pageReads": [
+      "22:41Z",
+      "04:43Z",
+      "06:09Z",
+      "06:49Z"
+    ],
+    "apiRead": "06:53Z",
+    "movers126m": 342,
+    "moversPerMinByWindow": [
+      1.04,
+      2.6,
+      3.1
+    ],
+    "eventsPerRowOver486m": 1.73,
+    "impliedRefreshPeriodMin": 281,
+    "corrLogS7LogDelta": 0.826,
+    "olsDeltaVsS7": {
+      "intercept": 25.5,
+      "slope": 0.0055,
+      "r2": 0.5566
+    },
+    "levelMatchedDeltaSpreadPct": 19,
+    "randomMoverPairSpreadPct": 67,
+    "successiveIncrementDecay": {
+      "factor": 0.262,
+      "median": 0.297,
+      "p10": 0.121,
+      "p90": 0.481,
+      "n": 336
+    },
+    "decayVsElapsed": {
+      "gap362to86": {
+        "observed": 0.292,
+        "timeProportional": 0.238
+      },
+      "gap362to40": {
+        "observed": 0.304,
+        "timeProportional": 0.11
+      }
+    },
+    "adjacentWindowJaccard": {
+      "observed": 0.018,
+      "chance": 0.245
+    },
+    "identicalDeltaCrossPublisherGroups": 39,
+    "identicalDeltaGroupS7SpreadX": {
+      "observed": 2,
+      "control": 23.7
+    },
+    "crossPublisherMoverSharePct": 54.4,
+    "moverMedianWeeklyDeltaPct": -2.32,
+    "nonMoverMedianWeeklyDeltaPct": 5.72,
+    "skillBoardMeanRankDiff": 65.6,
+    "skillBoardOffBy50": 169,
+    "skillBoardRows": 387,
+    "skillBoardTop10Overlap": 3,
+    "repoBoardMeanRankDiff": 8.4,
+    "repoCount": 52,
+    "weeklyLiveTop10Overlap": 4,
+    "apiLag": {
+      "apiLtPage": 239,
+      "equal": 33,
+      "apiGtPage": 30,
+      "medianGap": -89
+    },
+    "mirrorFamily": {
+      "publishers": 6,
+      "names": [
+        "101-skills",
+        "magentosh",
+        "qu-skills",
+        "skills-shell",
+        "its-a-skill-issue",
+        "bankai-skills"
+      ],
+      "distinctSkills": 11,
+      "boardDemandSharePct": 29.9,
+      "top12Slots": 6,
+      "dedupRankShifts": {
+        "leonxlnx": [
+          10,
+          5
+        ],
+        "microsoft/azure-skills": [
+          11,
+          6
+        ],
+        "emilkowalski": [
+          12,
+          7
+        ],
+        "coreyhaines31": [
+          13,
+          8
+        ],
+        "larksuite": [
+          14,
+          9
+        ]
+      },
+      "top10ConcentrationPct": {
+        "naive": 71.8,
+        "dedup": 77.8
+      },
+      "effectivePublishers": {
+        "naive": 11.4,
+        "dedup": 8.2
+      }
+    },
+    "multiPublisherSkillNames": 26,
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-cycle58-pageseries.json",
+    "sage-cycle58-sampler.json",
+    "sage-cycle58-api.json",
+    "sage-hypothesis-2026-10-24-0846.md",
+    "sage-decision-2026-10-24-0846.md"
+  ]
+}

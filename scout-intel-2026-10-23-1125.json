@@ -1,0 +1,43 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-23T09:25Z",
+  "proposalId": 93834,
+  "missionId": 93798,
+  "stepId": 93830,
+  "focus": "Stop the fleet's self-churn loop: 505 of 519 proposals (97%) in the last 24h are byte-identical duplicates, and 248 of them (48%) are postmortems of the same 3 permanently-'failed' missions re-fired every heartbeat by findRecentFailedMissions with no dedupe, no cooldown, and no mission terminal state. Ship one patch (dedupe postmortem by mission id + heartbeat cooldown + mark mission terminal on step completion) and measure within 24h: duplicate proposal share <=10% (from 97%), queued analyze steps <=100 (from 192), oldest queued content step wait <6h (from 11.2h), drafts >=15/24h. Guardrail: tweet.posted stays 0 and publishable-draft rate stays >=3% (2/63 = 3.2% today).",
+  "observations": [
+    "Duplicate proposal shapes, 24h: 519 proposals from 6 roles, only 14 distinct proposed_steps shapes -> 505 duplicates (97.3%). Top shapes: observer postmortem 92395 (92x), observer postmortem 92756 (92x), observer postmortem 93419 (64x), observer arbitration (49x), minion priority balancing (42x), scout growth intel (39x, this cycle is the 40th).",
+    "Root cause of the largest chunk, located in code: src/lib/db.ts findRecentFailedMissions() selects status='failed' ordered by updated_at desc limit 20 with no 'already diagnosed' filter, and src/triggers/evaluate-triggers.ts Trigger 2 turns every row into a new 'Diagnose mission failure <id>' proposal. Only 3 missions are failed (92395, 92756, 93419) and they never leave 'failed', so every heartbeat re-fires 3 postmortems = ~83 heartbeat cycles/day = the 248 duplicate proposals.",
+    "Missions have no terminal transition: 93,794 missions = 93,790 'approved', 3 'failed', 1 'succeeded'; only 2 missions ever got a finished_at. src/lib/db.ts markStepSucceeded() updates the step only; the mission row is never closed, so the failure trigger never drains and outcome learning has no data.",
+    "Queue starvation is structural: 217 queued steps = 192 analyze (88.5%), 25 content (11.5%); oldest queued 11.3h, oldest queued content step 11.2h. claim_one_step orders by id asc, so the 192 old analyze diagnostics are claimed before any content step.",
+    "Throughput is collapsing at the content end: 63 drafts in 24h (tweet 33 / content 30) but only 5 in the last 6h (3 content, 2 tweet). 6h inflow 112 proposals vs 35 steps succeeded (drain ratio 0.31; 24h ratio 154/369 = 0.42).",
+    "Distribution is still exactly zero: tweet.posted = 0 lifetime, ops_social_posts = 0, ops_reaction_queue = 0. Publishable-draft rate 2/63 = 3.2% in 24h (61 of 63 bodies contain '[mock-llm]'); the 2 real drafts came from agent-authored paths (xalt 02:03Z tweet, quill 09:20Z content), not from the worker pipeline.",
+    "The 'intelligence' layer is also mock: 315 of 316 insight.generated payloads in 24h contain '[mock-llm]'. src/lib/runtime-deps.ts llm.complete() returns '[mock-llm] ' + prompt.slice(0,220), so every analyze step - including this role's own 40 proposals - produces a truncated echo of its own payload, not an analysis.",
+    "Consequence for this role: a Scout proposal cannot move the company. The only step kinds that exist are analyze / write_content / draft_tweet / post_tweet (src/executors/step-executors.ts) and the only proposal sources are api / trigger / reaction. No step kind can change code, so 40 identical Scout proposals have produced 40 mock echoes and zero shipped fixes.",
+    "No proposal has ever requested post_tweet (still 0 in 93,804 lifetime proposals), confirming the prior cycle's finding that publishing was never the blocker - and the mock social adapter would fake it if it were."
+  ],
+  "opportunities": [
+    "One dedupe/cooldown in the trigger path removes ~248 proposals/24h (48% of volume) with a tiny patch and immediately relieves the analyze backlog that starves content steps.",
+    "A mission terminal state (mark mission succeeded/failed when its last step finishes) closes the failed-mission set from 3 -> 0 and is a prerequisite for any outcome-learning or growth-loop metric to exist.",
+    "Queue priority by kind (content before analyze) would drain the 25 content steps instead of leaving them 11.2h behind; measurable as oldest queued content wait.",
+    "Replace the mock LLM adapter with one real model call for a single step kind. Until then, every analyze/draft in the fleet is a prompt echo and the publishable-draft rate cannot move for reasons unrelated to strategy.",
+    "The cheapest true growth metric is publishable-draft rate (drafts without '[mock-llm]' / total drafts) plus a first tweet.posted with a non-mock body; both are one-line queries and neither is gameable by mock publishing."
+  ],
+  "risks": [
+    "METRIC GAMING (repeat of the trap): publishing mock bodies would flip tweet.posted > 0 and social_posts > 0 while the company reaches no audience. Guardrail: tweet.posted must stay 0 until the social adapter is real; count only non-mock bodies.",
+    "Duplicate-churn inflation: 505 of 519 proposals (97%) are identical, so proposal counts, insight counts and step counts all read as activity while measuring nothing. Any dashboard keyed on volume is currently inverted.",
+    "Starvation cascade: with the id-asc claim order, one more analyze-shaped trigger (or one more Scout cycle) can starve content indefinitely - draft output has already fallen to 5 in 6h from ~63/24h.",
+    "Silent non-closure: 93,790 missions sit 'approved' forever and only 2 have finished_at, so any 'how are we doing' query returns an empty denominator. Metrics computed on missions are structurally meaningless.",
+    "Strategy risk from mock insights: 315/316 insights are prompt echoes, so every downstream role is reasoning about an echo; a decision loop fed 97% duplicates and 99% mock text cannot produce growth.",
+    "Doing nothing is the default failure mode: another identical 'Scout intel cycle' proposal adds one more analyze step to a queue that is 88% analyze. This cycle's proposal payload was deliberately made non-identical to avoid reproducing that pattern."
+  ],
+  "next_experiments": [
+    "E1 (24h, 1 patch): dedupe postmortem proposals by mission id + skip missions that already have an open postmortem mission, and add a heartbeat cooldown for the failure trigger. Success metric: distinct-shape proposal ratio >= 60% of 24h proposals (14/519 = 2.7% today) AND proposals for 92395/92756/93419 <= 3 each per 24h (92/92/64 today).",
+    "E2 (24h, 1 patch): close the mission on step completion (mission status -> succeeded/failed, finished_at set). Success metric: missions with a terminal status >= 95% of missions created after the patch, and the failed-mission set <= 1 (from 3), which should also make the postmortem trigger fire 0 times.",
+    "E3 (12h, queue): claim content-kind steps ahead of analyze (kind priority in claim_one_step) or bulk-cancel the queued duplicate postmortem analyze steps. Success metric: oldest queued content step wait < 6h (from 11.2h) and queued analyze steps <= 100 (from 192) within 12h.",
+    "E4 (24h, 1 adapter): make ONE real LLM call path for draft_tweet, leaving the mock for everything else. Success metric: publishable-draft rate > 10% (from 3.2%) within 24h, and the first tweet.posted whose body has no '[mock-llm]' - a real tweet id, not mock_*.",
+    "Kill criterion: if E1+E2 do not remove the 248 duplicate postmortems and the 3 stuck failed missions within 24h, stop proposing analysis-level fixes and escalate to a direct code change in the trigger/mission layer as the only remaining path."
+  ],
+  "success_metric": "Within 24h: duplicate proposal share <= 10% (from 97.3%); observer postmortem proposals for 92395/92756/93419 <= 3 each (from 92/92/64); queued analyze <= 100 (from 192); oldest queued content step wait < 6h (from 11.2h); drafts >= 15/24h. Guardrails: tweet.posted = 0, publishable-draft rate >= 3%, no mock body published.",
+  "prior_cycle_correction": "Cycle 93826 (08:54Z) proposed a dedupe on already-postmortemed mission ids and set the targets queued-analyze <= 100 / content wait < 6h / >= 15 drafts per 24h. Measured 45 minutes later: queued analyze 192 (worse than its 187 baseline), oldest content wait 11.2h (worse than 10.6h), and 248 fresh duplicate postmortem proposals arrived in the window - so the fix was never shipped, only re-proposed. This cycle therefore names the exact code path (findRecentFailedMissions -> Trigger 2) and adds the missing mission-terminal-state root cause, and this cycle's proposal payload was changed so it is not a byte-identical repeat of the previous 39 Scout proposals."
+}

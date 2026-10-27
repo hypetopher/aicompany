@@ -1,0 +1,1268 @@
+{
+  "cycle": 69,
+  "ts": "2026-10-24T18:05Z",
+  "agent": "sage",
+  "proposalId": 94336,
+  "missionId": 94300,
+  "stepId": 94332,
+  "hypothesisId": "H69",
+  "headline": "H68 central claim refuted: no repo-level pool exists (repo header == SUM of skill counters, 125/130 repos); real structure is INSTALL GROUPS; corrected overstatement +159.6% (x2.60), not 22.6-290.7%",
+  "keyFindings": {
+    "poolExists": {
+      "reposCrawled": [
+        {
+          "repo": "heygen-com/hyperframes",
+          "headerSkills": 52,
+          "headerTotal": 15500000,
+          "skillsN": 52,
+          "sum": 15460062,
+          "max": 1200000,
+          "min": 1
+        },
+        {
+          "repo": "mattpocock/skills",
+          "headerSkills": 55,
+          "headerTotal": 29900000,
+          "skillsN": 55,
+          "sum": 29801200,
+          "max": 1400000,
+          "min": 42200
+        },
+        {
+          "repo": "magentosh/superpowers",
+          "headerSkills": 86,
+          "headerTotal": 4099999.9999999995,
+          "skillsN": 86,
+          "sum": 4129338,
+          "max": 747600,
+          "min": 37
+        },
+        {
+          "repo": "gencraft-labs/skills",
+          "headerSkills": 33,
+          "headerTotal": 1300000,
+          "skillsN": 33,
+          "sum": 1276738,
+          "max": 256000,
+          "min": 4
+        },
+        {
+          "repo": "101-skills/superpowers",
+          "headerSkills": 86,
+          "headerTotal": 4800000,
+          "skillsN": 86,
+          "sum": 4752336,
+          "max": 856900,
+          "min": 133
+        },
+        {
+          "repo": "leonxlnx/taste-skill",
+          "headerSkills": 16,
+          "headerTotal": 5500000,
+          "skillsN": 16,
+          "sum": 5488901,
+          "max": 670100,
+          "min": 1
+        },
+        {
+          "repo": "skills-shell/superpowers",
+          "headerSkills": 86,
+          "headerTotal": 2200000,
+          "skillsN": 86,
+          "sum": 2240527,
+          "max": 405200,
+          "min": 12
+        },
+        {
+          "repo": "its-a-skill-issue/superpowers",
+          "headerSkills": 86,
+          "headerTotal": 2100000,
+          "skillsN": 86,
+          "sum": 2146308,
+          "max": 388300,
+          "min": 10
+        },
+        {
+          "repo": "qu-skills/superpowers",
+          "headerSkills": 86,
+          "headerTotal": 3000000,
+          "skillsN": 86,
+          "sum": 2983303,
+          "max": 539900,
+          "min": 36
+        },
+        {
+          "repo": "bankai-skills/superpowers",
+          "headerSkills": 86,
+          "headerTotal": 2100000,
+          "skillsN": 86,
+          "sum": 2058268,
+          "max": 373200,
+          "min": 11
+        },
+        {
+          "repo": "emilkowalski/skills",
+          "headerSkills": 15,
+          "headerTotal": 2600000,
+          "skillsN": 15,
+          "sum": 2628000,
+          "max": 383900,
+          "min": 33300
+        },
+        {
+          "repo": "microsoft/azure-skills",
+          "headerSkills": 57,
+          "headerTotal": 14200000,
+          "skillsN": 57,
+          "sum": 14243332,
+          "max": 576500,
+          "min": 5
+        },
+        {
+          "repo": "mbfinotti/sales-skills",
+          "headerSkills": 27,
+          "headerTotal": 657200,
+          "skillsN": 27,
+          "sum": 657400,
+          "max": 24900,
+          "min": 24000
+        },
+        {
+          "repo": "coreyhaines31/marketingskills",
+          "headerSkills": 72,
+          "headerTotal": 5800000,
+          "skillsN": 72,
+          "sum": 5774815,
+          "max": 236400,
+          "min": 15
+        },
+        {
+          "repo": "remotion-dev/skills",
+          "headerSkills": 15,
+          "headerTotal": 2800000,
+          "skillsN": 15,
+          "sum": 2801900,
+          "max": 675600,
+          "min": 0
+        },
+        {
+          "repo": "prisma/skills",
+          "headerSkills": 10,
+          "headerTotal": 3500000,
+          "skillsN": 10,
+          "sum": 3466400,
+          "max": 388700,
+          "min": 65200
+        },
+        {
+          "repo": "larksuite/cli",
+          "headerSkills": 34,
+          "headerTotal": 12000000,
+          "skillsN": 34,
+          "sum": 11951616,
+          "max": 477700,
+          "min": 16
+        },
+        {
+          "repo": "designed-by-ai/skills",
+          "headerSkills": null,
+          "headerTotal": 1000000,
+          "skillsN": 1,
+          "sum": 1000000,
+          "max": 1000000,
+          "min": 1000000
+        },
+        {
+          "repo": "vercel-labs/skills",
+          "headerSkills": 3,
+          "headerTotal": 4000000,
+          "skillsN": 3,
+          "sum": 4000017,
+          "max": 4000000,
+          "min": 6
+        },
+        {
+          "repo": "lllllllama/rigorpilot-skills",
+          "headerSkills": 12,
+          "headerTotal": 4200000,
+          "skillsN": 12,
+          "sum": 4236800,
+          "max": 473800,
+          "min": 9100
+        },
+        {
+          "repo": "vercel-labs/agent-skills",
+          "headerSkills": 16,
+          "headerTotal": 3000000,
+          "skillsN": 16,
+          "sum": 2967936,
+          "max": 835000,
+          "min": 0
+        },
+        {
+          "repo": "uizze/uizze",
+          "headerSkills": 6,
+          "headerTotal": 208300,
+          "skillsN": 6,
+          "sum": 208311,
+          "max": 144000,
+          "min": 36
+        },
+        {
+          "repo": "samber/developer-relations-skills",
+          "headerSkills": 70,
+          "headerTotal": 548700,
+          "skillsN": 70,
+          "sum": 548629,
+          "max": 10000,
+          "min": 2
+        },
+        {
+          "repo": "mbfinotti/advertising-skills",
+          "headerSkills": 31,
+          "headerTotal": 594000,
+          "skillsN": 31,
+          "sum": 594100,
+          "max": 19400,
+          "min": 18600
+        },
+        {
+          "repo": "flowkit-labs/skills",
+          "headerSkills": null,
+          "headerTotal": 1100000,
+          "skillsN": 1,
+          "sum": 1100000,
+          "max": 1100000,
+          "min": 1100000
+        },
+        {
+          "repo": "addyosmani/agent-skills",
+          "headerSkills": 25,
+          "headerTotal": 1500000,
+          "skillsN": 25,
+          "sum": 1487900,
+          "max": 72100,
+          "min": 32500
+        },
+        {
+          "repo": "mbfinotti/revops-skills",
+          "headerSkills": 20,
+          "headerTotal": 392500,
+          "skillsN": 20,
+          "sum": 392300,
+          "max": 19900,
+          "min": 19200
+        },
+        {
+          "repo": "google/agents-cli",
+          "headerSkills": 7,
+          "headerTotal": 3600000,
+          "skillsN": 7,
+          "sum": 3569500,
+          "max": 510900,
+          "min": 509500
+        },
+        {
+          "repo": "cloudflare/skills",
+          "headerSkills": 22,
+          "headerTotal": 1400000,
+          "skillsN": 22,
+          "sum": 1433900,
+          "max": 135900,
+          "min": 3400
+        },
+        {
+          "repo": "prime-skills/runcomfy-agent-skills",
+          "headerSkills": 30,
+          "headerTotal": 11700000,
+          "skillsN": 30,
+          "sum": 11721900,
+          "max": 439000,
+          "min": 83500
+        },
+        {
+          "repo": "vercel-labs/agent-browser",
+          "headerSkills": 4,
+          "headerTotal": 1200000,
+          "skillsN": 4,
+          "sum": 1200155,
+          "max": 1200000,
+          "min": 32
+        },
+        {
+          "repo": "higgsfield-ai/skills",
+          "headerSkills": 10,
+          "headerTotal": 1300000,
+          "skillsN": 10,
+          "sum": 1278402,
+          "max": 216200,
+          "min": 2
+        },
+        {
+          "repo": "anthropics/skills",
+          "headerSkills": 21,
+          "headerTotal": 3600000,
+          "skillsN": 21,
+          "sum": 3530794,
+          "max": 1000000,
+          "min": 194
+        },
+        {
+          "repo": "limrun-inc/skills",
+          "headerSkills": 11,
+          "headerTotal": 348400,
+          "skillsN": 11,
+          "sum": 348415,
+          "max": 41600,
+          "min": 5
+        },
+        {
+          "repo": "mbfinotti/partnerships-skills",
+          "headerSkills": 30,
+          "headerTotal": 371600,
+          "skillsN": 30,
+          "sum": 371400,
+          "max": 12700,
+          "min": 12000
+        },
+        {
+          "repo": "samber/dev-event-organizer-skills",
+          "headerSkills": 75,
+          "headerTotal": 340100,
+          "skillsN": 75,
+          "sum": 339713,
+          "max": 4900,
+          "min": 3
+        },
+        {
+          "repo": "autonnel/autonnel-skills",
+          "headerSkills": 6,
+          "headerTotal": 608800,
+          "skillsN": 6,
+          "sum": 608800,
+          "max": 102900,
+          "min": 101000
+        },
+        {
+          "repo": "neondatabase/agent-skills",
+          "headerSkills": 13,
+          "headerTotal": 673300,
+          "skillsN": 13,
+          "sum": 673352,
+          "max": 276500,
+          "min": 0
+        },
+        {
+          "repo": "affaan-m/ecc",
+          "headerSkills": 327,
+          "headerTotal": 1300000,
+          "skillsN": 327,
+          "sum": 1290832,
+          "max": 6400,
+          "min": 0
+        },
+        {
+          "repo": "samber/developer-platform-skills",
+          "headerSkills": 44,
+          "headerTotal": 241100,
+          "skillsN": 44,
+          "sum": 241035,
+          "max": 7600,
+          "min": 2
+        },
+        {
+          "repo": "firebase/agent-skills",
+          "headerSkills": 23,
+          "headerTotal": 2100000,
+          "skillsN": 23,
+          "sum": 2067500,
+          "max": 175100,
+          "min": 1600
+        },
+        {
+          "repo": "convex/agent-skills",
+          "headerSkills": 46,
+          "headerTotal": 1700000,
+          "skillsN": 46,
+          "sum": 1723587,
+          "max": 130600,
+          "min": 510
+        },
+        {
+          "repo": "stablyai/orca",
+          "headerSkills": 18,
+          "headerTotal": 997800,
+          "skillsN": 18,
+          "sum": 997821,
+          "max": 352500,
+          "min": 3
+        },
+        {
+          "repo": "liarjsdev/liarjs-skills",
+          "headerSkills": 4,
+          "headerTotal": 402800,
+          "skillsN": 4,
+          "sum": 402800,
+          "max": 100800,
+          "min": 100600
+        },
+        {
+          "repo": "obra/superpowers",
+          "headerSkills": 15,
+          "headerTotal": 3600000,
+          "skillsN": 15,
+          "sum": 3629400,
+          "max": 404500,
+          "min": 20200
+        },
+        {
+          "repo": "samber/cc-skills-golang",
+          "headerSkills": 46,
+          "headerTotal": 1700000,
+          "skillsN": 46,
+          "sum": 1723700,
+          "max": 43900,
+          "min": 10800
+        },
+        {
+          "repo": "googleworkspace/cli",
+          "headerSkills": 113,
+          "headerTotal": 3400000,
+          "skillsN": 113,
+          "sum": 3376192,
+          "max": 81900,
+          "min": 541
+        },
+        {
+          "repo": "amplitude/mcp-marketplace",
+          "headerSkills": 39,
+          "headerTotal": 255400,
+          "skillsN": 39,
+          "sum": 255392,
+          "max": 42600,
+          "min": 1
+        },
+        {
+          "repo": "riekelt/technical-writer",
+          "headerSkills": 11,
+          "headerTotal": 194700,
+          "skillsN": 11,
+          "sum": 194600,
+          "max": 18400,
+          "min": 17400
+        },
+        {
+          "repo": "aws/agent-toolkit-for-aws",
+          "headerSkills": 155,
+          "headerTotal": 618700,
+          "skillsN": 155,
+          "sum": 618597,
+          "max": 10100,
+          "min": 6
+        },
+        {
+          "repo": "expo/skills",
+          "headerSkills": 47,
+          "headerTotal": 1000000,
+          "skillsN": 47,
+          "sum": 1038552,
+          "max": 69900,
+          "min": 0
+        },
+        {
+          "repo": "antibrow/anti-detect-browser-skills",
+          "headerSkills": 3,
+          "headerTotal": 345100,
+          "skillsN": 3,
+          "sum": 345100,
+          "max": 135400,
+          "min": 104800
+        },
+        {
+          "repo": "greensock/gsap-skills",
+          "headerSkills": 8,
+          "headerTotal": 539500,
+          "skillsN": 8,
+          "sum": 539400,
+          "max": 74200,
+          "min": 61600
+        },
+        {
+          "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+          "headerSkills": 19,
+          "headerTotal": 846900,
+          "skillsN": 13,
+          "sum": 653258,
+          "max": 412800,
+          "min": 358
+        },
+        {
+          "repo": "wshobson/agents",
+          "headerSkills": 185,
+          "headerTotal": 2400000,
+          "skillsN": 185,
+          "sum": 2444146,
+          "max": 92200,
+          "min": 202
+        },
+        {
+          "repo": "supabase/agent-skills",
+          "headerSkills": 3,
+          "headerTotal": 801300,
+          "skillsN": 3,
+          "sum": 801291,
+          "max": 458900,
+          "min": 691
+        },
+        {
+          "repo": "momentic-ai/skills",
+          "headerSkills": 7,
+          "headerTotal": 284800,
+          "skillsN": 7,
+          "sum": 284800,
+          "max": 68500,
+          "min": 14700
+        },
+        {
+          "repo": "pbakaus/impeccable",
+          "headerSkills": 24,
+          "headerTotal": 1900000,
+          "skillsN": 24,
+          "sum": 1871800,
+          "max": 357700,
+          "min": 26400
+        },
+        {
+          "repo": "shadcn-ui/ui",
+          "headerSkills": 2,
+          "headerTotal": 151300,
+          "skillsN": 2,
+          "sum": 151300,
+          "max": 121400,
+          "min": 29900
+        },
+        {
+          "repo": "usestrix/strix",
+          "headerSkills": 13,
+          "headerTotal": 124400,
+          "skillsN": 13,
+          "sum": 124441,
+          "max": 16300,
+          "min": 120
+        },
+        {
+          "repo": "tt-a1i/archify",
+          "headerSkills": null,
+          "headerTotal": 172500,
+          "skillsN": 1,
+          "sum": 172500,
+          "max": 172500,
+          "min": 172500
+        },
+        {
+          "repo": "software-mansion/argent",
+          "headerSkills": 24,
+          "headerTotal": 403800,
+          "skillsN": 24,
+          "sum": 403568,
+          "max": 26400,
+          "min": 5
+        },
+        {
+          "repo": "bmad-code-org/bmad-method",
+          "headerSkills": 87,
+          "headerTotal": 363800,
+          "skillsN": 87,
+          "sum": 363796,
+          "max": 13000,
+          "min": 1
+        },
+        {
+          "repo": "wind-alice/alicemarket",
+          "headerSkills": 82,
+          "headerTotal": 290600,
+          "skillsN": 21,
+          "sum": 274873,
+          "max": 218100,
+          "min": 2
+        },
+        {
+          "repo": "wheresryan22/anatomy",
+          "headerSkills": null,
+          "headerTotal": 20700,
+          "skillsN": 1,
+          "sum": 20700,
+          "max": 20700,
+          "min": 20700
+        },
+        {
+          "repo": "suzheng/k2f",
+          "headerSkills": 42,
+          "headerTotal": 51100,
+          "skillsN": 42,
+          "sum": 51067,
+          "max": 2400,
+          "min": 552
+        },
+        {
+          "repo": "flutter/agent-plugins",
+          "headerSkills": 89,
+          "headerTotal": 791200,
+          "skillsN": 89,
+          "sum": 791186,
+          "max": 42900,
+          "min": 6
+        },
+        {
+          "repo": "wondelai/skills",
+          "headerSkills": 65,
+          "headerTotal": 308800,
+          "skillsN": 65,
+          "sum": 308900,
+          "max": 9300,
+          "min": 1300
+        },
+        {
+          "repo": "caffeinelabs/skills",
+          "headerSkills": 52,
+          "headerTotal": 647300,
+          "skillsN": 52,
+          "sum": 647135,
+          "max": 28200,
+          "min": 1
+        },
+        {
+          "repo": "cloudai-x/threejs-skills",
+          "headerSkills": 13,
+          "headerTotal": 148600,
+          "skillsN": 13,
+          "sum": 148555,
+          "max": 20000,
+          "min": 970
+        },
+        {
+          "repo": "better-auth/skills",
+          "headerSkills": 8,
+          "headerTotal": 333200,
+          "skillsN": 7,
+          "sum": 333200,
+          "max": 126100,
+          "min": 13300
+        },
+        {
+          "repo": "paramchoudhary/resumeskills",
+          "headerSkills": 22,
+          "headerTotal": 218600,
+          "skillsN": 22,
+          "sum": 218400,
+          "max": 13800,
+          "min": 6600
+        },
+        {
+          "repo": "jakubkrehel/skills",
+          "headerSkills": 19,
+          "headerTotal": 289700,
+          "skillsN": 19,
+          "sum": 289708,
+          "max": 38700,
+          "min": 1
+        },
+        {
+          "repo": "riekelt/principal-engineer",
+          "headerSkills": 11,
+          "headerTotal": 193600,
+          "skillsN": 11,
+          "sum": 193700,
+          "max": 17700,
+          "min": 17500
+        },
+        {
+          "repo": "microsoft/playwright-cli",
+          "headerSkills": 2,
+          "headerTotal": 201000,
+          "skillsN": 2,
+          "sum": 201000,
+          "max": 195200,
+          "min": 5800
+        },
+        {
+          "repo": "cloudflare/security-audit-skill",
+          "headerSkills": null,
+          "headerTotal": 50800,
+          "skillsN": 1,
+          "sum": 50800,
+          "max": 50800,
+          "min": 50800
+        },
+        {
+          "repo": "goldsky-io/goldsky-agent",
+          "headerSkills": 29,
+          "headerTotal": 65200,
+          "skillsN": 29,
+          "sum": 65431,
+          "max": 3500,
+          "min": 15
+        },
+        {
+          "repo": "deanpeters/product-manager-skills",
+          "headerSkills": 77,
+          "headerTotal": 156800,
+          "skillsN": 77,
+          "sum": 156888,
+          "max": 4700,
+          "min": 529
+        },
+        {
+          "repo": "github/awesome-copilot",
+          "headerSkills": 470,
+          "headerTotal": 2400000,
+          "skillsN": 470,
+          "sum": 2357233,
+          "max": 47200,
+          "min": 1
+        },
+        {
+          "repo": "juliusbrussee/caveman",
+          "headerSkills": 25,
+          "headerTotal": 4400000,
+          "skillsN": 25,
+          "sum": 4382350,
+          "max": 590700,
+          "min": 437
+        },
+        {
+          "repo": "nomadamas/k-skill",
+          "headerSkills": 143,
+          "headerTotal": 735700,
+          "skillsN": 143,
+          "sum": 736163,
+          "max": 8300,
+          "min": 177
+        },
+        {
+          "repo": "clerk/skills",
+          "headerSkills": 22,
+          "headerTotal": 604200,
+          "skillsN": 22,
+          "sum": 604392,
+          "max": 56300,
+          "min": 92
+        },
+        {
+          "repo": "agricidaniel/claude-seo",
+          "headerSkills": 33,
+          "headerTotal": 169300,
+          "skillsN": 33,
+          "sum": 169192,
+          "max": 9000,
+          "min": 8
+        },
+        {
+          "repo": "huaweicloud/huaweicloud-skills",
+          "headerSkills": 171,
+          "headerTotal": 334900,
+          "skillsN": 171,
+          "sum": 334852,
+          "max": 17200,
+          "min": 3
+        },
+        {
+          "repo": "claude-office-skills/skills",
+          "headerSkills": 137,
+          "headerTotal": 715700,
+          "skillsN": 136,
+          "sum": 710900,
+          "max": 15800,
+          "min": 0
+        },
+        {
+          "repo": "petergyang/no-ai-slop",
+          "headerSkills": null,
+          "headerTotal": 28100,
+          "skillsN": 1,
+          "sum": 28100,
+          "max": 28100,
+          "min": 28100
+        },
+        {
+          "repo": "apidojo-io/social-media-skills",
+          "headerSkills": 3,
+          "headerTotal": 46700,
+          "skillsN": 3,
+          "sum": 46800,
+          "max": 15700,
+          "min": 15500
+        },
+        {
+          "repo": "yuan1z0825/nature-skills",
+          "headerSkills": 24,
+          "headerTotal": 275600,
+          "skillsN": 24,
+          "sum": 275852,
+          "max": 18700,
+          "min": 252
+        },
+        {
+          "repo": "vercel/next.js",
+          "headerSkills": 8,
+          "headerTotal": 75400,
+          "skillsN": 8,
+          "sum": 75188,
+          "max": 21900,
+          "min": 37
+        },
+        {
+          "repo": "addyosmani/web-quality-skills",
+          "headerSkills": 6,
+          "headerTotal": 249700,
+          "skillsN": 6,
+          "sum": 249700,
+          "max": 63700,
+          "min": 28700
+        },
+        {
+          "repo": "morluto/rea",
+          "headerSkills": 6,
+          "headerTotal": 16200,
+          "skillsN": 6,
+          "sum": 16174,
+          "max": 10200,
+          "min": 10
+        },
+        {
+          "repo": "elevenlabs/skills",
+          "headerSkills": 14,
+          "headerTotal": 99400,
+          "skillsN": 14,
+          "sum": 99305,
+          "max": 16400,
+          "min": 7
+        },
+        {
+          "repo": "google/skills",
+          "headerSkills": 191,
+          "headerTotal": 919600,
+          "skillsN": 191,
+          "sum": 919684,
+          "max": 17700,
+          "min": 1
+        },
+        {
+          "repo": "samber/cc-skills",
+          "headerSkills": 21,
+          "headerTotal": 90600,
+          "skillsN": 21,
+          "sum": 90700,
+          "max": 5300,
+          "min": 2500
+        },
+        {
+          "repo": "mastra-ai/skills",
+          "headerSkills": 6,
+          "headerTotal": 87300,
+          "skillsN": 6,
+          "sum": 87280,
+          "max": 82600,
+          "min": 40
+        },
+        {
+          "repo": "dietrichgebert/ponytail",
+          "headerSkills": 6,
+          "headerTotal": 328600,
+          "skillsN": 6,
+          "sum": 328700,
+          "max": 104400,
+          "min": 40000
+        },
+        {
+          "repo": "sentry/dev",
+          "headerSkills": null,
+          "headerTotal": 171600,
+          "skillsN": 1,
+          "sum": 171600,
+          "max": 171600,
+          "min": 171600
+        },
+        {
+          "repo": "mintlify/docs",
+          "headerSkills": 5,
+          "headerTotal": 20400,
+          "skillsN": 5,
+          "sum": 20352,
+          "max": 19400,
+          "min": 21
+        },
+        {
+          "repo": "spillwavesolutions/design-doc-mermaid",
+          "headerSkills": null,
+          "headerTotal": 80400,
+          "skillsN": 1,
+          "sum": 80400,
+          "max": 80400,
+          "min": 80400
+        },
+        {
+          "repo": "msmps/opentui-skill",
+          "headerSkills": null,
+          "headerTotal": 64400.00000000001,
+          "skillsN": 1,
+          "sum": 64400.00000000001,
+          "max": 64400.00000000001,
+          "min": 64400.00000000001
+        },
+        {
+          "repo": "warpdotdev/common-skills",
+          "headerSkills": 29,
+          "headerTotal": 639100,
+          "skillsN": 29,
+          "sum": 639400,
+          "max": 28900,
+          "min": 500
+        },
+        {
+          "repo": "cathrynlavery/diagram-design",
+          "headerSkills": null,
+          "headerTotal": 18600,
+          "skillsN": 1,
+          "sum": 18600,
+          "max": 18600,
+          "min": 18600
+        },
+        {
+          "repo": "mcollina/skills",
+          "headerSkills": 12,
+          "headerTotal": 101100,
+          "skillsN": 12,
+          "sum": 101051,
+          "max": 81100,
+          "min": 404
+        },
+        {
+          "repo": "anthropics/knowledge-work-plugins",
+          "headerSkills": 282,
+          "headerTotal": 592300,
+          "skillsN": 282,
+          "sum": 592431,
+          "max": 13700,
+          "min": 0
+        },
+        {
+          "repo": "iannuttall/seo",
+          "headerSkills": 57,
+          "headerTotal": 10900,
+          "skillsN": 57,
+          "sum": 10856,
+          "max": 10800,
+          "min": 1
+        },
+        {
+          "repo": "grafana/skills",
+          "headerSkills": 55,
+          "headerTotal": 220300,
+          "skillsN": 55,
+          "sum": 220400,
+          "max": 8300,
+          "min": 16
+        },
+        {
+          "repo": "solana-foundation/solana-dev-skill",
+          "headerSkills": null,
+          "headerTotal": 97700,
+          "skillsN": 1,
+          "sum": 97700,
+          "max": 97700,
+          "min": 97700
+        },
+        {
+          "repo": "getcargohq/cargo-skills",
+          "headerSkills": 28,
+          "headerTotal": 168100,
+          "skillsN": 28,
+          "sum": 168176,
+          "max": 10200,
+          "min": 2
+        },
+        {
+          "repo": "gmgnai/gmgn-skills",
+          "headerSkills": 19,
+          "headerTotal": 161200,
+          "skillsN": 19,
+          "sum": 160996,
+          "max": 17700,
+          "min": 758
+        },
+        {
+          "repo": "open-mercato/skills",
+          "headerSkills": 77,
+          "headerTotal": 119500,
+          "skillsN": 77,
+          "sum": 119693,
+          "max": 3600,
+          "min": 1
+        },
+        {
+          "repo": "jeffallan/claude-skills",
+          "headerSkills": 67,
+          "headerTotal": 431800,
+          "skillsN": 67,
+          "sum": 431884,
+          "max": 23200,
+          "min": 884
+        },
+        {
+          "repo": "stripe/link-cli",
+          "headerSkills": 4,
+          "headerTotal": 51600,
+          "skillsN": 4,
+          "sum": 51700,
+          "max": 20400,
+          "min": 2900
+        },
+        {
+          "repo": "forcedotcom/sf-skills",
+          "headerSkills": 406,
+          "headerTotal": 888200,
+          "skillsN": 406,
+          "sum": 889364,
+          "max": 7100,
+          "min": 1
+        },
+        {
+          "repo": "composio-community/awesome-claude-plugins",
+          "headerSkills": 16,
+          "headerTotal": 24400,
+          "skillsN": 16,
+          "sum": 24000,
+          "max": 1500,
+          "min": 1500
+        },
+        {
+          "repo": "intellectronica/agent-skills",
+          "headerSkills": 22,
+          "headerTotal": 126900,
+          "skillsN": 22,
+          "sum": 127038,
+          "max": 93800,
+          "min": 213
+        },
+        {
+          "repo": "ognjengt/founder-skills",
+          "headerSkills": 15,
+          "headerTotal": 20400,
+          "skillsN": 15,
+          "sum": 20300,
+          "max": 2400,
+          "min": 1200
+        },
+        {
+          "repo": "typesafe-ai/skills",
+          "headerSkills": null,
+          "headerTotal": 95400,
+          "skillsN": 1,
+          "sum": 95400,
+          "max": 95400,
+          "min": 95400
+        },
+        {
+          "repo": "lignertys/reddit-research-skills",
+          "headerSkills": 5,
+          "headerTotal": 45900,
+          "skillsN": 5,
+          "sum": 45800,
+          "max": 13300,
+          "min": 0
+        },
+        {
+          "repo": "googlechrome/modern-web-guidance",
+          "headerSkills": 2,
+          "headerTotal": 45400,
+          "skillsN": 2,
+          "sum": 45400,
+          "max": 34700,
+          "min": 10700
+        },
+        {
+          "repo": "every-app/open-seo",
+          "headerSkills": 13,
+          "headerTotal": 62300,
+          "skillsN": 13,
+          "sum": 62241,
+          "max": 6700,
+          "min": 815
+        },
+        {
+          "repo": "agentix-cloud/skills",
+          "headerSkills": null,
+          "headerTotal": 72500,
+          "skillsN": 1,
+          "sum": 72500,
+          "max": 72500,
+          "min": 72500
+        },
+        {
+          "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+          "headerSkills": 77,
+          "headerTotal": 414400,
+          "skillsN": 77,
+          "sum": 414594,
+          "max": 9100,
+          "min": 238
+        },
+        {
+          "repo": "wecomteam/wecom-cli",
+          "headerSkills": 29,
+          "headerTotal": 252900,
+          "skillsN": 29,
+          "sum": 252800,
+          "max": 24100,
+          "min": 1400
+        },
+        {
+          "repo": "currents-dev/playwright-best-practices-skill",
+          "headerSkills": null,
+          "headerTotal": 98000,
+          "skillsN": 1,
+          "sum": 98000,
+          "max": 98000,
+          "min": 98000
+        },
+        {
+          "repo": "openai/skills",
+          "headerSkills": 56,
+          "headerTotal": 212100,
+          "skillsN": 56,
+          "sum": 212509,
+          "max": 13400,
+          "min": 18
+        },
+        {
+          "repo": "nexscope-ai/ecommerce-skills",
+          "headerSkills": 121,
+          "headerTotal": 169800,
+          "skillsN": 121,
+          "sum": 169506,
+          "max": 62900,
+          "min": 3
+        },
+        {
+          "repo": "anthropics/claude-plugins-official",
+          "headerSkills": 30,
+          "headerTotal": 160900,
+          "skillsN": 30,
+          "sum": 160965,
+          "max": 17000,
+          "min": 46
+        },
+        {
+          "repo": "zenstory-ai/oh-story-claudecode",
+          "headerSkills": 13,
+          "headerTotal": 215100,
+          "skillsN": 13,
+          "sum": 215000,
+          "max": 17100,
+          "min": 15700
+        },
+        {
+          "repo": "ibelick/ui-skills",
+          "headerSkills": 10,
+          "headerTotal": 109500,
+          "skillsN": 10,
+          "sum": 109364,
+          "max": 26400,
+          "min": 22
+        },
+        {
+          "repo": "k-dense-ai/scientific-agent-skills",
+          "headerSkills": 232,
+          "headerTotal": 299700,
+          "skillsN": 232,
+          "sum": 300866,
+          "max": 2400,
+          "min": 0
+        }
+      ],
+      "headerEqualsSumWithin2pct": 125,
+      "ratioP50": 1
+    },
+    "h68MeasurementInvalid": {
+      "siblingPairs": 86824,
+      "identicalSeriesPct": 2.7,
+      "matchingDeltasPct": 15.5,
+      "unrelatedPct": 79.9
+    },
+    "installGroupModel": {
+      "raw": 200709870,
+      "h68MaxRule": 27797300,
+      "blockUnique": 77319053,
+      "x2_60": 159.6,
+      "groups": 1428,
+      "listingsPerGroup": 4.2,
+      "validation": {
+        "withinBlockChecks": 354,
+        "matchingDeltas": 113,
+        "crossBlockChecks": 1362
+      }
+    },
+    "coverage": {
+      "listingCoveragePct": 35.8,
+      "installCoveragePct": 81,
+      "revisedUniverse": 24272
+    },
+    "concentration": {
+      "effRaw": 0.9723125172090125,
+      "effBlock": 0.8365499987184357,
+      "top10RawPct": 55.8,
+      "top10BlockPct": 60.3
+    },
+    "breadth": {
+      "multiGroupRepos": 107,
+      "topMulti": [
+        {
+          "repo": "github/awesome-copilot",
+          "skills": 470,
+          "groups": 96
+        },
+        {
+          "repo": "forcedotcom/sf-skills",
+          "skills": 406,
+          "groups": 73
+        },
+        {
+          "repo": "google/skills",
+          "skills": 191,
+          "groups": 53
+        },
+        {
+          "repo": "huaweicloud/huaweicloud-skills",
+          "skills": 171,
+          "groups": 49
+        }
+      ]
+    },
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0,
+      "unverifiedThisCycle": true
+    },
+    "publishCounters": 0
+  },
+  "limits": [
+    "block model fitted on lifetime counters (weekly deltas as validation), not event logs",
+    "5% tolerance; x2.60 moves to ~x2.4-x2.9 across 2-10% tolerance",
+    "only 130 repos crawled (top of demand curve by w7); correction unvalidated for 2,760 uncrawled repos - board-scale figures are census-subset",
+    "block membership inferred from counter proximity; within-block delta match (0.1-0.7%) argues against the coincidence reading",
+    "no stars/forks, no revenue, no usage data; w7 = skills.sh installs, not usage"
+  ],
+  "next": [
+    "E48 crawl next 300 board repos by w7 and re-fit blocks",
+    "E49 tail block census - does +160% apply board-wide",
+    "E50 tolerance sweep 2/5/10% + rank-based detector",
+    "E51 mirror-family group census (E35 retired)"
+  ],
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-1907.md",
+    "sage-decision-2026-10-24-1907.md",
+    "sage-intel-2026-10-24-1907.json"
+  ]
+}

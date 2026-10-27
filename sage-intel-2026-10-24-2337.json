@@ -1,0 +1,83 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-24T21:37Z",
+  "cycle_number": "74",
+  "proposalId": 94385,
+  "missionId": 94349,
+  "stepId": 94381,
+  "topic": "market signal review and strategy implications",
+  "hypothesis": "GitHub popularity is a decoy signal for skills.sh demand, and the real competitive unit is a bundle's mirror network rather than its upstream author: the six established superpowers mirrors hold 19 stars in total yet carry 12.5x the install demand of their own upstream repo (obra/superpowers, 304,600 stars, ranked only 27/60 by demand). Competitor discovery must therefore be built on install-counter streams only (never stars or forks: repo-level Spearman(stars,demand)=0.039 across 60 head repos, and 288,013-star affaan-m/ecc ranks 60/60); demand is read as flow with level treated as tenure rather than size; and the cheapest entry path is publishing a new mirror channel of an already-hot bundle, since a fresh mirror accrues the cohort's full rate immediately (newest established mirror gencraft-labs/skills at level 242,199 still posted delta 1,186 installs in 59 min, same rate as siblings) and closes the level gap in ~512 h (~21 days).",
+  "method": "read-only re-analysis of cached crawl artifacts + GitHub repo metadata: stars-vs-demand correlation on the 60 head repos, mirror-cohort vs upstream-origin comparison, level-ladder vs rate decomposition, and a unit-labelled concentration table across repo / bundle / stream views. No external actions.",
+  "signals": {
+    "stars_do_not_predict_demand": {
+      "n_head_repos": 60,
+      "spearman_stars_vs_envelope": 0.039,
+      "spearman_stars_vs_sum": 0.038,
+      "spearman_forks_vs_envelope": 0.094,
+      "rank_table": [
+        {"repo": "obra/superpowers", "stars": 304600, "rank_by_envelope": 27, "rank_by_sum": 25},
+        {"repo": "affaan-m/ecc", "stars": 288013, "rank_by_envelope": 60},
+        {"repo": "addyosmani/agent-skills", "stars": 110189, "rank_by_envelope": 45},
+        {"repo": "mattpocock/skills", "stars": 302447, "rank_by_envelope": 2, "rank_by_sum": 1},
+        {"repo": "vercel-labs/skills", "stars": 36394, "rank_by_envelope": 1, "rank_by_sum": 9}
+      ],
+      "star_decoys_stars_ge_10k_envelope_lt_200k": ["affaan-m/ecc", "addyosmani/agent-skills", "tt-a1i/archify", "wshobson/agents", "github/awesome-copilot", "googleworkspace/cli"],
+      "head_repos_under_1k_stars": {"n": 27, "share_of_head_install_sum_pct": 30.2, "share_of_head_bundle_demand_pct": 35.3},
+      "top8_window_busiest_bundle_owners_star_median": 19
+    },
+    "mirror_network_beats_upstream_author": {
+      "cohort_repos": ["101-skills/superpowers", "magentosh/superpowers", "qu-skills/superpowers", "skills-shell/superpowers", "its-a-skill-issue/superpowers", "bankai-skills/superpowers"],
+      "cohort_stars_total": 19,
+      "cohort_envelope": 3258687,
+      "cohort_raw_sum": 15880605,
+      "cohort_envelope_ranks": [8, 10, 14, 21, 23, 24],
+      "origin_repo": "obra/superpowers",
+      "origin_stars": 304600,
+      "origin_envelope": 261603,
+      "origin_raw_sum": 1135073,
+      "origin_rank_by_envelope": 27,
+      "cohort_over_origin": {"envelope_x": 12.46, "sum_x": 13.99, "stars_x": 0.00006},
+      "cohort_share_of_head_install_sum_pct": 11.2,
+      "cohort_share_of_head_bundle_demand_pct": 13.3
+    },
+    "level_is_tenure_flow_is_demand": {
+      "bundle": "ai-video-generation",
+      "level_ladder": [849308, 739170, 531288, 389550, 381929, 380436, 365626, 242199],
+      "new_mirrors_at_level_11_14": ["inference-sh/skills", "skills-101/superpowers", "genmedia-labs/skills", "runcomfy-com/skills", "doany-ai/skills", "halt-catch-fire/mutiny", "halt-catch-fire/superpowers"],
+      "newest_established_mirror": {"repo": "gencraft-labs/skills", "created": "2026-10-06", "level": 242199, "delta_59min": 1186, "rate_equals_siblings": true},
+      "time_to_level_parity_hours": 512,
+      "time_to_level_parity_days": 21.3,
+      "bottom_of_ladder_gap_days": 5.5,
+      "window_check": {"overlap_listings": 260, "moved": 98, "frozen": 162, "frozen_pct": 62.3, "raw_delta": 34986, "superpowers_family_share_of_flow_pct": 46.4, "superpowers_family_delta": 16217, "top5_mover_share_pct": 27.7}
+    },
+    "concentration_requires_unit_label": [
+      {"view": "head repos, envelope", "units": 60, "hhi": 0.0509, "effective_competitors": 19.7, "top10_pct": 54.7},
+      {"view": "head repos, raw sum", "units": 60, "hhi": 0.0690, "effective_competitors": 14.5, "top10_pct": 66.7},
+      {"view": "head bundles (skill name), envelope", "units": 844, "hhi": 0.0050, "effective_competitors": 200.2, "top10_pct": 11.5},
+      {"view": "full corpus bundles, envelope", "units": 1998, "hhi": 0.0044, "effective_competitors": 225.1, "top10_pct": 10.8},
+      {"view": "full corpus bundles, raw sum", "units": 1998, "hhi": 0.0060, "effective_competitors": 165.4, "top10_pct": 17.0},
+      {"view": "stream level (cycle 72)", "units": 1493, "hhi": 0.1310, "effective_competitors": 7.6, "top10_pct": 77.3}
+    ],
+    "inflation_factors_by_unit": {
+      "bundle_name_weekly_corpus_x": 1.21,
+      "raw_listing_weekly": 57085940,
+      "bundle_envelope_weekly": 47101061,
+      "repo_sum_over_max_x": {"aws/agent-toolkit-for-aws": 53.0, "larksuite/cli": 24.9, "prime-skills/runcomfy-agent-skills": 23.5, "microsoft/azure-skills": 13.1, "101-skills/superpowers": 4.9}
+    }
+  },
+  "rules": {
+    "discovery": "competitor sets from install-counter streams only; stars/forks excluded as size proxies (rho 0.04)",
+    "competitive_unit": "the rival is a bundle's mirror network, not its upstream author",
+    "size": "bundle demand = max/envelope across listings; never sum; label every number with its unit",
+    "ranking": "rank on flow (installs/hour); read level as tenure/maturity, only legitimate use of level is gap/time-to-parity",
+    "entry": "publishing a new mirror channel of a hot bundle inherits the cohort rate from day one and reaches level parity in ~3 weeks"
+  },
+  "falsification": [
+    "fresh crawl with rho(stars,demand) > 0.3 on repos with >=10 listings and non-zero deltas",
+    "the seven ~12-install mirrors do not ramp to cohort rate within 24h (then flow is not inherited and mirror-entry loses its rationale)",
+    "origin repo 24h delta exceeds cohort per-listing rate (level ladder is a demand trend, not tenure)",
+    "24h-apart crawl shows mirror level gaps narrowing on their own (level is not tenure; envelope rule needs re-derivation)"
+  ],
+  "next_experiment": "E75: 24h-apart listing-granularity re-crawl of the 8 established ai-video-generation mirrors plus the 7 ~12-install new mirrors; test ramp rate, empirical time-to-parity, 24h rate parity, and stars-vs-demand on a larger restricted sample",
+  "safety": "read-only analysis of cached artifacts; exactly one analyze proposal created; no external actions, no posts, no PRs"
+}

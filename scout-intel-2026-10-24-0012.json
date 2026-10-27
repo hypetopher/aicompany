@@ -1,0 +1,92 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-23T22:12Z",
+  "proposalId": 94031,
+  "missionId": 93995,
+  "stepId": 94027,
+  "focus": "Growth is not blocked by ideas, it is blocked by a 350-deep queue that drains at 1.4 steps/h - and 59% of that queue is 190 duplicate postmortems for FOUR dead missions (92395 x55, 92756 x55, 93419 x54, 93805 x26). Throughput collapsed further since the last cycle: 12h arrivals 189 vs 17 completions (was 169 vs 47) = net +14/h, queue 323 -> 350, and 324 of 350 queued steps are analyze. Our own proposal's analyze step (94027) sits in that queue, so every growth experiment we write will not run for ~4 days unless content/experiment steps are prioritized over duplicate postmortems - one ORDER BY change, measurable as queue<=100 and content-step wait <1h. The good news: this cycle found the ONE surface where our measurement is already wanted, and it needs no new credentials. sickn33/agentic-awesome-skills Discussion #1063 ('same-name skills across repos') asked exactly our question, the maintainer sickn33 ANSWERED it within 24h (2026-08-02 16:51Z), and our finding answers it with data: install counters on skills.sh/ClawHub are repo-level stamps, so they cannot disambiguate same-name skills across repos - a structural inventory problem, not a catalog one. Ship three small, measurable things: (1) publish the install-counter/badger measurement as a PUBLIC GIST via the already-authorized gh 'gist' scope - a durable, citable, ownable URL, no repo-push needed; (2) publish-readiness gate on write_content - publish-safe articles 2/13 -> >=8/13, internal-id leakage 10/13 -> 0, [mock-llm] 3/13 -> 0, zero-link 8/13 -> <=1; (3) ONE measurement-only reply in upstream Discussion #1063, linking the gist and nothing else - HUMAN GO, success = >=1 substantive reply in 72h and gist views > 0. The measurement surface we lack (ops_social_posts=0, no ops_audience tables) is replaceable with 3 counters that already exist on real platforms: our repo's GitHub traffic API (views/uniques currently 0, referrers empty), gist view count, and upstream discussion comment count - so 'did we reach anyone' becomes answerable without building tables. Guardrail: tweet.posted stays 0 (the social adapter returns mock ids, so any 'reach' it reports is fake), no internal ids/paths/mock markers in anything published, and no product pitch in the upstream thread.",
+  "observations": [
+    "THROUGHPUT COLLAPSED AGAIN, NOT RECOVERED: 12h arrivals 189 (15.8/h) vs 17 succeeded (1.4/h) = net +14.4/h. Last cycle (22:13Z artifact) measured 169 arrivals vs 47 completions (3.9/h). Per-hour completions over the last 12h: 1,1,1,2,1,2,1,2,1,1,1,3 - never above 3/h. The drain ceiling (claim_one_step, 'order by s.id asc ... limit 1', migration 002 line 20 still says limit 1) is unchanged and now worse because the queue grew.",
+    "QUEUE IS 92.6% ANALYZE: 350 queued = analyze 324 + draft_tweet 16 + write_content 10. Oldest queued step 93623 (analyze) created 2026-10-22T23:21Z = ~23h wait. Queue grew 323 -> 350 in the hour since the last intel.",
+    "DUPLICATE POSTMORTEMS ARE NOW THE MAJORITY OF THE QUEUE: of 324 queued analyze steps, 190 (59%) are mode=postmortem for the SAME FOUR failed missions - 92395 (x55, failed 2026-10-21), 92756 (x55, failed), 93419 (x54, failed), 93805 (x26, failed today 10:12Z). Their proposals keep arriving: in the last 6h, 94 proposal.created events, of which 52 were 'Diagnose mission failure #' - and every one of those 52 targeted only those 4 mission ids (13 each). The observer trigger has no 'already diagnosed' guard, so the queue is self-perpetuating: 190 queued analyze steps to analyze 4 corpses.",
+    "STEP 94027 (this cycle's own analyze) IS BEHIND THAT BACKLOG: mission 93995 status=approved, step 94027 status=queued, worker_id=null, attempts=0, created 2026-10-23T22:12:04Z. At 1.4/h and priority by id asc, it will not execute for roughly 4 days. Every growth experiment produced by this cycle is therefore contingent on one cheap ordering change, not on more analysis.",
+    "CONTENT IS STILL CONTAMINATED: 25 write_content steps in 24h, 13 with a real body (>500 chars). Publish-safe (no mock marker, no internal proposal/mission/step id, no internal path, >=1 external link) = 2/13. Breakdown: [mock-llm] in 3, internal ids in 10, internal paths (src/, CLAIM_SQL, ops_mission_steps) in 4, zero external links in 8. Last cycle measured 1/12 safe, 10/12 ids, 4/12 mock, 7/12 zero-link - the gate shipped nothing, so the rate is flat at ~15%.",
+    "DRAFTS ARE UNANCHORED: 25 draft_tweet steps in 24h, 17 authored (hook+text), 0 of them carry payload.context (last cycle baseline: 1/35 lifetime), and only 3/17 mention the research subject (skills.sh / ClawHub / install counters / scanners). So the social lane is still emitting about our own queue mechanics, and still has no machine-checkable link from intel artifact -> draft.",
+    "NO SOCIAL POST EVER: tweet.posted lifetime = 0. Event kinds in 24h: proposal.created 414, step.succeeded 130, insight.generated 117, content.drafted 19, tweet.drafted 16, analysis_complete 1, probe.x 1. There is no engagement event of any kind, so our own event stream cannot answer 'did this reach anyone'.",
+    "DISCORD IS STILL DEAD (unchanged since last cycle, re-verified now): token present in openclaw.json, GET /api/v10/users/@me returns 401 Unauthorized. It is not a distribution surface tonight.",
+    "OUR OWN GITHUB SURFACE IS ZERO AND MEASURABLE: github.com/hypetopher/aicompany is public, pushed_at 2026-02-09, 0 stars, 0 watchers, has_discussions=false, description empty. GitHub traffic API on it returns views count 0, uniques 0 for all 14 days, and popular/referrers = []. That is a genuine baseline we have never had: today our owned surface receives 0 views and 0 referrals. It also means the GitHub traffic API is a working, real KPI we can use instead of inventing ops_audience tables.",
+    "THE GIST SCOPE IS ALREADY AUTHORIZED AND UNUSED: gh CLI is authenticated as hypetopher with scopes gist, read:org, repo, workflow. `gh api gists` returns 0 gists - we have never published one. A public gist is a durable, ownable, citable URL with a view count, and it needs no repo push and no PR.",
+    "THE UPSTREAM AUDIENCE IS LIVE AND ON-TOPIC - AND IT HAS ALREADY REPLIED TO OUR EXACT QUESTION: sickn33/agentic-awesome-skills = 48,398 stars, 7,035 forks, 310 watchers, discussions enabled, pushed 2026-10-23T20:38Z. Discussion #1063 'Catalog vs structural inventory: how do you treat same-name skills across repos?' (2026-08-02) has 2 comments and the maintainer sickn33 himself replied within ~13h (2026-08-02T16:51Z) plus yuehua1213 followed up 2026-08-03. Their answer: AAS Core tools operate on the verified catalog and do not resolve same-name collisions across repos. Our measurement answers the unresolved half with data: install counters on skills.sh/ClawHub are repo-level stamps, so for a same-name skill across N repos the counters differ per repo and cannot be collapsed into one number - a structural inventory problem, not a catalog one. Skills.sh API re-verified live: anthropics/skills/pdf installs=215790.",
+    "RISK IN UPSTREAM POSTING IS NOISE, NOT HOSTILITY: the upstream repo is saturated with automated batch issues (2092-2096 opened 2026-10-23 19:38-20:16Z, 'individually review 150 skill trees (batch 13-16)') and showcase/Q&A discussions (1849 from 2026-10-09, 1333/1238/993/984 from Aug-Sep). Only 35 discussions exist total. A new top-level Discussion would land in that noise; a reply inside an existing open question thread where the maintainer already participated is the highest-signal, lowest-noise format available.",
+    "TWO PLATFORM COUNTERS EXIST THAT GIVE US A REAL GROWTH KPI FOR THE FIRST TIME: our repo's GitHub traffic API (views/uniques/referrers, currently all zero) and gist view count, plus upstream discussion comment counts. Combined with 'referrers' on our repo, a successful upstream reply becomes observable as a referral from a 48k-star repo within 24h - a causal, attributable growth signal that no amount of internal event counting can produce."
+  ],
+  "experiments": [
+    {
+      "id": "E1-queue-priority-for-growth-steps",
+      "change": "One change in the claim path: order by kind priority (draft_tweet/write_content/experiment steps first, analyze last) and/or by age-of-need instead of plain s.id asc, and add a 'already diagnosed' guard so the observer stops re-proposing postmortems for missions 92395/92756/93419/93805. Smallest viable version: one ORDER BY in the claim function; the dedupe guard can be a WHERE mission_id NOT IN (failed, already-postmortemed) filter.",
+      "measurable": "queue total 350 -> <=100 within 24h; queued analyze 324 -> <=120; duplicate postmortem steps 190 -> 0 new arrivals for the 4 dead missions within 6h; oldest queued write_content step wait 23h -> <1h; completions/h 1.4 -> >=10.",
+      "cost": "one SQL function body + one trigger filter; no schema migration.",
+      "guardrail": "must not drop or skip steps - only reorder; no step may be deleted, and the 4 dead missions stay untouched for the operator."
+    },
+    {
+      "id": "E2-measurement-gist",
+      "change": "Publish ONE public gist via the already-authorized gh gist scope containing: the install-counter-is-a-repo-level-stamp finding, the trust-badge-no-expiry finding, the exact skills.sh/ClawHub API calls used, the measured numbers with the as-of date, and the same-name-across-repos implication. No internal proposal/mission/step ids, no internal file paths, no [mock-llm] artifacts, no product mention.",
+      "measurable": "gist exists and is publicly fetchable (HTTP 200 unauthenticated); gist id recorded; gist view count > 0 within 72h; gist contains >=3 measured claims each with its exact API call; zero internal-id strings in the body (mechanical check).",
+      "cost": "one gh api gists POST; no credentials beyond the existing gh login; no repo push.",
+      "guardrail": "measurement only - no pitch, no CTA, no link to our repo; if a check fails, the gist is replaced, not published as-is."
+    },
+    {
+      "id": "E3-publish-readiness-gate",
+      "change": "In the write_content path, after the body is composed, run a mechanical sanitize + gate: strip 'proposal N'/'mission N'/'step N', 'src/...', 'CLAIM_SQL', 'ops_mission_steps', '[mock-llm]' markers and stale self-metrics of the form '<n> steps/missions'; require >=1 external https link; tag the artifact not-publishable instead of silently succeeding if the check fails.",
+      "measurable": "publish-safe articles 2/13 -> >=8/13 within 24h; internal-id leakage 10/13 -> 0/13; [mock-llm] 3/13 -> 0/13; zero-link articles 8/13 -> <=1/13; drafts with payload.context 0/17 -> >=80% of new authored drafts.",
+      "cost": "one function + one boolean field; no schema migration, no new dependency.",
+      "guardrail": "must not delete content - only tag it; articles stay in ops_mission_steps and drafts/."
+    },
+    {
+      "id": "E4-upstream-measurement-reply",
+      "change": "Post ONE reply inside upstream Discussion #1063 (the existing open question), stating the repo-level-install-counter measurement and the exact API call, linking ONLY the E2 gist, naming no product, no CTA, no link to our repo. Must land after E2 and E3 so the citation is clean.",
+      "measurable": "reply exists in #1063; >=1 substantive reply (not a maintainer bot, not 'thanks') within 72h; gist views increase in the same window; our repo traffic API shows uniques > 0 and a referrer entry pointing at the upstream repo within 24h of the reply; if zero replies, the topic is recorded closed and we do not retry in that repo.",
+      "cost": "one reply; no new credentials.",
+      "requires_human_go": true,
+      "risk": "replying into a 3-month-old thread can read as drive-by, and upstream is flooded with automated batch issues - so it must be a direct answer to the thread's own question, not a new announcement.",
+      "guardrail": "no mock reach claims; tweet.posted stays 0; no social post published."
+    }
+  ],
+  "risks": [
+    "Experiment risk that dominates all others: the company has no owned audience and no owned surface. ops_social_posts = 0, ops_audience / ops_followers / ops_social_metrics do not exist as tables, tweet.posted = 0 lifetime, and our only external transport (Discord) is 401. Any 'publish and measure' plan needs a metric that exists before it runs - which is why E2/E4 are built on real platform counters (gist views, repo traffic referrers, upstream comment counts) instead of a metric table we would have to invent.",
+    "Queue starvation risk: 190 of 350 queued steps are duplicate postmortems for four missions that have been dead for 2-3 days, and 52 of 94 proposals in the last 6h re-diagnosed those same four. Until E1 lands, this cycle's own step (94027) will not run, and no content step will either - growth experiments become a queue-filling exercise.",
+    "Contamination risk at publish time: 10/13 articles still leak internal proposal/mission/step ids and 3/13 carry [mock-llm] markers. Publishing before E3 puts internal identifiers and fake artifacts in a public, indexable gist or thread, and mock ids mean any reported reach is fabricated.",
+    "Credibility risk on E4: unsolicited upstream posts to a 48k-star repo that did not invite us can burn access permanently. Mitigation is format (answer the existing question), content (measurement + reproducible API call), and gating (human go, gist first, no product link, no retry if ignored).",
+    "Noise risk on E4: upstream is flooded with automated batch issues (2092-2096 today) and only 35 discussions exist; a reply inside an existing thread is measurably more likely to be seen than a new discussion.",
+    "Staleness risk: our articles assert live self-metrics ('93,777 steps') with no as-of stamp, and the step count has already moved by hundreds. Anything published must carry its measurement date, and the gist must state 'as of 2026-10-23'.",
+    "Measurement drift risk: our own intel has quoted 'real drafts' as 20, 32, 34 and 35 across cycles. All numbers in this artifact were re-measured directly from ops_mission_steps / ops_agent_events / GitHub APIs with the predicate stated inline, so this cycle does not inherit prior counts."
+  ],
+  "not_doing": [
+    "Not re-filing the batch-claim ceiling fix (limit 20 + drain loop) as the headline: it is still unshipped and still the binding constraint, but this cycle's distinct contribution is the growth surface finding (gist + upstream thread + real platform counters), and E1 already carries the ordering fix that is the cheaper half of it.",
+    "Not touching the four dead missions or their 190 queued postmortems beyond an ordering/dedupe change - closing or re-scoping them is an operator decision, not a growth action.",
+    "Not filing anything upstream tonight: E4 requires human go and E2 must land first.",
+    "Not pushing our own repo README as the primary citation: the repo has 0 stars, 0 views and no discussions, so it is a weak citation target next to a gist URL, and a push also risks publishing contaminated drafts/ content. Revisit only if E2 proves a citation gets traffic."
+  ],
+  "baseline_for_next_cycle": {
+    "queue_total": "350 (analyze 324 / draft_tweet 16 / write_content 10) - target <=100",
+    "duplicate_postmortem_steps": "190 (4 dead missions) - target 0 new arrivals",
+    "completions_per_hour_12h": "1.4 - target >=10",
+    "publish_safe_articles_24h": "2/13 - target >=8/13",
+    "internal_id_leakage_24h": "10/13 - target 0/13",
+    "mock_marker_articles_24h": "3/13 - target 0/13",
+    "zero_link_articles_24h": "8/13 - target <=1/13",
+    "drafts_with_payload_context_24h": "0/17 - target >=80%",
+    "gists_published": "0 - target 1 (public, citable, no internal ids)",
+    "our_repo_traffic_uniques_14d": "0 - target >0 with an upstream referrer after E4",
+    "upstream_discussion_replies_72h": "0 - target >=1 substantive reply in #1063",
+    "tweet_posted_lifetime": "0 - must stay 0",
+    "discord_reachable": "false (401) - unchanged until a human rotates the token"
+  },
+  "notes": [
+    "Distinct from the last two cycles on purpose. The 18:03Z cycle attacked the drain ceiling and found the audience-value mix of drafts; the 22:13Z cycle found that Discord is dead and proposed a publish gate plus a repo push plus an upstream discussion. This cycle adds three things none of them measured: (a) the queue is now 59% duplicate postmortems for four dead missions, with a measured arrival rate of 52 duplicate proposals in 6h - the tax is the majority of the backlog, not a side effect; (b) the growth metric does not have to be invented - GitHub traffic API on our own repo, gist view count and upstream comment counts are three real counters that already answer 'did this reach anyone', and they give us the first non-zero-to-zero baseline (0 views, 0 referrers, 0 gists); (c) upstream Discussion #1063 already contains the maintainer's own answer to the exact question our install-counter measurement answers, and the maintainer replied within ~13h - so there is a proven, low-noise, high-signal place to make one measurement-only post.",
+    "All numbers were measured directly against Supabase (ops_mission_steps, ops_mission_proposals, ops_agent_events, ops_missions) and the GitHub API on 2026-10-23T22:12-22:20Z. No external action was taken, nothing was published, no post was made, and no step was claimed or mutated.",
+    "Proposal 94031 / mission 93995 / step 94027 (analyze) created for this cycle. The step is queued behind the backlog described in E1, which is deliberate: E1 is the prerequisite for this cycle's experiments actually running.",
+    "GitHub API checks performed read-only: our repo metadata + traffic views + referrers, upstream repo metadata + discussions (list, #1063, #1063 comments, #726) + open issues, gh api gists (list), skills.sh search API, HN Algolia (competitor discovery: skillsmp.com is the only marketplace story surfaced)."
+  ],
+  "artifact": "scout-intel-2026-10-24-0012.json"
+}

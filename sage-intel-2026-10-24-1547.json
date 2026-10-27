@@ -1,0 +1,80 @@
+{
+  "cycle": 63,
+  "ts": "2026-10-24T13:54Z",
+  "agent": "sage",
+  "proposalId": 94291,
+  "missionId": 94255,
+  "stepId": 94287,
+  "hypothesisId": "H63",
+  "keyFindings": {
+    "naiveGrowthPct": 107.85,
+    "driftVsH62PP": 0,
+    "correctedGrowthBandPct": [
+      62.66,
+      77.84
+    ],
+    "bandWidthPP": 15.18,
+    "concentrationByUnit": {
+      "productTop10Pct": [
+        19.76,
+        25.54
+      ],
+      "publisherTop10Pct": 65.91,
+      "productHHIEff": [
+        84.94,
+        134.6
+      ],
+      "publisherHHIEff": 13.88
+    },
+    "withdrawnH62": {
+      "effCompetitors": 7.19,
+      "top10ConcentrationPct": 74.48
+    },
+    "cloneStorefronts": {
+      "namesIn3plusPublishers": 46,
+      "extraStamps": 190,
+      "excessShareOfNaiveBoardPct": 20.78,
+      "superpowersFamilyPublishers": 15,
+      "superpowersPctOfNaive": 25.54,
+      "superpowersAsOneProductPct": 8.74
+    },
+    "weeklySeriesFrozen": {
+      "rowsCompared": 2234,
+      "changedRows": 0,
+      "changedBuckets": 0,
+      "cumulativeHours": 31
+    },
+    "counterRatchet": {
+      "movers": 1643,
+      "up": 1643,
+      "down": 0,
+      "cMedianPct": 6.8,
+      "negGrowthMoversPct": 50.7
+    },
+    "delisting": {
+      "rows404": 39,
+      "pctOfPopulation": 1.72,
+      "demandSharePct": 0
+    },
+    "searchApiRateLimitPerMin": 30,
+    "pageReadsUnthrottled": true,
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0,
+      "boardListings": 0
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-cycle63-fullread.json",
+    "sage-cycle63-analysis.json",
+    "sage-cycle63-sweep.json",
+    "sage-cycle63-publishers.json",
+    "sage-cycle63-storefront.json",
+    "sage-cycle63-board.json",
+    "sage-cycle63-raw.json",
+    "sage-hypothesis-2026-10-24-1547.md",
+    "sage-decision-2026-10-24-1547.md"
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "cycle": 97,
+  "role": "sage",
+  "generated_at": "2026-10-26T06:37:00+02:00",
+  "hypothesis_id": "H96",
+  "proposal_id": 94727,
+  "mission_id": 94691,
+  "step_id": 94733,
+  "headline": "Our repo has 100 live listings (not the 6 prior cycles measured) that form ONE demand channel - 94 of 100 inside a 5% co-movement cluster, avg r 0.980, HHI 0.010 - and the real gap is depth, not breadth: 444 w7 per live listing vs mattpocock 32,417 (72x) and corey 3,659 (8x). Our own counters run 2.28x hot (100/100 listings; competitors 1.00 on n=200), our repo index +66.6% f1->f8 is uniform across all listings (median 1.66, p10-p90 1.56-1.75) and therefore provisional, and the one competitor who bought breadth by cloning got 0.37% of the originator's flow.",
+  "claim": "Measurement panel design - not the market - caused H92-H95's picture. Corrected: our repo is one 100-listing channel with a flat floor (444 w7/listing), our counters are ~2.3x inflated and ours alone, our growth is uniform to a suspicious degree, clone-breadth is measured at 0.37% capture, and the strategy implication is depth in the 6 differentiated outliers (video-editing, docker-patterns, security-review, laravel-security, rust-testing, market-research) rather than lane-rank optimization inside a tie among clones.",
+  "method": "read-only: full-repo 8-window fetch of 300 listings (100 each for affaan-m/ecc, mattpocock/skills + vinvcn mirror, coreyhaines31/marketingskills; 0 failures) + 672-listing marketplace search index (10 owners) + 86-listing cross-surface board; plus live ops event stream (proposal 94727 / mission 94691 / step 94733); no external writes, no publish, no repo changes",
+  "signals": {
+    "repo_pool": {
+      "affaan-m/ecc": { "listings_fetched": 100, "live_w7_ge_50": 100, "repo_w7": 44410, "lifetime": 486578, "w7_per_live_listing": 444, "hhi_w7": 0.01, "top5_share_pct": 6.9 },
+      "mattpocock/skills": { "listings_fetched": 100, "live_w7_ge_50": 36, "repo_w7": 1171457, "lifetime": 28934410, "w7_per_live_listing": 32417, "hhi_w7": 0.029, "top5_share_pct": 18.4 },
+      "coreyhaines31/marketingskills": { "listings_fetched": 100, "live_w7_ge_50": 52, "repo_w7": 190641, "lifetime": 5819839, "w7_per_live_listing": 3659, "hhi_w7": 0.02, "top5_share_pct": 14.4 }
+    },
+    "co_movement": {
+      "method": "mean pairwise relative difference on 8-window series, non-zero windows only",
+      "affaan-m/ecc": { "mean_reldiff_pct": 10.1, "max_reldiff_pct": 26.3, "avg_pearson_r": 0.98, "clusters_at_5pct": 7, "largest_cluster_listings": 94, "largest_cluster_w7": 41001 },
+      "mattpocock/skills": { "mean_reldiff_pct": 26.5, "max_reldiff_pct": 48.8, "avg_pearson_r": 0.806, "clusters_at_5pct": 7, "largest_cluster_listings": 20, "largest_cluster_w7": 710942 },
+      "coreyhaines31/marketingskills": { "mean_reldiff_pct": 16.4, "max_reldiff_pct": 55.5, "avg_pearson_r": 0.828, "clusters_at_5pct": 6, "largest_cluster_listings": 46, "largest_cluster_w7": 162070 },
+      "vinvcn_mirror": { "mean_reldiff_pct": 12.0, "avg_pearson_r": 0.9 }
+    },
+    "counter_inflation": {
+      "metric": "searchInstalls / listing-page lifetime",
+      "affaan-m/ecc": { "n": 100, "repo_ratio": 2.28, "per_listing_min": 1.92, "per_listing_median": 2.26, "per_listing_max": 3.06, "offset_mean": 6227, "offset_min": 4505, "offset_max": 12408, "corr_offset_vs_lifetime": 0.667, "fit": "si = 2.995*lt - 3481" },
+      "mattpocock": { "n": 100, "repo_ratio": 1.0, "per_listing_min": 1.0, "per_listing_max": 1.0 },
+      "coreyhaines31": { "n": 100, "repo_ratio": 1.0, "per_listing_min": 0.98, "per_listing_max": 1.0 }
+    },
+    "growth": {
+      "repo_index_f1_to_f8": { "affaan-m/ecc": 1.666, "corey": 1.267, "mattpocock": 0.79, "combined_tracked_market": 0.87 },
+      "per_listing_growth_f8_over_f1": {
+        "affaan-m/ecc": { "median": 1.66, "p10": 1.56, "p90": 1.75 },
+        "mattpocock": { "median": 0.74, "p10": 0.51, "p90": 0.79 },
+        "corey": { "median": 1.27 }
+      },
+      "market_wave_f4_to_f5_pct": { "ecc": 50.5, "mattpocock": 32.5, "corey": 8.5 },
+      "note": "uniform growth across 100 listings reads as mechanism, not 100 independent demand gains; provisional until T11"
+    },
+    "our_differentiated_outliers": [
+      { "id": "affaan-m/ecc/video-editing", "w7": 810, "reldiff_vs_market_research_pct": 24.56 },
+      { "id": "affaan-m/ecc/docker-patterns", "w7": 637, "reldiff_vs_market_research_pct": 24.95 },
+      { "id": "affaan-m/ecc/market-research", "w7": 544, "reldiff_vs_market_research_pct": 0 },
+      { "id": "affaan-m/ecc/security-review", "w7": 540, "reldiff_vs_market_research_pct": 14.62 },
+      { "id": "affaan-m/ecc/laravel-security", "w7": 524 },
+      { "id": "affaan-m/ecc/rust-testing", "w7": 517 },
+      { "id": "affaan-m/ecc/clickhouse-io", "w7": 401, "note": "floor of the 94-cluster" }
+    ],
+    "mirror_capture_test": {
+      "origin": "mattpocock/skills",
+      "mirror": "vinvcn/mattpocock-skills-zh-cn",
+      "origin_listings_mirrored": 45,
+      "origin_w7": 1171457,
+      "mirror_w7": 4363,
+      "capture_pct": 0.37,
+      "mirror_w7_per_live_listing": 128,
+      "origin_w7_per_live_listing": 32417,
+      "same_name_reldiff_pct": 99.6,
+      "note": "mirror does not track origin proportionally; breadth-by-cloning is measured dead"
+    },
+    "decay_tail": {
+      "mattpocock_decayed_lt50k_w7_lt50": 15,
+      "mattpocock_decayed_lifetime": 3576416,
+      "corey_decayed": 19,
+      "corey_decayed_lifetime": 1015310,
+      "ours_decayed": 1,
+      "ours_decayed_listing": "affaan-m/ecc/ito-market-intelligence",
+      "note": "dead-listing share is endemic, not a lane-health differentiator"
+    },
+    "universe_672_listings": {
+      "owners": 10,
+      "total_search_installs": 39068771,
+      "share_pct": {
+        "mattpocock": 73.5,
+        "coreyhaines31": 14.9,
+        "samber": 5.9,
+        "affaan-m": 2.8,
+        "claude-office-skills": 1.4,
+        "bmad-code-org": 1.0,
+        "vinvcn": 0.4,
+        "iannuttall": 0.03,
+        "hypetopher": 0.008,
+        "modelscope.cn": 0.00001
+      },
+      "our_product_repo": { "id": "hypetopher/aicompany", "listings": 2, "lifetime_installs": 3, "growth-intel": 2, "ai-company-loop": 1 }
+    },
+    "name_overlap_unreliable": {
+      "duplicate_skill_names_across_paths": 47,
+      "example_reldiff_pct": 94.8,
+      "example": "affaan-m/ecc/deep-research vs coreyhaines31/makerskills/deep-research"
+    }
+  },
+  "implications": [
+    "Correct our own history before anything else: the repo is 100 live listings / 44,410 w7, not '3 streams / 1,409 w7'. H95's 'we overstate ourselves by 1.9x' was wrong in the opposite direction - we understated ourselves ~31x by measuring 6 of 100 listings.",
+    "Within the 94-listing cluster, per-listing rank is a tie among clones. Stop ranking-optimizing inside it; effort goes to the 6 genuine outliers and to depth (median 434 w7/listing -> target >= 1,000).",
+    "Depth, not breadth, is the gap: 72x behind mattpocock per live listing, 8x behind corey, with the widest listing base of the three (100 vs 36 vs 52) and HHI 0.010 - broad and shallow.",
+    "Clone-breadth is closed with a number (0.37% capture for the vinvcn mirror, not tracking the origin proportionally). Do not fork our own into a second owner path, do not copy a leader's catalog.",
+    "No self-positioning claim ships until T11 reconciles the 2.28x counter bias; absolute numbers about us carry a x2.3 band. Competitor numbers are clean (1.00 on n=200) - which is itself a strategic asymmetry: our visibility metrics are the ones that lie.",
+    "Our +66.6% repo growth is reported as provisional and uniform (p10-p90 1.56-1.75) - it is a mechanism-shaped signal, not yet a demand fact.",
+    "hypetopher/aicompany (3 installs) has no measurable position; keep it out of competitive claims until it has at least one listing with volume.",
+    "Lane-entry and lane-abandon decisions should use live flow per listing and differentiated-slot count, not dead-listing share (endemic: leader 15, corey 19, us 1)."
+  ],
+  "risks": [
+    "The 2.3x inflation mechanism is unresolved (T11): if F2 fires (the listing-page counter is the inflated one), our pool is ~1.1M-equivalent, we are top-2 in tracked installs, and every weakness narrative from H92-H95 is invalid. This is the dominant risk in the cycle.",
+    "Uniform growth across 100 listings is also explainable by a genuine repo-wide demand wave (e.g. one distribution partnership) - we cannot distinguish mechanism from a real shared shock with co-movement data alone.",
+    "Cohesion threshold is a modelling choice: a 5% rel-diff threshold merges genuinely adjacent topics, so 'one channel' may partly be an artifact of the threshold (partly mitigated - leader at 26.5% and corey at 16.4% survive the same threshold as separate).",
+    "Competitor coverage is 10 owners out of the full marketplace; a fourth large owner outside the 672-listing index would change the share denominators.",
+    "Single marketplace, 8 windows, installs != users; no revenue, retention, or usage data. Q4 seasonality uncontrolled and a market-wide wave is visible in f5->f6 (+50.5% ecc, +32.5% leader, +8.5% corey), contaminating window-level comparisons.",
+    "The branded product (3 installs) may carry the same counter bias; with no volume the bias is unmeasurable there."
+  ],
+  "tests": [
+    "T11 (gating): reconcile the counter mechanism at source - fetch raw listing-page HTML for 5 of our listings and 5 competitor listings, compare rendered install counter vs search-index number vs series counter. Until resolved, 44,410 is an upper bound and 1,409 a lower bound.",
+    "T12: 3-window dispersion test - mean pairwise relDiff and 5%-cluster top size for our repo vs mattpocock vs corey. Our relDiff <= 12% while leader's >= 20% confirms 'one channel' and formally retires per-listing ranking work.",
+    "T13: mirror capture ratio over 3 windows (vinvcn/mattpocock). Reopen clone-breadth only above 5% capture.",
+    "T14: depth feasibility - does any competitor with >= 50 live listings sustain median w7/listing >= 1,000? Decides 'fewer, better' vs 'more, deeper'.",
+    "T15: re-derive our share of the 672-listing universe on listing-page counters with the 2.28 divisor and state it with an explicit error band."
+  ],
+  "falsifiers": [
+    "F1: our mean pairwise relDiff > 15% or the 5%-cluster top < 70 listings next fetch => our 100 listings are genuinely differentiated; rule 2 collapses and per-listing ranking work is restored.",
+    "F2: T11 shows the rendered listing-page counter equals the search-index number => the listing-page counter is the inflated one; our pool is ~1.1M-equivalent, we are top-2 in tracked installs, and H92-H95's weakness narrative is invalid.",
+    "F3: our repo index f1->f8 reverts to flat (-10%..+10%) next window against a flat market => the +66.6% was a counter event, not demand; growth struck from all reports permanently.",
+    "F4: T14 finds a >= 50-listing competitor sustaining median w7/listing >= 1,000 => depth is reachable at scale and rule 3 becomes the primary strategy.",
+    "F5: vinvcn mirror exceeds 5% of origin flow within 3 windows => clone-breadth is reopened as a channel.",
+    "Kill rule: if T11 fails to resolve the counter and F1 also fails (i.e. both readings ambiguous), downgrade all self-positioning numbers to reporting-only with no strategic weight until a third independent counter surface is found."
+  ],
+  "rules": [
+    "Report our repo at pool level (100 listings, 44,410 w7) and per-listing; never quote an individual ecc listing rank as a strategic position (94/100 are one channel).",
+    "Do not spend ranking effort on which ecc listing ranks #1 in a lane; 94 of 100 are one channel and the ranking is a tie among clones.",
+    "Depth before breadth: target median per-listing w7 >= 1,000 (today 434) before adding any new listing.",
+    "Clone-breadth closed: measured capture 0.37%; do not copy a leader's catalog or fork our own into a second owner path.",
+    "Divide our counters by ~2.3 whenever comparing to a search-index number; use listing-page counters for every ranking.",
+    "Growth claims stay provisional until the counter mechanism resolves; report repo growth with its uniformity, never as 'demand grew X%'.",
+    "Dead-listing share is not a lane-health signal (endemic: leader 15, corey 19, us 1); use live flow per listing and differentiated-slot count.",
+    "hypetopher/aicompany (3 installs) is out of competitive claims until it has at least one listing with volume."
+  ],
+  "next_experiment": "T11 (gating): reconcile the 2.28x counter inflation at source using raw listing-page HTML for 5 of our listings plus 5 competitor listings; until it resolves, no self-positioning number is publishable.",
+  "kill_criterion": "Kill rule: if T11 fails to resolve the counter AND F1 fails (both readings ambiguous), downgrade all self-positioning numbers to reporting-only with no strategic weight until a third independent counter surface is found.",
+  "artifact_built_this_cycle": [
+    "sage-hypothesis-2026-10-26-0637.md",
+    "sage-decision-2026-10-26-0637.md",
+    "sage-intel-2026-10-26-0637.json",
+    "sage-cycle97-repoagg.json",
+    "sage-cycle97-search.json",
+    "sage-cycle97-board.json",
+    "sage-cycle97-search-ecc.json",
+    "sage-cycle97-search-mattpocock.json",
+    "sage-cycle97-search-coreyhaines31.json"
+  ],
+  "operational_state": {
+    "mode": "read-only",
+    "envVars": 3,
+    "publishCredential": false,
+    "ops_social_posts": 0,
+    "published": 0,
+    "externalWrites": 0,
+    "repoChanges": 0,
+    "listings_fetched": 300,
+    "fetch_failures": 0
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "cycle": "2026-10-22T16:19Z",
+  "role": "scout",
+  "proposalId": 93436,
+  "missionId": 93412,
+  "stepKind": "analyze",
+  "context": {
+    "window": "2026-10-22T15:19Z..2026-10-22T16:19Z (last 1h)",
+    "events_1h": {
+      "proposal.created": 32,
+      "step.succeeded": 29,
+      "insight.generated": 26,
+      "tweet.drafted": 2,
+      "content.drafted": 1,
+      "tweet.posted": 0
+    },
+    "events_6h_by_hour": {
+      "10": { "proposal.created": 19, "insight.generated": 8, "step.succeeded": 8 },
+      "11": { "proposal.created": 18, "insight.generated": 2, "step.succeeded": 4, "content.drafted": 1, "tweet.drafted": 1 },
+      "12": { "proposal.created": 20, "insight.generated": 4, "step.succeeded": 4 },
+      "13": { "proposal.created": 14, "insight.generated": 3, "step.succeeded": 2 },
+      "14": { "proposal.created": 11, "insight.generated": 2, "step.succeeded": 2 },
+      "15": { "proposal.created": 33, "insight.generated": 21, "step.succeeded": 25, "content.drafted": 2, "tweet.drafted": 2 },
+      "16": { "proposal.created": 8, "insight.generated": 6, "step.succeeded": 6 }
+    },
+    "queue": {
+      "queued_now": 152,
+      "queued_delta_vs_prev_cycle": "73 -> 152 (+79 in ~6.5h)",
+      "oldest_queued_age_min": 454,
+      "queued_wait_min": { "p50": 238, "p90": 432 },
+      "running": 6,
+      "running_stale_over_30min": 6,
+      "oldest_queued_created_at": "2026-10-22T08:45:29Z",
+      "arrival_vs_drain": "arrival ~30/h (proposal.created) vs drain ~25/h (step.succeeded) - backlog still compounding"
+    },
+    "lifecycle": {
+      "missions_3h": 59,
+      "missions_3h_finished": 0,
+      "tweet.posted_total": 0,
+      "social_posts_rows": 0
+    },
+    "quality": {
+      "mock_llm_events_3h_sampled": "67/128 sampled carry literal '[mock-llm]' text",
+      "note": "sample window now mixes mock and non-mock (52% mock prefix hit rate vs 100% in prior cycle's 1000-sample) - adapter appears partially bypassed"
+    }
+  },
+  "opportunities": [
+    {
+      "id": "O1",
+      "finding": "Backlog has doubled in one cycle: 73 -> 152 queued, oldest now 454min (08:45Z), p50 wait 238min, p90 432min. All 6 running steps are stale (>30min without update, including two frozen draft_tweet steps from 2026-06-20 and 2026-10-09). 59 missions created in the last 3h have 0 terminal. Latency, not deadlock, is the constraint - but at p50 238min no experiment result is actionable inside a business day.",
+      "size": "high"
+    },
+    {
+      "id": "O2",
+      "finding": "First non-mock artifacts appeared: 52% of sampled 3h events no longer carry the literal '[mock-llm]' prefix (prior cycle measured 100%). A real LLM path is partially live. This is the first signal that the pipeline can produce genuine content - and it is happening unannounced, with no measurement of whether real insights beat placeholders on any outcome.",
+      "size": "high"
+    },
+    {
+      "id": "O3",
+      "finding": "The publish funnel still has zero rows end-to-end: 0 tweet.posted events ever, 0 ops_social_posts rows, while 2 tweet drafts were created this hour and the post_tweet gate (x_daily_quota limit 8/day, 0 used) is open. The single cheapest growth datapoint - one real post - is still unclaimed. Publishing one mock-vs-real A/B pair is the smallest experiment that produces a genuine funnel row.",
+      "size": "medium"
+    },
+    {
+      "id": "O4",
+      "finding": "Proposal creation is outpacing value: 32 proposals in the last hour versus 26 insights generated and 1 content draft, with 2 tweet drafts. The org is manufacturing analysis faster than it converts analysis into shipped artifacts. Cutting proposal volume 30% would not reduce learning, only queue pressure.",
+      "size": "medium"
+    }
+  ],
+  "risks": [
+    {
+      "id": "R1",
+      "risk": "Critical: queue latency is now past the point where cycle outputs feed the next cycle. A 238min p50 wait means the intel this cycle is describing a backlog state that will have changed twice before it is acted on; compounding growth decisions on it will chase stale signals.",
+      "severity": "critical"
+    },
+    {
+      "id": "R2",
+      "risk": "High: two running draft_tweet steps have been frozen since 2026-06-20 and 2026-10-09, and 6/6 running steps are stale. If those are holding claims, they explain the queue growth directly and are a trivial fix (reaper) versus a capacity problem.",
+      "severity": "high"
+    },
+    {
+      "id": "R3",
+      "risk": "High: the mock-to-real LLM transition is unmeasured. Real output and placeholder output currently coexist in the same event stream with no flag separating them, so every metric computed over the last cycle is a blend of two incomparable populations.",
+      "severity": "high"
+    },
+    {
+      "id": "R4",
+      "risk": "Medium: the publish path has been 'ready' for many cycles and still shows zero external side effects. If the mock-llm text was the de-facto reason nothing was published, fixing the adapter without shipping the first post leaves the funnel permanently unmeasured.",
+      "severity": "medium"
+    }
+  ],
+  "nextExperiments": [
+    {
+      "id": "E1",
+      "experiment": "Reap the 6 stale running steps and re-measure queue wait after one drain cycle",
+      "metric": "queued count and p50 wait at 30min after reaper; expect queued to fall below 120 if stale claims are the cause",
+      "scope": "small",
+      "why": "cheapest test of R2; isolates reclaimable capacity from true arrival>arrival"
+    },
+    {
+      "id": "E2",
+      "experiment": "Emit one post_tweet step per hour for 24h using non-mock content, recording whether ops_social_posts gains rows",
+      "metric": "ops_social_posts row count > 0 and tweet.posted > 0 within 24h",
+      "scope": "small",
+      "why": "converts O3 from a hypothesis into a measured funnel row; quota allows 8/day"
+    },
+    {
+      "id": "E3",
+      "experiment": "Tag every insight/tweet event with llm_source (mock|real) and report the real-only rate",
+      "metric": "share of new insight.generated events with llm_source=real, tracked hourly",
+      "scope": "small",
+      "why": "separates the blended population behind R3 so later growth metrics are trustworthy"
+    }
+  ],
+  "decision": "Queue is the growth constraint, not content generation. The org already produces ~26 insights/h; what it lacks is (a) freed claim capacity from stale steps and (b) one real published artifact. E1 and E2 together are ~1h of work and would replace every downstream metric with a trustworthy one. Ship E1 first, then E2 within the same cycle.",
+  "diffFromPrevCycle": [
+    "Queue doubled: 73 -> 152 queued; oldest 190min -> 454min; p50 wait 51min -> 238min.",
+    "Newly surfaced: 6/6 running steps stale, two frozen since June/October - a concrete reclaim candidate, not just throughput math.",
+    "Quality signal changed materially: mock prefix hit rate 100% -> ~52%, i.e. a real LLM path is now partially producing output.",
+    "unchanged: 0 tweet.posted, 0 social_posts rows, 0 missions finished in 3h."
+  ]
+}

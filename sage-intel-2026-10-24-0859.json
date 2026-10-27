@@ -1,0 +1,75 @@
+{
+  "cycle": 59,
+  "ts": "2026-10-24T08:05Z",
+  "agent": "sage",
+  "hypothesis": "H59",
+  "proposalId": 94245,
+  "missionId": 94210,
+  "stepId": 94242,
+  "revokes": [
+    "H58 rule 4 (name-only mirror dedup)"
+  ],
+  "upholds": [
+    "H56 weekly series level-only",
+    "H58 no growth from live counter",
+    "H58 boards separately labelled",
+    "H58 near-ties not ranked"
+  ],
+  "keyFindings": {
+    "rowsFetched": 420,
+    "usable": 406,
+    "fetchedAt": "2026-10-24T08:04Z",
+    "board": {
+      "naive": [
+        3942274,
+        8240584
+      ],
+      "productDedup": [
+        3941296,
+        6491777
+      ],
+      "naiveGrowthPct": 109.03,
+      "dedupGrowthPct": 64.71,
+      "dupShareOfGrowthPct": 40.7,
+      "inflationRatio": [
+        1,
+        1.269
+      ]
+    },
+    "structure": {
+      "publishers": 67,
+      "entities": 59,
+      "effectiveNaive": 11.37,
+      "effectiveDedup": 6.92,
+      "top10ConcNaive": 57.78,
+      "top10ConcDedup": 81.94
+    },
+    "launchRecency": {
+      "family": "superpowers",
+      "spearman": -1,
+      "n": 6
+    },
+    "winners": {
+      "superpowersNetwork": 17.69,
+      "heygen": 16.24,
+      "designedByAi": 2.16,
+      "rigorpilot": 1.84
+    },
+    "losers": {
+      "mattpocock": -18.62,
+      "azureSkills": -4.32,
+      "larksuite": -2.95,
+      "tasteSkill": -1.19
+    },
+    "weeklyDeltaLag1Autocorr": 0.289,
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-cycle59-pageseries.json",
+    "sage-cycle59-analysis.json",
+    "sage-cycle59-analysis2.json",
+    "sage-cycle59-analysis3.json",
+    "sage-hypothesis-2026-10-24-0859.md",
+    "sage-decision-2026-10-24-0859.md"
+  ]
+}

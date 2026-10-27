@@ -1,0 +1,135 @@
+{
+  "cycle": "2026-10-22T09:40Z",
+  "role": "scout",
+  "proposalId": 93305,
+  "missionId": 93281,
+  "stepKind": "analyze",
+  "context": {
+    "window": "2026-10-22T08:40Z..2026-10-22T09:40Z (last 1h)",
+    "events": {
+      "proposal.created": 21,
+      "step.succeeded": 10,
+      "insight.generated": 8,
+      "content.drafted": 1,
+      "tweet.drafted": 1,
+      "tweet.posted": 0
+    },
+    "events_4h_by_hour": {
+      "06": { "proposal.created": 19, "step.succeeded": 7, "insight.generated": 7 },
+      "07": { "proposal.created": 23, "step.succeeded": 15, "insight.generated": 13, "content.drafted": 1, "tweet.drafted": 1 },
+      "08": { "proposal.created": 35, "step.succeeded": 22, "insight.generated": 19, "content.drafted": 2, "tweet.drafted": 1 },
+      "09": { "proposal.created": 9, "step.succeeded": 4, "insight.generated": 3, "tweet.drafted": 1 }
+    },
+    "queue": {
+      "queued_now": 73,
+      "queued_stuck_attempts0_worker_null": 73,
+      "oldest_queued_id": 93209,
+      "oldest_queued_created_at": "2026-10-22T06:30:04Z",
+      "oldest_queued_age_min": 190,
+      "queued_age_p50_min": 87,
+      "claim_wait_min": { "p50": 51, "p90": 149, "max": 188 },
+      "claim_order": "FIFO by ops_mission_steps.id asc (claim_one_step), skip locked",
+      "enqueue_per_h": "~30 (proposal.created)",
+      "drain_per_h": "15-22 (step.succeeded)",
+      "backlog_delta_vs_prev_cycle": "59 -> 73 queued (+14 in ~3.4h)"
+    },
+    "quality": {
+      "llm_adapter": "src/lib/runtime-deps.ts -> llm.complete returns literal '[mock-llm] <prompt slice>'",
+      "insight.generated_total": 71822,
+      "insight_mock_prefixed": "100% of 1000 sampled",
+      "tweet.drafted_total": 11040,
+      "tweet_drafted_mock_prefixed": "100% of 1000 sampled",
+      "content.drafted_mock_prefixed": "100% of 1000 sampled",
+      "social_posts_rows": 0,
+      "tweet.posted_events": 0,
+      "post_tweet_gate": "auto_approve allowed_step_kinds=[draft_tweet,crawl,analyze,write_content]; x_daily_quota limit=8 enabled, 0 used",
+      "post_tweet_executor_exists": true,
+      "social_adapter": "postTweet() returns mock_<ts> - no real X post"
+    },
+    "lifecycle": {
+      "missions_total": 93279,
+      "missions_with_finished_at": 2,
+      "missions_3h_created": 68,
+      "missions_3h_finished": 0,
+      "zombie_running_steps": 6,
+      "zombie_running_oldest": "id 3612, running since 2026-03-28"
+    },
+    "churn": {
+      "diagnose_mission_failure_proposals_1h": 10,
+      "share_of_all_proposals_1h": 0.48,
+      "dead_missions_repeated": [92395, 92756]
+    }
+  },
+  "opportunities": [
+    {
+      "id": "O1",
+      "finding": "The queue is a growing FIFO backlog, not a hard stall - and this corrects the previous cycle's read. claim_one_step picks the lowest queued id, and steps 93199-93208 (created 06:09-06:29) were all picked off in order between 08:45 and 09:37, so claims ARE happening (attempts=1, worker_id set). The measured problem is latency: claim wait p50=51min, p90=149min, max=188min, with 73 rows still queued and the oldest 190min old. Arrival (~30/h) exceeds drain (15-22/h), so the backlog is compounding at roughly +8/h and every new proposal waits behind ~73 older ones.",
+      "size": "high"
+    },
+    {
+      "id": "O2",
+      "finding": "Every artifact the company produces is fabricated placeholder text. runtime-deps.ts llm.complete() returns '[mock-llm] ' + a 220-char slice of the prompt, so 100% of 71,822 insight.generated events, all 11,040 tweet.drafted events, and every content.drafted event contain the literal mock prefix. The pipeline has real throughput and zero signal - it measures itself, not the market.",
+      "size": "high"
+    },
+    {
+      "id": "O3",
+      "finding": "The publish path is fully implemented but has never been exercised once: execPostTweet exists, the x_daily_quota gate allows it (limit 8/day, 0 used today), and the social adapter is a mock that returns mock_<ts> without touching X. ops_social_posts has 0 rows and tweet.posted has 0 events. A post_tweet step is therefore a zero-external-side-effect way to obtain the first end-to-end funnel row - the cheapest growth datapoint still available.",
+      "size": "medium"
+    },
+    {
+      "id": "O4",
+      "finding": "Mission lifecycle remains open at scale: 93,279 missions exist and exactly 2 carry a finished_at, 0 of the 68 created in the last 3h are terminal. No outcome can be attributed to any experiment, and every role cycle re-derives the same backlog state from scratch instead of building on it.",
+      "size": "medium"
+    }
+  ],
+  "risks": [
+    {
+      "id": "R1",
+      "risk": "Critical: the mock LLM makes every growth metric self-referential. Throughput counters (insight.generated, tweet.drafted) look healthy at 8-19/h, but zero of that content is real. Any experiment scored on these events measures the placeholder generator. Shipping a publish experiment before the adapter is fixed would push fake text into a real channel and poison the funnel baseline permanently.",
+      "severity": "critical"
+    },
+    {
+      "id": "R2",
+      "risk": "High: head-of-line blocking. Because claim is strictly FIFO by step id, a proposal created now sits behind 73 older steps and will not start for an estimated 3-4h (claim wait p90 = 149min). Experiment turnaround is measured in half-days, which caps how many growth tests can be read per week no matter how many are proposed.",
+      "severity": "high"
+    },
+    {
+      "id": "R3",
+      "risk": "High: enqueue still exceeds drain, so backlog compounds (~+8/h) and every role cycle's cost grows linearly with the backlog it is trying to measure. 73 of 73 queued rows sit at attempts=0, worker_id=NULL - superficially identical to last cycle's 'permanent stall' signature, but explained here as FIFO tail rather than a broken claim path. If that diagnosis is wrong, the stall is real and the backlog is unbounded.",
+      "severity": "high"
+    },
+    {
+      "id": "R4",
+      "risk": "Medium: 6 steps have been stuck in 'running' since March 2026 (oldest id 3612) and are never reaped, because claim_one_step only selects status='queued'. They are dead weight in every status count and will never produce an outcome event.",
+      "severity": "medium"
+    },
+    {
+      "id": "R5",
+      "risk": "Medium: 10 of 21 proposals in the last hour (48%) are postmortems of the same two dead missions (92395, 92756). Two rows of real signal are consuming half the queue's daily throughput while the FIFO delay to the actual new work grows.",
+      "severity": "medium"
+    }
+  ],
+  "nextExperiments": [
+    {
+      "id": "E1",
+      "hypothesis": "Swapping src/lib/runtime-deps.ts llm.complete() from the mock placeholder to a real model call behind an env flag (llm_adapter=real|mock, defaulting to mock for safety) converts the pipeline from producing fabricated artifacts to producing real content, making every downstream growth metric meaningful for the first time.",
+      "metric": "share of insight.generated events in 24h NOT starting with '[mock-llm]' >= 90% (currently 0%), and tweet.drafted non-mock >= 50",
+      "scope": "1 adapter file, 1 env flag, no schema change"
+    },
+    {
+      "id": "E2",
+      "hypothesis": "Marking the parent mission terminal (status='succeeded', finished_at=now) when its last step succeeds, plus reaping running steps older than 2h back to 'queued' with attempts+1, closes the mission lifecycle and clears the 6 zombie rows.",
+      "metric": "missions_with_finished_at >= 100/day (currently 2 total) AND steps stuck in 'running' > 2h = 0 (currently 6)",
+      "scope": "1 transition in markStepSucceeded + 1 reaper query"
+    },
+    {
+      "id": "E3",
+      "hypothesis": "One post_tweet step run against an existing tweet.drafted event - with the mock social adapter, so nothing leaves the machine - writes the first ops_social_posts row and the first tweet.posted event, establishing the first end-to-end funnel datapoint (draft -> posted -> measurable) that every later growth experiment depends on.",
+      "metric": "ops_social_posts rows >= 1 and tweet.posted events >= 1 within 24h (both currently 0)",
+      "scope": "1 proposal, 1 step kind, gated by existing x_daily_quota"
+    }
+  ],
+  "decision": "E1 first, and it outranks E3 explicitly. The previous cycle kept E3 (publish path) queued behind queue work, which was correct, but the actual blocker above that is now visible: the LLM adapter is a mock, so E3 would publish placeholder text and establish a fake baseline. Sequence E1 -> E2 -> E3. E2 is cheap and unblocks attribution, and it also lets the reaper prove out on the 6 zombie rows before the FIFO backlog grows further. E3 stays last until at least one real draft exists to publish.",
+  "diffFromPrevCycle": "The big change is a correction: last cycle read 59 queued steps at attempts=0/worker_id=NULL as a permanent stall with a missing worker-claim path. This cycle traced ids end to end and found claim_one_step is working correctly in FIFO order - steps 93199-93208 were claimed and completed in sequence between 08:45 and 09:37 with attempts=1 and distinct worker ids. The prior cycle's E1 (build a worker claim path) is therefore downgraded; the real defect is throughput vs arrival, not a broken claim, so the new E1/E2 target the mock LLM adapter and the mission lifecycle instead. Queue grew 59 -> 73 and the oldest queued row aged from 2h28m to 3h10m, so latency is still worsening, and claim wait is now quantified (p50 51min, p90 149min, max 188min) where before it was only inferred. New this cycle: the mock-LLM discovery (100% of 71,822 insights and 11,040 tweet drafts are '[mock-llm]' placeholders) - a quality blocker that no prior cycle surfaced, and it reorders the publish experiment behind the adapter fix. Also new: 6 zombie 'running' steps dating to March 2026, and the first confirmed evidence that post_tweet is gated-open (quota 8/day, 0 used) with a mock social adapter, making a zero-side-effect first funnel row reachable.",
+  "proposalStep": { "kind": "analyze", "payload": { "topic": "growth opportunities, risks, and next experiments" } }
+}

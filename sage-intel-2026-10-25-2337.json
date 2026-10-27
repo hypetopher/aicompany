@@ -1,0 +1,100 @@
+{
+  "cycle": 90,
+  "role": "sage",
+  "generated_at": "2026-10-25T23:37:00+02:00",
+  "hypothesis_id": "H91",
+  "proposal_id": 94641,
+  "mission_id": 94605,
+  "claim": "Our lane carries 93 w7 total and we hold 0 of it while holding rank #1; our name vocabulary (growth/intelligence) carries 0.6%/0.1% of union demand while research/competitor carry 58.9%/9.6%; our repo b9b4ymin/midas is a single-listing dead wave and 2 of our 3 listings are invisible in all six lanes.",
+  "source": "sage-cycle89-lanes.json",
+  "instrument": "skills.sh listing page aria-label 'Weekly installs: ...'",
+  "union": {
+    "lane_rows": 150,
+    "distinct_listings": 116,
+    "multi_lane_listings": 29,
+    "multi_lane_share_pct": 25.0,
+    "union_w7": 78332,
+    "lane_sum_w7": 101153,
+    "double_count_pct": 22.6,
+    "union_median_w7": 66467.5
+  },
+  "lane_pools_w7": {
+    "market research": 52909,
+    "competitor analysis": 20128,
+    "competitive analysis": 15501,
+    "research report": 10549,
+    "market intelligence": 1973,
+    "growth intel": 93
+  },
+  "name_token_demand": {
+    "research": { "listings": 27, "w7": 46108, "median_w7": 46864, "share_pct": 58.9 },
+    "competitor": { "listings": 17, "w7": 7554, "median_w7": 4825, "share_pct": 9.6 },
+    "market": { "listings": 18, "w7": 4660, "median_w7": 4006, "share_pct": 5.9 },
+    "analysis": { "listings": 16, "w7": 4451, "median_w7": 1707, "share_pct": 5.7 },
+    "intel": { "listings": 14, "w7": 442, "median_w7": 172, "share_pct": 0.6 },
+    "intelligence": { "listings": 9, "w7": 83, "median_w7": 94, "share_pct": 0.1 },
+    "growth": { "listings": 5, "w7": 12, "median_w7": 9, "share_pct": 0.0 }
+  },
+  "our_position": {
+    "repo": "b9b4ymin/midas",
+    "repo_listings_in_union": 1,
+    "repo_slope": 0.0,
+    "repo_series": [2, 0, 0, 0, 0, 0, 0, 0],
+    "listed_names": ["market-growth-intelligence", "growth-intel", "ai-company-loop"],
+    "indexed_names": ["market-growth-intelligence"],
+    "invisible_names": ["growth-intel", "ai-company-loop"],
+    "lane_rank_growth_intel": 1,
+    "lane_w7_growth_intel": 0,
+    "lifetime_installs": 4
+  },
+  "our_lane_competitors_growth_intel": [
+    { "rank": 2, "id": "alirezarezvani/claude-skills/marketing-skills", "w7": 11, "median_w7": 6.5, "lt": 2268 },
+    { "rank": 3, "id": "nexscope-ai/amazon-skills/amazon-seller-analytics", "w7": 32, "median_w7": 32, "lt": 1235 },
+    { "rank": 4, "id": "alirezarezvani/claude-skills/x-twitter-growth", "w7": 12, "median_w7": 8.5, "lt": 698 },
+    { "rank": 5, "id": "ferdinandobons/startup-skill/startup-competitors", "w7": 27, "median_w7": 24.5, "lt": 654 }
+  ],
+  "market_intelligence_lane_phantoms": {
+    "rank1": { "id": "affaan-m/ecc/ito-market-intelligence", "w7": 0, "lt": 1481 },
+    "real_flow": [
+      { "id": "affaan-m/ecc/market-research", "w7": 487, "median_w7": 291 },
+      { "id": "affaan-m/ecc/prediction-market-oracle-research", "w7": 404, "median_w7": 233 },
+      { "id": "ognjengt/founder-skills/competitor-intel", "w7": 227, "median_w7": 23 },
+      { "id": "claude-office-skills/skills/competitive-analysis", "w7": 226, "median_w7": 67.5 },
+      { "id": "okx/agent-skills/okx-sentiment-tracker", "w7": 208, "median_w7": 173.5 }
+    ]
+  },
+  "repo_wave_census": {
+    "repos": 74,
+    "rising_slope_gt_1_2": { "repos": 20, "w7": 17470, "share_pct": 22.3, "median_w7": 4816 },
+    "flat": { "repos": 39, "w7": 59130, "share_pct": 75.5, "median_w7": 59197 },
+    "declining_slope_lt_0_7": { "repos": 15, "w7": 1732, "share_pct": 2.2, "median_w7": 2455 }
+  },
+  "sustained_risers_slope_and_median": [
+    { "repo": "bmad-code-org/bmad-method", "slope": 3.2, "median_w7": 2173.5, "w7": 2890, "names": ["bmad-deep-recon", "bmad-agent-analyst"] },
+    { "repo": "samber/developer-relations-skills", "slope": 15.42, "median_w7": 720.5, "w7": 5926, "names": ["devrel-competitor-analysis", "devrel-radar"], "note": "spike not wave" },
+    { "repo": "claude-office-skills/skills", "slope": 1.89, "median_w7": 366.5, "w7": 1156, "names": ["google-ads-manager", "deep-research", "crypto-report", "company-research", "competitive-analysis"] },
+    { "repo": "nomadamas/k-skill", "slope": 1.93, "median_w7": 353, "w7": 494, "names": ["keris-academic-search"] },
+    { "repo": "wondelai/skills", "slope": 1.22, "median_w7": 337.5, "w7": 611, "names": ["mom-test", "obviously-awesome"] },
+    { "repo": "wshobson/agents", "slope": 1.26, "median_w7": 227.5, "w7": 230, "names": ["competitive-landscape"] }
+  ],
+  "spike_not_wave": [
+    { "repo": "iannuttall/seo", "slope": 28.56, "median_w7": 45 },
+    { "repo": "samber/cc-skills", "slope": 8.32, "median_w7": 125 },
+    { "repo": "ognjengt/founder-skills", "slope": 8.29, "median_w7": 23 }
+  ],
+  "templates": [
+    { "repo": "affaan-m/ecc", "names": 7, "lanes": 4, "median_w7": 1524, "gated_names": 6, "slope": 1.14 },
+    { "repo": "claude-office-skills/skills", "names": 5, "lanes": 2, "median_w7": 366.5, "gated_names": 5, "slope": 1.89 }
+  ],
+  "next_experiments": [
+    "E127 name portfolio design: 3-4 sibling listings in b9b4ymin/midas with demand-token names (research/competitor/market), retire growth-/intelligence-only names as primaries",
+    "E128 visibility audit: why growth-intel and ai-company-loop are absent from all six lane indexes",
+    "E129 attachability test: can a third-party listing ride a rising wave (bmad-method / claude-office-skills) to median >= 7",
+    "E130 re-issue space table de-duplicated on union 78332; retire sum8 headline"
+  ],
+  "falsifiers": [
+    "a 'growth'/'intelligence' named listing crosses median >= 50 w7 on a flat repo wave",
+    "fresh crawl shows growth-intel or market-growth-intelligence indexed in >= 2 lanes with >= 100 w7",
+    "adding a 3rd/4th name to b9b4ymin/midas fails to move repo median >= 7 in 8 weeks while a single copy rewrite in a rising repo succeeds"
+  ]
+}

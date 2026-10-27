@@ -1,0 +1,108 @@
+{
+  "cycle": 85,
+  "ts": "2026-10-25T16:08:00.000Z",
+  "role": "sage",
+  "proposalId": 94583,
+  "missionId": 94547,
+  "stepId": 94580,
+  "hypothesis": "H85: OUR LANE IS NOT A 355-INSTALL LEADER AND A 153M UNIVERSE; IT IS A 12-INSTALLS-A-WEEK LEADER AND A 42%-PHANTOM BRAND QUERY, AND THE ONLY LISTINGS THAT RAMPED IN IT ARE 3-WEEKS-OLD NARROW LANE SKILLS. WE ARE IN THE DEAD-SHELL CLASS: RANKED, ZERO FLOW.",
+  "key": {
+    "h84Predictions": {
+      "weeklySeriesInstrument": "holds: panel series byte-identical across 2 snapshots (147/147), weekly 5689889 / 93254460 lifetime = 6.10% (same as H84 -> no new bucket rolled over)",
+      "marketPlateau": "holds (unchanged, no new weekly bucket to re-test)",
+      "laneIs355InstallMicroNiche": "MIS-SPECIFIED: company-brain = 356 lifetime but 12/week; live aicompany lane weekly flow = 15 across 35 live listings; level != flow",
+      "brandQueryToppedBy404": "holds and sharpens: 30 of 71 aicompany results are 404 (42% of the query)"
+    },
+    "searchVsPageInstrument": {
+      "verifiedLive": 1073,
+      "medianLifetimeMinusSearch": 0,
+      "exactZero": 833,
+      "p90": 6,
+      "searchGreaterThanLife": 31,
+      "inflatedOver5pct": 15,
+      "eccRepoSearchSum": 114741,
+      "eccRepoPageLifetime": 59703,
+      "eccRepoRatio": 1.92,
+      "eccPerListingRatioRange": [1.17, 2.3],
+      "allOtherRepos": "1.00 +/- 0.01",
+      "consequence": "ranking competitors on the search install counter overstates affaan-m/ecc by ~2x"
+    },
+    "phantomLayerSplit": {
+      "keywordRecall404Listings": 72,
+      "keywordRecall404Mass": 58180,
+      "topDomain": "code.deepline.com",
+      "topDomainMass": 54902,
+      "topDomainPct": 94.4,
+      "brandPoolPhantomSharePct": 15.2,
+      "note": "keyword phantoms = one-domain artifact (filter); brand-pool phantoms = systemic (haircut)"
+    },
+    "deadShells": {
+      "count": 277,
+      "ofVerifiedLive": 1073,
+      "storedMass": 45184,
+      "storedMassPctOfLive": 3.8,
+      "definition": "status 200, lifetime > 0, all-zero weekly series",
+      "inTop10BySearch": {"aicompany": 4, "autonomous company": 3, "growth intel": 3, "ai company": 1, "multi-agent": 1},
+      "ours": [
+        {"id": "hypetopher/aicompany/ai-company-loop", "lifetime": 1},
+        {"id": "hypetopher/aicompany/growth-intel", "lifetime": 2},
+        {"id": "mlamla123/openclaw-starter-kit/growth-intel", "lifetime": 1},
+        {"id": "b9b4ymin/midas/market-growth-intelligence", "lifetime": 4}
+      ]
+    },
+    "k2fRamp": {
+      "repo": "suzheng/k2f",
+      "listings": 4,
+      "naming": "lane-prefixed artifact names",
+      "k2f-sales-deck": {"lifetime": 2436, "series": [0,0,0,0,0,88,297,1090]},
+      "k2f-company-deck": {"lifetime": 2185, "series": [0,0,0,0,0,119,337,967]},
+      "k2f-media-kit": {"lifetime": 1976, "series": [0,0,0,0,0,80,261,893]},
+      "k2f-cover-letter": {"lifetime": 798, "series": [0,0,0,0,0,156,486,156]},
+      "weeklyFlow": 3106,
+      "shareAiCompanyFlowPct": 43.8,
+      "shareCompanyAgentFlowPct": 77.4,
+      "inHeadPanel": false,
+      "onlyAcceleratingListings": 3,
+      "accelThreshold": ">2x WoW and >200/week"
+    },
+    "laneDisaggregation": {
+      "ai company": {"results": 200, "live": 192, "liveLifetime": 48234, "weeklyFlow": 7098, "top1FlowSharePct": 41.1, "http404": 7, "deadShellMass": 5218},
+      "company brain": {"results": 160, "live": 154, "liveLifetime": 85512, "weeklyFlow": 3195, "top1FlowSharePct": 94.7, "http404": 5, "deadShellMass": 115},
+      "company agent": {"results": 200, "live": 189, "liveLifetime": 24234, "weeklyFlow": 4012, "top1FlowSharePct": 27.2, "http404": 4, "deadShellMass": 811},
+      "agent loop": {"results": 164, "live": 158, "liveLifetime": 381386, "weeklyFlow": 25203, "top1FlowSharePct": 23.3, "http404": 3, "deadShellMass": 15651},
+      "multi-agent": {"results": 186, "live": 179, "liveLifetime": 185494, "weeklyFlow": 9425, "top1FlowSharePct": 28.6, "http404": 0, "deadShellMass": 11557},
+      "openclaw": {"results": 110, "live": 109, "liveLifetime": 495583, "weeklyFlow": 4107, "top1FlowSharePct": 14.6, "http404": 1, "deadShellMass": 12259},
+      "growth intel": {"results": 105, "live": 84, "liveLifetime": 5756, "weeklyFlow": 96, "top1FlowSharePct": 33.3, "http404": 16, "deadShellMass": 372},
+      "autonomous company": {"results": 64, "live": 57, "liveLifetime": 421, "weeklyFlow": 3, "top1FlowSharePct": 66.7, "http404": 7, "deadShellMass": 132},
+      "aicompany": {"results": 71, "live": 35, "liveLifetime": 170, "weeklyFlow": 15, "top1FlowSharePct": 73.3, "http404": 30, "deadShellMass": 52}
+    },
+    "instrumentCaveat": {
+      "sumSeriesGreaterThanLifetime": 5,
+      "ofVerifiedLive": 1073,
+      "maxViolation": 13,
+      "note": "do not treat sum(series) <= lifetime as an invariant"
+    }
+  },
+  "rules": [
+    "Benchmark our lane on weekly flow, never lifetime; publish the 9-term flow table each cycle and retire lifetime rankings for our lane.",
+    "Correct competitor mass before ranking: use page lifetime; print the search/page ratio next to every competitor row.",
+    "Split the phantom story: filter the two code.deepline.com URLs from keyword work; keep the 15.2% brand-pool haircut separate and labelled.",
+    "Liveness is a first-class metric: report dead-shell counts and mass per query; our four listings are currently dead shells, which outranks ranking work.",
+    "The competitor benchmark is suzheng/k2f, not company-brain: model entry on the 88 -> 297 -> 1090 narrow-lane ramp, not on the 67k/wk mirror equilibrium or the 4M universe.",
+    "Test the k2f structure: publish narrow, lane-prefixed, artifact-named listings routing to our two skills; predict a non-zero weekly bucket within 14 days while the current broad listing stays at zero.",
+    "Never quote our lane size (51.5k live lifetime vs 15/week live flow) without naming the unit."
+  ],
+  "killConditions": [
+    "k2f's next two weekly buckets flat or down (ai company flow share < 30% or last week < 600): ramp claim dies, benchmark reverts to company-brain at ~12/week.",
+    "Re-poll of affaan-m/ecc pages yields search/page ratio outside 1.75-2.10 on >= 8 of 15 listings: the one-repo double-count explanation is wrong and the search counter is unusable for all repos.",
+    "Our lane's live weekly flow exceeds 500 in any query within 14 days without a new listing family: the zero-flow diagnosis is wrong."
+  ],
+  "instruments": "Full page verification of all 1174 rows of the 9-term keyword set (status, series, lifetime); complete parse of two 147-listing panel snapshots; complete join of search index vs verified set; full enumeration of the 404 set with domain attribution; per-repo search-vs-page deltas.",
+  "limits": "9 self-chosen query terms, so term mass is a lower bound on the lane; series updates weekly-or-slower and no new bucket rolled over between the two panel snapshots, so no panel trend can be called this cycle; k2f's ramp is three buckets of one family observed once; registry-side installs only, no usage/revenue/satisfaction data; our own listings' zero flow may reflect a listing-level failure we have not yet diagnosed.",
+  "actions": "none external",
+  "artifacts": [
+    "sage-hypothesis-2026-10-25-1808.md",
+    "sage-decision-2026-10-25-1808.md",
+    "sage-intel-2026-10-25-1808.json"
+  ]
+}

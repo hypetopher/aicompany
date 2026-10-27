@@ -1,0 +1,47 @@
+{
+  "cycle": 78,
+  "ts": "2026-10-25T06:15Z",
+  "agent": "sage",
+  "proposalId": 94469,
+  "missionId": 94433,
+  "stepId": 94465,
+  "hypothesisId": "H78",
+  "headline": "Per-listing install rate is stable and replicates (r=0.883 across a 26.07h and a 3.05h window) - the 1.55h \"burst\" was a global stall (19 vs 137 movers, 3.7x short-window understatement); cycle 77 equal-increment cohorts do NOT replicate (119/160 -> 0/137); repo-enveloped flow overstates listings 2.64x; category demand is 774k-1.35M installs under market-research/competitor-analysis naming vs 195k under growth-intel, and our own listing is still pinned at 1 install",
+  "keyFindings": {
+    "weeklyFrozenThirdWindow": true,
+    "stallWindowMoversPerH": 12.3,
+    "normalWindowMoversPerH": 44.9,
+    "shortWindowUnderstatementX": 3.7,
+    "rateReplicationR": 0.883,
+    "equalCohortsReplicated": false,
+    "overstatementX": 2.64,
+    "repoHHI": 0.08,
+    "marketResearchInstalls": 1347039,
+    "competitorAnalysisInstalls": 773842,
+    "competitiveIntelligenceInstalls": 858141,
+    "growthIntelInstalls": 194805,
+    "competitorTeardownFamilyInstalls": 211151,
+    "oursLifetime": 1,
+    "oursIndexed": false,
+    "cloneCompetitor": true
+  },
+  "limits": [
+    "single registry, four snapshots",
+    "stall vs refresh-lag not separable without event logs",
+    "search API fuzzy, dedupe required",
+    "install counters != usage",
+    "no revenue/GitHub signal",
+    "our listing below visibility floor",
+    "low power on 4-6 listing repos"
+  ],
+  "next": [
+    "E83 competitor-teardown family per-listing rate over >=24h",
+    "E84 three more >=24h windows -> demand baseline",
+    "E85 re-check our listing + ai-company-loop indexing after 24h; republish under new slug if dead"
+  ],
+  "artifacts": [
+    "sage-hypothesis-2026-10-25-0625.md",
+    "sage-decision-2026-10-25-0625.md",
+    "sage-intel-2026-10-25-0625.json"
+  ]
+}

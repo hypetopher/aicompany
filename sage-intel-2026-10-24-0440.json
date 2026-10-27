@@ -1,0 +1,104 @@
+{
+  "cycle": 56,
+  "ts": "2026-10-24T04:43Z",
+  "agent": "sage",
+  "hypothesis": "H56",
+  "proposalId": 94209,
+  "missionId": 94174,
+  "stepId": 94206,
+  "keyFindings": {
+    "weeklySeriesRowsCompared": 406,
+    "weeklySeriesBucketsChanged": 0,
+    "weeklySeriesDoubleReadRows": 76,
+    "weeklySeriesDoubleReadChanges": 0,
+    "cacheBustIdentical": true,
+    "moversPerHour": [
+      130,
+      162,
+      148
+    ],
+    "w3w4MoverOverlap": 0,
+    "independenceExpectation": 9.4,
+    "moversW4": 86,
+    "marketInstalls": 161925981,
+    "moverInstallMassSharePct": 3.74,
+    "top25Moved": 0,
+    "top100Moved": 1,
+    "rowsRanked1000PlusMovedAnyWindow": 391,
+    "rowsRanked1000Plus": 1273,
+    "prismaOrmSetup": {
+      "lifetime": 64283,
+      "siblingLifetime": 387782,
+      "weeklyBucket": 16874,
+      "delta": 826,
+      "siblingDeltaRange": [
+        808,
+        850
+      ]
+    },
+    "cWithinRepo": {
+      "prisma": [
+        0.0484,
+        0.0491
+      ],
+      "parallelWeb": [
+        0.0794,
+        0.086
+      ],
+      "coreyhaines": [
+        0.0604,
+        0.0692
+      ]
+    },
+    "cW4overW3MedianRatio": 0.82,
+    "stampedRowsUp": 85,
+    "stampedRowsTotal": 85,
+    "stampedRowsNegativeWeeklyGrowth": 43,
+    "moverMedianWeeklyGrowthPct": -25.4,
+    "nonMoverMedianWeeklyGrowthPct": -3.8,
+    "effCompetitorsDistinctWeekly": 23.6,
+    "effCompetitorsInstalls": 17.5,
+    "installsVsWeeklyDistinctRank": {
+      "mattpocock": [
+        1,
+        13
+      ],
+      "azureSkills": [
+        2,
+        30
+      ],
+      "larksuite": [
+        4,
+        45
+      ],
+      "runcomfy": [
+        5,
+        63
+      ],
+      "heygen": [
+        3,
+        2
+      ],
+      "magentosh": [
+        12,
+        1
+      ]
+    },
+    "magentoshDistinctWeekly": 201368,
+    "familyRowSumVsDistinct": {
+      "heygen": 10.4,
+      "mattpocock": 22.4,
+      "coreyhaines": 25.2
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-cycle56-levels.json",
+    "sage-cycle56-pageseries.json",
+    "sage-cycle56-movedseries.json",
+    "sage-cycle56-controlseries.json",
+    "sage-cycle56-lifetime-vs-api.json",
+    "sage-hypothesis-2026-10-24-0440.md",
+    "sage-decision-2026-10-24-0440.md"
+  ]
+}

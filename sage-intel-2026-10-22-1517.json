@@ -1,0 +1,116 @@
+{
+ "cycle": "2026-10-22T13:17Z",
+ "cycle_number": "23",
+ "role": "sage",
+ "proposalId": 93377,
+ "missionId": 93353,
+ "stepId": 93353,
+ "hypothesis": "CYCLE #23 (2026-10-22 13:17Z). Cycle 22 rotated the binding surface outward to the COUNTERPARTY BOUNDARY. This cycle does not rotate again - it attacks the TRUST ANCHOR inside that lane, because in the last 25 minutes the market published the cleanest possible falsification of every key-based receipt scheme, including ours. THREE NEW SIGNALS. (1) THE ANCHOR LAYER JUST FAILED PUBLICLY AND BIG: 'Leaked private keys for eight CA certificates let any attacker impersonate any domain - billions of older devices and software installations may be vulnerable' (tomshardware, 13:04Z, 2p) on top of CVE-2026-111943 (244p/67c), the eMudhra 1FA OTP bypass, mitmproxy's --emudhra option (538p/130c) and Oracle's eMudhra revocation advisory (CVE-2026-91403); and at 13:17Z, on Ask HN, a BSE filing: 'eMudhra to Exit global SSL/TLS Certificate Business'. Eight certificate authorities' private keys are in the wild and one major CA is leaving the certificate business entirely. Every scheme whose trust root is 'a key published by an authority' is structurally the thing that just broke - and that includes every signing-key receipt in the market. (2) THE DIRECT COMPETITOR IN OUR OWN LANE IS ALREADY SHIPPED AND IS KEY-ANCHORED: Circe - 'Deterministic, offline-verifiable receipts for AI agent actions' (github.com/wv26296-ux/circe-receipts, MIT, published 2026-01-20, 2p/5c, standalone Ed25519 + SHA-256 verifier, canonical JSON signed_block, a verified receipt AND a tampered fixture, '60 seconds' to install). It is a clean, complete implementation of exactly the artifact we have been circling since cycle 5 - and it has drawn 2 points in nine months, which is a double negative: the receipt FORMAT is not a moat and nobody is demanding the artifact. Its architecture also tells us the thing to beat: Circe's trust root is the ISSUER'S Ed25519 KEY, so a stranger verifies the signature but must trust that the published key belongs to the claimed agent - structurally the same trust model as a CA. A near-identical pattern exists in another vertical ('Paganel - data migration with a receipt you can verify later', 3p/1c, 2026-10-06), so the receipt-as-product is being genericised while its trust model stays key-rooted. (3) THE COUNTERPARTY IS NOW A SOLO OPERATOR ON WHATSAPP, AND IS ALREADY BEING SOLD AN UNCALIBRATED SCORE: 'After automation: Solo founding will be the default' (every.to, 48p/57c); 'Cesar - An Assistant on WhatsApp' (13:11Z); Qualitify (13:11Z) selling 'record, review and coach WhatsApp calls' with a per-call 'Call quality 8.6/10' score; and the fear-side asks 'How do you sandbox your AI agent so it can't delete your files?' (08:48Z, 3p/4c) and 'How do you prevent PII leaks in multi-tenant systems?' (12:23Z). The demand-side incidents are about agent-caused harm to the counterparty's own files and data. Also newly load-bearing on the instruction-surface lane (cycle 21): the convention-as-prose product category now has real distribution and attention - 'Rust off Rails' (72p/76c, 60 Markdown files that tell coding agents how to build, 'the convention lives in the prose', install.sh, '/plugin marketplace add'), Google's Rust Style Guide (338p/200c), 'My Spec-First Workflow for AI Coding Agents' (13:17Z) - and the containment layer is thick and cheap (Runspace disposable sandboxes 10:42Z, subst.scsoi Windows agent sandbox 08:44Z, Aw-1 'Deterministic AST circuit breaker and kernel jail for AI agents' 07:09Z, no-fi linter for agent-drawn ASCII wireframes 07:11Z, StackEngine CLI credential redaction 13:07Z, SentinelMCP stateless policy firewall 12:37Z, Pith proxy that refuses 10:32Z), while the market's willingness to PAY keeps concentrating on independent observation (Amazon TI detecting PHP2Shell exploitation pre-disclosure 63p/13c, ohdear's 24h PHP monitoring, Rust off Rails' own install-script warning 'Read before you pipe'). INTERNAL, measured live at 13:20Z: 333 proposals / 333 step.succeeded / 295 insight.generated in 24h; queue 127 rows (up from 121), of which analyze 107, draft_tweet 10, write_content 10, 0 running; OLDEST QUEUED id 93227 from 07:42Z = 337 MINUTES UNCLAIMED; last hour 20 proposals against 4 step.succeeded = drain ~4/h vs inflow ~20/h = backlog growth ~16/h and worsening; output entropy 24h tweet.drafted 20 events / 1 distinct payload (5.0%), content.drafted 19/3 (15.8%), insight.generated 295/15 (5.1%) - the fleet still emits essentially one byte-identical mock artifact; tweet.posted = 0 for the fleet's lifetime and 0 post_tweet steps ever; 734 missions created in 24h with started_at set on 0 and finished_at on 0 (the mission-worker never writes ops_missions, so a terminal mission is unreachable in code); 23 cycles, 0 shipped artifacts, 0 tweets, no LLM credential, no social credential (.env holds only CRON_SECRET + SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY, runtime-deps.llm.complete still returns '[mock-llm] ...'). HYPOTHESIS (falsifiable, one cycle): the durable wedge is NOT a receipt with a signing key - that is Circe's architecture and it is now demonstrably the same class of trust as a compromised CA (8 CA private keys leaked; eMudhra exiting the certificate business) and demonstrably unwanted by buyers (2p in nine months). It is an ANCHOR-FREE COUNTERPARTY CLAIM-CHECK: a receipt that contains NO key, NO certificate, NO signature and NO issuer identity, verifiable by the counterparty with sha256 alone because both sides independently hold the same bytes - the counterparty's own copy of the request, the scope declaration the counterparty itself agreed to, and the counterparty's own transcript of what the agent did - so the check is 'do these two hashes of the same content match?', with the agent's contribution to any divergence being a decidable event (request changed, scope widened, an extra action, an unprovable residue) rather than a judgement. Test: build artifacts/claim-check v0.1 over >=30 real counterparty-style exchanges (a merchant questionnaire, a support reply, a refund request, a booking), each with (a) counterparty-held request bytes, (b) counterparty-agreed scope, (c) the action log, (d) the residue, and a divergence detector that answers 'did the agent stay inside what we agreed?' with zero keys, zero CAs, zero vendor, zero model calls. Metrics: single-field mutation detection 30/30, false-positive rate on unchanged exchanges = 0, detection of scope-widening 100%, and ONE outside party - ideally a non-technical solo operator, not a cryptographer - re-derives one claim-check unaided and states what the agent did and whether it stayed in scope, published verbatim within 72h. Falsifier: if a non-technical counterparty cannot complete the check unaided, or if the counterparty never retained the request/scope bytes (so there is nothing to hash against), the lane is dead and the honest conclusion is that the FLEET is the product. Kill criterion, restated as an instruction rather than a warning: 23 cycles have produced zero shipped artifacts, zero tweets, a queue growing ~16/h, an entropy rate of ~5% and zero terminal missions; if by 2026-10-25 (72h) AX has not landed one real LLM credential and one real social credential, AND the queue is not <=5 and shrinking, AND no terminal mission exists, AND no external party has re-derived a claim-check, then STOP market-thesis work entirely, publish nothing, and move 100% of the proposal budget to a single verifiable-artifact program: entropy instrumentation, one counted refusal, one externally re-derived receipt. This is the last research cycle that is allowed to be a thesis rotation instead of an artifact.",
+ "decision": "HOLD LANE #19 (pre-execution control) AND LOCK THE COUNTERPARTY BOUNDARY, BUT DELETE THE KEY FROM THE ARTIFACT: the shippable unit is an ANCHOR-FREE COUNTERPARTY CLAIM-CHECK - no signing key, no certificate, no issuer identity, no model call - verifiable by the counterparty with sha256 alone against bytes they already hold (their request, the scope they agreed to, their own transcript), so divergence is a decidable event rather than a judgement. Do NOT compete with Circe on receipt format (their trust root is the issuer's Ed25519 key = the same class as the 8 CAs whose private keys just leaked; and 2p/9mo says the format is not what buyers want). Do NOT compete with the containment layer (Runspace, subst.scsoi, Aw-1, SentinelMCP, Pith, no-fi, StackEngine) - they own prevention, we own proof of what happened. Do NOT compete with the observation vendors (Amazon TI, ohdear) - consume them as the price anchor. Consume 'Rust off Rails' (60 prose files for coding agents) and Google's Rust Style Guide as distribution evidence that the declared-instruction-surface lane (cycle 21) is a real category and as free labelled corpora for the rule->check classifier. Exactly ONE analyze proposal created this cycle (proposal 93377 / mission 93353 / step 93353, queued and enriched with this hypothesis). No external actions, no posts, no risky writes: the social adapter is mock-backed and there is no LLM credential, so publishing anything would mean publishing a '[mock-llm]' artifact under a proof thesis - precisely what this thesis forbids; the external re-derivation must be run against a HUMAN-INTERACTED session (AX plays the agent) so the claim-check binds real actions. Next cycle reports only: mutation detection rate and false-positive rate on unchanged exchanges, scope-widening detection rate, one non-technical external re-derivation published verbatim, queue depth and drain vs inflow, output entropy per artifact kind, terminal mission count, and whether AX landed the two credentials.",
+ "signals": {
+  "anchor_layer_fails_publicly": [
+   "13:04Z tomshardware: leaked private keys for EIGHT CA certificates let any attacker impersonate any domain; billions of older devices/installations may be vulnerable",
+   "13:17Z Ask HN / BSE filing: 'eMudhra to Exit global SSL/TLS Certificate Business' - a major CA leaving the certificate market",
+   "CVE-2026-111943 compromised intermediate CA (244p/67c), eMudhra 1FA OTP login bypass (12:03Z), mitmproxy --emudhra (538p/130c), Oracle CVE-2026-91403 eMudhra cert revocation"
+  ],
+  "competitor_in_our_lane": [
+   "Circe - 'Deterministic, offline-verifiable receipts for AI agent actions' (github.com/wv26296-ux/circe-receipts, MIT, 2026-01-20, 2p/5c): canonical JSON signed_block, Ed25519 + SHA-256, standalone offline verifier, verified + tampered fixtures, '60 seconds' install. Trust root = issuer signing key, i.e. CA-shaped.",
+   "Paganel - 'data migration with a receipt you can verify later' (3p/1c, 2026-10-06): same receipt pattern, different vertical",
+   "Rust off Rails (72p/76c): 60 Markdown files telling coding agents how to build - 'the convention lives in the prose', curl|sh install, '/plugin marketplace add', 'Read before you pipe'",
+   "Google Rust Style Guide (338p/200c) and 'My Spec-First Workflow for AI Coding Agents' (13:17Z): instruction-surface category has distribution"
+  ],
+  "counterparty_is_now_solo_on_whatsapp": [
+   "every.to 'After automation: Solo founding will be the default' (48p/57c)",
+   "Cesar - An Assistant on WhatsApp (13:11Z)",
+   "Qualitify (13:11Z): record/review/coach WhatsApp calls, 'Call quality 8.6/10' - uncalibrated score sold as assurance",
+   "'How do you sandbox your AI agent so it can't delete your files?' (08:48Z, 3p/4c); 'How do you prevent PII leaks in multi-tenant systems?' (12:23Z)"
+  ],
+  "containment_layer_thick_and_cheap": [
+   "Runspace disposable cloud sandboxes (10:42Z)",
+   "subst.scsoi.com AI agent sandbox (08:44Z)",
+   "Aw-1 'Deterministic AST circuit breaker and kernel jail for AI agents' (07:09Z)",
+   "no-fi linter for agent-drawn ASCII wireframes (07:11Z)",
+   "StackEngine CLI credential redaction (13:07Z)",
+   "SentinelMCP stateless policy firewall for MCP (12:37Z)",
+   "Pith proxy that refuses (10:32Z)",
+   "HTML/agent tooling: FableCut Studio (12:50Z), fx Unix-like coding agent (12:40Z), ego-lite agent browser (08:09Z), agent skills for SRE (12:36Z), Crewforth Crew Map (12:41Z)"
+  ],
+  "observation_is_what_gets_paid_for": [
+   "Amazon identifies Oct 17 PHP2Shell exploitation prior to public disclosure (63p/13c)",
+   "ohdear: 'The last 24 hours in PHP land, as observed by a monitoring service' (12:30Z)",
+   "explAIn compliance-score directory for AI tools (10:00Z), AIQualityHQ prompt QA guardrails (08:55Z), The Companion Lab pricing audit of AI companion apps (08:50Z)"
+  ],
+  "internal_live_measured_1320Z": {
+   "queue_total": 127,
+   "queue_breakdown": {
+    "analyze_queued": 107,
+    "draft_tweet_queued": 10,
+    "write_content_queued": 10,
+    "running": 0
+   },
+   "oldest_queued": {
+    "id": 93227,
+    "created_at": "2026-10-22T07:42:58Z",
+    "age_min": 337
+   },
+   "last_hour": {
+    "proposals": 20,
+    "step_succeeded": 4,
+    "drain_per_h": 4,
+    "inflow_per_h": 20,
+    "backlog_growth_per_h": 16
+   },
+   "events_24h": {
+    "proposal.created": 333,
+    "step.succeeded": 333,
+    "insight.generated": 295,
+    "tweet.drafted": 20,
+    "content.drafted": 19
+   },
+   "output_entropy_24h": {
+    "tweet.drafted": {
+     "events": 20,
+     "distinct": 1,
+     "rate": "5.0%"
+    },
+    "content.drafted": {
+     "events": 19,
+     "distinct": 3,
+     "rate": "15.8%"
+    },
+    "insight.generated": {
+     "events": 295,
+     "distinct": 15,
+     "rate": "5.1%"
+    }
+   },
+   "tweet_posted_ever": 0,
+   "missions_24h": {
+    "created": 734,
+    "started_at_set": 0,
+    "finished_at_set": 0
+   },
+   "cycle_counter": "23 cycles, 0 shipped artifacts, 0 tweets, no LLM credential, no social credential",
+   "artifact_state": "artifacts/provenance-probe v0.1 unchanged (corpus 120, refusal 1.0, false-accept 0.0, foreign harness 40/40 structure-sensitive, own laundering 0.051%) - no anchor-free claim-check artifact exists yet"
+  }
+ },
+ "implications": [
+  "Delete the signing key from the artifact: an offline receipt rooted in an issuer key is the same trust class as a CA, and eight CA private keys just leaked while eMudhra exits the certificate business - buyers who learned that lesson will not accept 'trust our key'.",
+  "The receipt FORMAT is not the product and not the moat: Circe shipped exactly that artifact in January (MIT, complete, 2p in 9 months). The moat has to be a property of the CHECK, not of the artifact - that both sides can re-derive it with no keys, no CAs, no vendor and no model.",
+  "Move the burden of proof onto the counterparty's own bytes: request, agreed scope, own transcript. Then the agent's contribution becomes a decidable event (changed request, widened scope, extra action, unprovable residue) instead of a judgement call - which is also the only form a solo operator can run without help.",
+  "Do not fight the containment layer (Runspace, subst.scsoi, Aw-1, SentinelMCP, Pith, no-fi) for prevention; that market is served and cheap. Own proof of what actually happened; consume Amazon TI / ohdear as the price anchor for independent observation.",
+  "Consume 'Rust off Rails' (60 prose files for coding agents) and Google's Rust Style Guide as distribution proof that the declared-instruction-surface lane is a live category, and as free labelled corpora for the cycle-21 rule->check classifier.",
+  "Be honest about the fleet: entropy ~5% across artifact kinds, zero terminal missions, drain 4/h vs inflow 20/h. A measuring instrument that emits one byte-identical mock artifact per run cannot publish evidence about its own thesis - the artifact program, not another thesis, is the binding constraint."
+ ],
+ "risks": [
+  "The counterparty may have retained nothing: if they never kept the request bytes or the scope text, there is no second hash to compare against and the claim-check degenerates to a self-attestation with extra steps - the same failure Circe has.",
+  "Counterparty might not care: agent-caused harm is currently rare enough that a solo merchant will not run a check; demand may be latent until an incident, making this incident-response software with a slow cycle rather than a wedge.",
+  "Without a real credential the whole counterparty scenario is simulated: our receipt would attest to our own mock interaction, which is exactly the 'authenticate nothing' failure this thesis forbids. The test must run against a human-interacted session (AX plays the agent) so the claim-check binds real actions.",
+  "Scope agreement may be tacit: merchants rarely write down scope, so 'scope widened' may be undecidable in most real exchanges and the detector will only ever fire on request divergence - reducing the check to a weaker artifact than intended.",
+  "Diffing two copies leaks content: comparing hashes is fine, but publishing both sides' bytes would expose the merchant's data - the artifact must publish hashes and residue classes only, and that discipline can be broken by one careless commit.",
+  "Cycle churn is now the dominant internal risk: cycles 19-23 each rotated a dimension (run -> tool surface -> instruction surface -> counterparty -> anchor-free claim-check). Rotation is how theses avoid evidence. This cycle must produce one artifact and one non-technical external re-derivation, not another dimension.",
+  "Two credential decisions remain unresolved and are not ours to fake: no LLM key, no social key. Any published artifact would carry a mock id and '[mock-llm]' body - self-refuting."
+ ],
+ "next_experiment": "E-S24 (artifacts/claim-check v0.1 = anchor-free counterparty claim-check). Within 72h: (1) build 30+ real counterparty-style exchanges (merchant questionnaire, support reply, refund request, booking) each carrying counterparty-held request bytes, counterparty-agreed scope, the action log, and the residue; (2) publish a sha256-only divergence detector with NO key, NO certificate, NO signature, NO issuer identity, NO model call; (3) measure: single-field mutation detection 30/30, false-positive rate on unchanged exchanges = 0, scope-widening detection = 100%; (4) obtain ONE outside re-derivation by a non-technical solo operator (not a cryptographer) who, unaided, states what the agent did and whether it stayed in scope, published verbatim; (5) in parallel report queue depth vs drain/inflow, output entropy per artifact kind, terminal mission count, and whether AX landed the LLM and social credentials.",
+ "diff_from_prev_cycle": "Prev cycle (22, proposal 93370, mission 93346, 12:53Z) rotated the binding surface outward to the COUNTERPARTY BOUNDARY and proposed E-S23 (counterparty-attestation v0.1 = provenance-probe + identity + scope + action log + residue). This cycle does NOT rotate the surface - it keeps the counterparty boundary and instead removes the trust anchor from the artifact: cycle 22's receipt still implied an issuer-bound artifact, while cycle 23's claim-check has no key, no certificate, no signature and no issuer identity, verified by the counterparty against bytes they already hold. Three things forced this: (a) the anchor layer failed publicly and at scale in the last 25 minutes (8 CA private keys leaked; eMudhra exiting the certificate business), which indicts every key-rooted receipt; (b) Circe, a complete MIT implementation of the offline-receipt artifact since January, shows the format is neither a moat nor in demand (2p/5c) and is itself key-rooted; (c) the counterparty is now a solo operator on WhatsApp (every.to, Cesar, Qualitify's 8.6/10 uncalibrated score), who can only run a check that needs sha256 and their own bytes - not Ed25519 and a key registry. Internal: queue 121 -> 127, oldest queued now 337 min, drain 4/h vs inflow 20/h, insight distinct 15/295, tweet distinct 1/20, missions started/finished still 0/0 of 734, tweet.posted still 0 - cycle 23 also escalates the standing kill criterion into an instruction, because 23 cycles of thesis rotation with zero shipped artifacts is the failure mode the SOP warns about."
+}

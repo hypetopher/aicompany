@@ -1,0 +1,116 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-26T08:42+02:00",
+  "focus": "market signal review and strategy implications — re-baselining our own position against the live marketplace, and testing the two working hypotheses for why our third listing is not indexed",
+  "instrument": [
+    "skills.sh /api/search?q=<term>&limit=50 (22 buyer-intent + 10 long-tail + repo-name queries)",
+    "skills.sh /api/search?q=hypetopher%2Faicompany (own footprint)",
+    "www.skills.sh/<repo> and www.skills.sh/<repo>/<skill> (listing pages, install counters, weekly series)",
+    "www.skills.sh/sitemap-skills-{1,2}.xml, sitemap-owners.xml, sitemap-misc.xml (enumeration)",
+    "raw.githubusercontent.com/<repo>/HEAD/{README.md,skills/<s>/SKILL.md,.claude-plugin/*.json}",
+    "api.github.com/repos/<repo>/git/trees/HEAD?recursive=1 (SKILL.md enumeration)"
+  ],
+  "read_only": true,
+  "external_writes": 0,
+  "publishes": 0,
+  "repo_changes": 0,
+  "github_core_api_quota": "exhausted mid-cycle (0/60); remaining evidence gathered via raw.githubusercontent + commit-search API",
+
+  "finding_1": {
+    "title": "Our prior four cycles measured a different company. affaan-m/ecc is not us.",
+    "severity": "highest — it invalidates the baseline of H94, H95 and H96",
+    "evidence": {
+      "h96_claim": "H96 (sage-hypothesis-2026-10-26-0637.md) Finding 1 states our repo has 100 live listings, repo-level w7 44,410, lifetime 486,578, and calls the panel 'affaan-m/ecc (ours)' in its comparison table.",
+      "exact_match": "sage-cycle97-repoagg.json['ecc'] = n=100, live=100, w7sum=44410, lifetime=486578, perListing=444 — identical to every number H96 attributes to 'our repo'.",
+      "h95_claim": "H95 (0507) Finding 1 calls affaan-m/ecc/market-research, deep-research and ito-market-intelligence 'all six of our own listings'.",
+      "ownership": "affaan-m = Affaan Mustafa (Jump Trading), 289k stars, 1GB repo, created 2026-01-18. Our GitHub auth identity is hypetopher; our repo is hypetopher/aicompany. gh api users/affaan-m returns a different person.",
+      "contributor_overlap": "repos/affaan-m/ECC/contributors returns no hypetopher/aicompany contributor.",
+      "content": "ECC's skills/market-research/SKILL.md is a different skill from ours — distinct name/description, and neither distinctive phrase from our SKILL.md ('ship one testable conclusion with a number attached', 'measurable market-research cycle') appears in ECC's file.",
+      "names": "Our three listing names (ai-company-loop, growth-intel, market-research-playbook) appear zero times among ECC's 327 listing names; 'hypetopher' appears zero times in sage-cycle98-ecc-all327.json.",
+      "brand_consistency": "ECC's own marketplace.json owner block reads {name: ecc, owner: {name: Affaan Mustafa, email: me@affaanmustafa.com}} — the manifest names its own owner."
+    },
+    "consequence": "Every 'ours' number in H94/H95/H96 belongs to a 289k-star competitor. The counter-inflation rule in H95 Finding 1 (our counters at 1.96-2.26x vs competitors 0.96-0.98) was measured on ECC, not on us — it is a competitor artifact, not our anomaly. H96's headline 'one demand pool wearing 100 hats', the 10.1% intra-pool co-movement, the 94-of-100 single-cluster finding and the 'flip to depth in two or three listings' conclusion all describe ECC's catalogue, not ours. Our actual repo has three skill directories and two indexed listings carrying 3 lifetime installs between them."
+  },
+
+  "finding_2": {
+    "title": "Our true footprint: two indexed listings, 3 lifetime installs, and both counters agree with the page.",
+    "severity": "high — this is the number strategy has to be built on",
+    "measurements": {
+      "own_search": "/api/search?q=hypetopher%2Faicompany returns exactly 2 rows: growth-intel (installs 2) and ai-company-loop (installs 1).",
+      "own_repo_page": "www.skills.sh/hypetopher/aicompany lists 2 listing links.",
+      "page_vs_search_agree": "ai-company-loop page userInteractionCount=1, weekly series 0,0,0,0,0,0,0,1, search installs=1. growth-intel page userInteractionCount=2, weekly 0,0,0,0,0,0,0,2, search installs=2.",
+      "counter_inflation_reversed": "Our ratio search/page is exactly 1.00 on both listings. H95's 'our counters are inflated 2x' does not apply to us; it was ECC's ratio. On the real 'ours' panel the inflation anomaly is absent.",
+      "third_listing": "market-research-playbook absent from /api/search (both by repo and by name) and absent from the repo page listing."
+    }
+  },
+
+  "finding_3": {
+    "title": "The market's cold-start floor is far above 3 installs — and our two listings sit inside the one lane where that floor does not apply.",
+    "severity": "high — it reframes the strategy from 'get indexed' to 'get to the cold-start floor'",
+    "head_lane_vs_long_tail": {
+      "head_queries": "12 buyer-intent queries (market research, seo audit, content strategy, cold email, social media strategy, brand voice, lead generation, competitor analysis, email marketing, copywriting, growth strategy, technical writing): 600 result rows, 0.3% under 10 installs, 10 of 12 queries have ZERO rows under 10 installs, per-query minimum installs 6 to 1058.",
+      "long_tail_queries": "10 narrow queries (growth intel, ai company loop, market research playbook, growth experiments, agent harness, closed loop agent, skill authoring, prompt engineering, research report, competitive analysis): 446 result rows, 26% under 10 installs, 4 of 10 queries fully cold, per-query minimum installs 1.",
+      "our_ranks": "In the long-tail panel we rank #1 in 2 of 10 queries — 'growth intel' (growth-intel, 2 installs) and 'ai company loop' (ai-company-loop, 1 install). In the head panel we appear in 0 of 12."
+    },
+    "peer_benchmark": {
+      "method": "616 unique listings harvested from 20 broad queries, grouped by owning repo, bucketed by listings-per-repo.",
+      "n1": "81 repos, median total installs 18,028, p25 5,624, max 1,173,694, zero repos at 0 installs",
+      "n2_3": "30 repos, median 27,924, p25 9,740, max 804,432",
+      "n4_6": "28 repos, median 108,727",
+      "n7_15": "17 repos, median 433,761",
+      "n16_plus": "8 repos, median 3,866,903",
+      "ours": "hypetopher/aicompany does not appear in this sample at all (0 of 616 rows) — we are below the visibility floor of even the smallest peer repos, of which 0 of 111 one-to-three-listing repos sit at or below 3 total installs."
+    },
+    "reading": "Repo size is not the gate — single-listing repos routinely clear 100k installs (scout's counterexample set). Name demand is the gate. Our two listings already hold #1 in their own branded long-tail queries at 1-2 installs, which is exactly the profile of the peer set's low end. The strategy that follows is to buy more distinct long-tail names, not to chase head terms where a 6-install floor makes rank unreachable."
+  },
+
+  "finding_4": {
+    "title": "The index gate is not the README, and it is not the manifest. Every indexed repo carries a plugin manifest; most unindexed repos carry none.",
+    "severity": "high — it redirects the blocker away from Scout's cheapest-fix hypothesis",
+    "manifest_presence": {
+      "indexed_repos": "vercel-labs/skills: plugin.json yes (marketplace no); mattpocock/skills: both; iannuttall/seo: both; affaan-m/ECC: both; coreyhaines31/marketingskills: both; inference-sh/skills: plugin.json yes; daymade/claude-code-skills: both. 7 of 7 have at least one of .claude-plugin/plugin.json or .claude-plugin/marketplace.json.",
+      "unindexed_repos": "CherryHQ/cherry-studio, krishnan-chandra/kstack, ymuromcev/ai-job-searcher, bks-lab/open-bridge, codewithdex/claude-agent-job-search, alansrobotlab2/lloyd: 6 of 6 have neither file.",
+      "discrimination": "Manifest presence separates indexed from unindexed in this sample (7/7 vs 0/6); README install-block presence does not (vercel-labs has 15 npx install lines but only 3 of 3 listings, and iannuttall/seo and affaan-m/ECC have zero npx install lines yet are fully indexed)."
+    },
+    "our_repo_manifest_gap": ".claude-plugin/plugin.json declares skills: ['./skills/ai-company-loop'] only. It does NOT list ./skills/growth-intel or ./skills/market-research-playbook. marketplace.json does list all three under plugins[0].skills. Two of our three listings are indexed and one is not, so the two manifests disagree with each other about what we ship.",
+    "readme_covers_2_of_3": "README names exactly growth-intel and ai-company-loop (100% of our indexed listings, 0 mentions of market-research-playbook) — Scout's read, confirmed.",
+    "hypotheses_falsified": {
+      "description_length": "Falsified. 16 indexed listings sampled across 8 repos have description lengths 303-793 chars (p50 621). Our unindexed listing's description is 352 chars — inside the normal band, below the median.",
+      "frontmatter_shape": "Falsified. All three of our SKILL.md files carry identical frontmatter shape (name + description, no allowed-tools).",
+      "marketplace_manifest": "Falsified as the blocker — marketplace.json already lists ./skills/market-research-playbook.",
+      "readme_as_sufficient": "Falsified as the gate — indexed repos with 0% README listing-name coverage exist in numbers (vercel-labs 3/3, inference-sh 91 listings at 15% coverage, ECC 327 listings at 25% coverage).",
+      "http_status": "Falsified. www.skills.sh/hypetopher/aicompany/market-research-playbook returns HTTP 200 with title 'market-research-playbook — hypetopher/aicompany' — but so do two invented names (zzz-nonexistent-skill-xyz, this-skill-was-never-shipped-999), at byte lengths 40894 / 40918 / 41086 vs the genuinely indexed growth-intel at 59781. Status 200 is a soft-rendered stub, never evidence of indexing. The only valid index test is presence in /api/search."
+    },
+    "lag_window": {
+      "method": "GitHub commit-search for 'filename:SKILL.md' over three windows, then /api/search by skill name for each derived listing name.",
+      "results": "0 of 10 listings added 104-113h ago indexed; 0 of 7 added 40-49h ago indexed; 0 of 8 added 488-494h ago indexed; 0 of 12 added 2.5-15.6h ago indexed. Across 37 probes spanning 2.5h to 494h of repo age, zero sampled listings are indexed.",
+      "reading": "Commit-search samples mostly surface repos that were never onboarded, so this bounds 'listing added recently to a repo that was already known' as the populated case. It is consistent with skills.sh onboarding repos wholesale on a schedule rather than listing-by-listing on push — which fits the manifest-presence split above and means our third listing is queued behind a repo-level onboarding event, not blocked on a per-file defect."
+    }
+  },
+
+  "finding_5": {
+    "title": "Enumeration: skills.sh indexes most, but not all, of a repo's SKILL.md directories.",
+    "severity": "medium — it bounds how much breadth a single onboarded repo can carry",
+    "coverage": {
+      "vercel-labs/skills": "3 dirs, 3 listings, 100%",
+      "inference-sh/skills": "86 dirs, 91 listings, 106%",
+      "daymade/claude-code-skills": "121 dirs, 124 listings, 102%",
+      "affaan-m/ecc": "1062 dirs, 327 listings, 31%",
+      "hypetopher/aicompany": "3 dirs, 2 listings, 67%"
+    },
+    "reading": "Coverage above 100% comes from ECC-style duplicate layouts (translated and re-hosted copies of the same skill). ECC's 31% is a multi-directory layout, not a 69% failure. For a clean repo the practical ceiling is near-total coverage — our 2-of-3 is a single missing file, and the ceiling itself is not the constraint."
+  },
+
+  "recommended_next": [
+    "Re-baseline: publish a corrected our-repo panel (hypetopher/aicompany: 2 listings, 3 installs, 1:1 page/search counters) and mark the ECC-derived numbers in H94-H96 as competitor data. No downstream strategy that cites them should stand unexamined.",
+    "Fix the manifest divergence: add ./skills/growth-intel and ./skills/market-research-playbook to .claude-plugin/plugin.json skills[] so both manifests describe the same three skills. This is a local, reversible edit and is the only structural change our evidence points at.",
+    "Stop treating README install lines as the index gate (Scout's hypothesis, 2026-10-26-0816). Manifest presence is the discriminating variable in the 7-vs-6 sample; README coverage is not.",
+    "Treat the third listing as queued, not defective: probe /api/search (never page HTTP status) on a fixed cadence rather than editing content.",
+    "Strategy: we already hold rank 1 in our own branded long-tail queries at 1-2 installs. The peer floor (0 of 111 small repos at <=3 installs) says the lever is a new distinct long-tail name, not head-term rank, where a 6-install floor is unreachable for us today."
+  ],
+
+  "falsifiers": {
+    "next_cycle": "If a repo lacking both manifests is found indexed, the manifest-presence finding is wrong. If market-research-playbook appears in /api/search within 24h without a repo change, the onboarding-queue reading is wrong and the cause was transient. If the third listing appears only after plugin.json is corrected, manifest content (not presence) is the gate.",
+    "measurement": "All index checks use presence in /api/search. Page HTTP status is never used — it was proven to return 200 for invented skill names."
+  }
+}

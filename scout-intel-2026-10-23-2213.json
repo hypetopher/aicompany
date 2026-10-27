@@ -1,0 +1,67 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-23T22:13Z",
+  "focus": "The 18:03Z throughput fix never shipped (its own step 93963 is still queued 4h later, attempts=0; migration 002 still says 'limit 1'), but the GROWTH finding is new and it is not the queue: the company now has a publishable research asset and ZERO working distribution surface, and the surface everyone planned on is dead. Discord is enabled in openclaw.json but the token is 401 Unauthorized and the gateway is in a restart loop (auto-restart 1/10..7/10, 'Failed to resolve Discord application id') - so the 18:03 'post to Discord' experiment cannot ship as written. Meanwhile 12 research articles landed in the last 24h (9 of 12 about agent-skill marketplace measurement, all API-verifiable: skills.sh/ClawHub install counters, trust badges, scanner verdicts) but only ONE (93972) is publish-safe: 10/12 leak internal proposal/mission/step ids, 5/12 leak internal file paths (src/, CLAIM_SQL, ops_mission_steps), 4/12 still carry [mock-llm] markers, 7/12 have zero external links. And the audience is not 'our followers' - ops_social_posts=0, ops_audience/ops_followers do not exist - it already exists at 48,394 stars / 7,037 forks / 310 watchers in sickn33/agentic-awesome-skills, whose Discussion #1063 ('same-name skills across repos') is literally arguing the same question our install-counter measurement answers. Ship three small things: (1) a mechanical publish-readiness gate on write_content output - strip internal ids/paths/mock markers, require >=1 external link - target publish-safe articles 1/12 -> >=8/12 in 24h with zero internal-id leakage; (2) push our own public repo (stale since 2026-02-09, 0 stars, 1 unpushed commit) with 3 research headlines + measurement method so any downstream post has a durable citation; (3) one measurement-only Discussion post in the upstream repo - HUMAN GO REQUIRED, no link to us until (2) lands, success = >=1 substantive reply within 72h. Risk: posting to a third-party repo that did not invite it burns credibility, so it must be a measurement, not a pitch, and (1)+(2) must land first. Guardrail: tweet.posted stays 0 and no social post is published - the social adapter returns mock_<ts> ids, so any 'reach' it reports is fake.",
+  "observations": [
+    "FIX NOT SHIPPED: step 93963 (the 18:03 Scout proposal's own analyze step) is still status=queued, attempts=0, worker_id=null, created 2026-10-23T18:03:40Z - 4.2h later. supabase/migrations/002_claim_one_step_fn.sql still 'order by s.id asc ... limit 1'; no migration touches it; git log for supabase/migrations shows only Phase 4/9/10 commits. So the recommended ceiling fix (limit 20 + drain loop) is unshipped, and a 323-deep queue means a fresh analyze step will not run for hours.",
+    "THROUGHPUT UNCHANGED AND STILL NET NEGATIVE: over the last 12h, 169 step arrivals (14.1/h) vs 47 completions (3.9/h) = net +10.2/h. Queue is 323, up from 312 at 18:03Z (+11 in 4.2h). The 18:03Z intel reported 194/51 (16.2/h vs 4.3/h); completion rate fell 4.3 -> 3.9/h while arrivals fell only 16.2 -> 14.1/h, so the gap is not closing on its own.",
+    "QUEUE IS 87.9% DUPLICATE PAYLOAD: 323 queued steps map to only 39 unique (kind, payload) pairs - 284 steps of duplicate excess. Top duplicate groups: analyze/postmortem mission 92756 x51, mission 92395 x51, mission 93419 x50, mission 93805 x19 (=172 steps, 53% of the whole queue, from FOUR dead missions), plus fixed-topic analyze blocks 'priority balancing and blocker removal' x30, 'cross-role conflict, queue pressure, and step latency' x26, 'growth opportunities, risks, and next experiments' x23, 'system health anomalies and corrective actions' x16.",
+    "SELF-PERPETUATING OBSERVER LOOP (root cause of the 172): observer emitted 88 'Diagnose mission failure X' proposals in 12h (108 of 169 proposals total; 223 in 24h) against only FOUR distinct mission ids - 92395, 92756, 93419, 93805 - which are the same four failed missions forever (lifetime counts 195/195/84/19). The trigger has no 'already diagnosed' guard, so every heartbeat re-creates a postmortem proposal for the same corpse; each becomes one more queued analyze step that outnumbers the real work 172:28 (analyze-non-postmortem + content).",
+    "DISCORD IS DEAD, NOT LIVE (corrects the 18:03Z intel): openclaw.json channels.discord.enabled=true, token present, but GET https://discord.com/api/v10/users/@me with that token returns {'message':'401: Unauthorized'}; /tmp/openclaw/openclaw-2026-10-23.log shows the provider exiting with 'Failed to resolve Discord application id' and auto-restarting 1/10 -> 7/10, plus health-monitor 'restarting (reason: stopped)'. openclaw channels list reports 'Discord default: configured, token=config, enabled' - configuration presence is not reachability. So the 18:03 'publish to Discord' recommendation has no working transport.",
+    "CONTENT IS PRODUCED BUT NOT PACKAGED: 12 real articles (write_content with body) in 24h; 9/12 are on agent-skill marketplace measurement (install counters, trust badges, scanner verdicts), 3/12 are self-referential (about our own queue/postmortems). Publish-readiness audit of those 12 bodies: mock marker [mock-llm] in 4, internal proposal/mission/step ids in 10, internal paths (src/, CLAIM_SQL, ops_mission_steps) in 5, stale self-metrics (e.g. '93,777 steps') in 4, zero external links in 7. Only 93972 ('THE DOWNLOAD NUMBER IS A REPO NUMBER', 16.3KB, 1 link, payload.context citing scout-intel-2026-10-23-1803.json) passes all checks - i.e. publish-safe rate is 1/12 = 8%. Same audit over the 22 on-disk drafts/*.md: 1 clean file (quill-narrative-20261023-1826.md), 21 contaminated.",
+    "THE AUDIENCE EXISTS AND IS ARGUMENTING OUR FINDING: sickn33/agentic-awesome-skills = 48,394 stars, 7,037 forks, 310 watchers, MIT, discussions enabled, 5 open issues, pushed 2026-10-23T20:15Z. Discussion #1063 'Catalog vs structural inventory: how do you treat same-name skills across repos?' (2 comments) and #726 'Introducing the AI Skill Registry Validation Framework' are the exact topic of our badge/install-counter work. skills.sh search API verified live just now (query 'pdf' -> anthropics/skills/pdf installs=215790) and ClawHub skill pages 200. Our gh CLI is authenticated as hypetopher with scopes gist, read:org, repo, workflow - zero new credentials needed to reach a 48k-star audience.",
+    "OUR OWN PUBLIC SURFACE IS STALE: github.com/hypetopher/aicompany is PUBLIC, 0 stars / 0 watchers, pushed_at 2026-02-09 (8.5 months ago), description empty, README still says 'Implemented (phase 1 + 2 + 3)'. origin/main = cc319ba1 (Feb), local HEAD = 33c9df8 (1 unpushed commit). 93,941 steps and 12 research articles exist in Supabase and nowhere public. 0 social posts ever (ops_social_posts count 0); ops_audience / ops_followers / ops_social_metrics tables do not exist, so there is no owned-audience surface and no follower metric to report.",
+    "PROPOSAL ECONOMICS: 169 proposals in 12h = 88 trigger (observer postmortems) + 81 api (role cycles). 4 title shapes account for 145 of them ('Diagnose mission failure #' x223 in 24h, 'Minion coordination cycle' x35, 'Observer arbitration cycle' x35, 'Sage research cycle' x31). Role-cycle proposals are cheap to create and never convert into shipped artifacts because the analyze steps sit behind the ceiling - 18:03Z's proposal included, and it is still queued."
+  ],
+  "experiments": [
+    {
+      "id": "E1-publish-readiness-gate",
+      "change": "In the write_content path, after the body is composed, run a mechanical sanitize + check: strip 'proposal N'/'mission N'/'step N' ids, 'src/...', 'CLAIM_SQL', 'ops_mission_steps', '[mock-llm]' markers and any stale self-metric of the form '<n> steps/missions/tweets'; then require >=1 external https link; if the check fails, mark the artifact not-publishable instead of silently succeeding.",
+      "measurable": "publish-safe articles (pass all checks) 1/12 -> >=8/12 within 24h; internal-id leakage 10/12 -> 0/12; [mock-llm] 4/12 -> 0/12; zero-link articles 7/12 -> <=1/12.",
+      "cost": "one function + one boolean column/field; no schema migration, no new dependency.",
+      "guardrail": "must not delete content - only tag it; articles stay in ops_mission_steps and drafts/."
+    },
+    {
+      "id": "E2-republish-public-repo",
+      "change": "Push the working tree (1 commit behind) to origin/main and rewrite README to lead with three research headlines (install counter is a repo-level stamp; trust badges have no expiry and the second marketplace copied the staleness; 2,642-skill catalog scan verdicts), each with its measurement method and a link to the evidence endpoint.",
+      "measurable": "origin/main updated (currently 2026-02-09); README contains >=3 headline+method pairs; repo has a public URL that a downstream post can cite.",
+      "cost": "one git push + one README; no credentials beyond the gh CLI already authenticated.",
+      "guardrail": "no internal metrics, no mission/step ids, no drafts/*.md with contamination published."
+    },
+    {
+      "id": "E3-upstream-measurement-post",
+      "change": "Post ONE measurement-only Discussion/issue in sickn33/agentic-awesome-skills (48k stars) stating the repo-level-install-counter finding and the badge-expiry finding, with the exact API call used so it is reproducible. No link to our repo, no product mention, no CTA.",
+      "measurable": "post exists; >=1 substantive reply (not a maintainer bot) within 72h; if zero replies, the topic is recorded as closed and we do not retry in that repo.",
+      "cost": "one post; no new credentials.",
+      "requires_human_go": true,
+      "risk": "posting into a 48k-star repo that did not invite us can read as self-promotion and burn credibility; therefore measurement-only, no link, and only after E1+E2 land so our own surface is citable and clean.",
+      "guardrail": "no mock reach claims; ops_social_posts stays 0; no tweet.posted."
+    }
+  ],
+  "risks": [
+    "Distribution-surface illusion: every channel in config reads 'configured, enabled'. Discord proves that false (401 + restart loop). Any plan that names a surface must first prove reachability with a real call, not a config read.",
+    "Contamination risk at publish time: 10/12 articles leak internal proposal/mission/step ids and 5/12 leak internal file paths. Publishing unblocked but ungated puts our internal identifiers and [mock-llm] artifacts in public, and mock ids mean any reported 'reach' is fabricated.",
+    "Attention concentration: 172 of 323 queued steps (53%) are postmortems for four dead missions, and 88 observer proposals in 12h target only those four. Every hour this persists is an hour of the ceiling that never reaches content or distribution.",
+    "Reputation risk on E3: an unsolicited measurement post to a third-party repo is the one experiment here that can lose access, so it stays human-gated and measurement-only.",
+    "Self-referential content drift: 3 of the last 12 articles are about our own postmortems and queue, which is zero audience value if a publish path opens before E1 fixes packaging.",
+    "Measurement drift in our own intel: authored-tweet counts are still quoted inconsistently across channels (20/32/34/35 lifetime variants), so all numbers in this artifact were re-measured directly from ops_mission_steps rather than inherited."
+  ],
+  "not_doing": [
+    "Not re-proposing the 18:03Z batch-claim ceiling fix as the headline: it is still unshipped (step 93963 queued, migration 002 limit 1) and it remains the binding constraint on how fast ANY of E1-E3 can be applied, but it is a code change with a human owner, and this cycle's growth finding is that distribution has no working surface even when the queue is fixed.",
+    "Not filing anything upstream tonight: E3 requires human go and E1/E2 must land first.",
+    "Not touching the 4 dead missions or their 172 queued postmortems: that is a dedupe decision for the operator, not a growth action."
+  ],
+  "baseline_for_next_cycle": {
+    "publish_safe_articles_24h": "1/12 (8%) - target >=8/12",
+    "internal_id_leakage_24h": "10/12 - target 0/12",
+    "mock_marker_articles_24h": "4/12 - target 0/12",
+    "zero_link_articles_24h": "7/12 - target <=1/12",
+    "repo_pushed_at": "2026-02-09 - target pushed in this cycle",
+    "discord_reachable": "false (401) - target unchanged until a human rotates the token",
+    "queue_size": 323,
+    "completions_per_hour_12h": 3.9,
+    "arrivals_per_hour_12h": 14.1,
+    "duplicate_excess_steps": "284 of 323 (87.9%)",
+    "upstream_post_replies_72h": "n/a (E3 not yet filed)"
+  }
+}

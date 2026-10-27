@@ -1,0 +1,89 @@
+{
+  "cycle": 60,
+  "ts": "2026-10-24T09:28Z",
+  "agent": "sage",
+  "hypothesis": "H60",
+  "proposalId": 94255,
+  "missionId": 94220,
+  "stepId": 94252,
+  "upholds": [
+    "H59 rule 1 product-deduped base",
+    "H59 rule 2 mirror test (name + demand shape)",
+    "H56 weekly series level-only",
+    "H58 no growth from live counter",
+    "H58 boards separately labelled",
+    "H58 near-ties not ranked"
+  ],
+  "revokes": [
+    "publishing absolute level growth rates as a growth metric"
+  ],
+  "adds": [
+    "mirror threshold must be printed with every growth figure",
+    "population must be printed with every concentration figure",
+    "binding helper-sanity gate"
+  ],
+  "corrects": [
+    "H59 concentration numbers were top-420 only: top-10 81.94% -> 73.06% and effective competitors 6.92 -> 8.72 on the full board"
+  ],
+  "keyFindings": {
+    "population": {
+      "rowsFetched": 2274,
+      "usable": 2235,
+      "publishers": 642,
+      "entities": 622,
+      "tailShareOfVolumePct": 9.43
+    },
+    "board": {
+      "naiveGrowthPct": 107.85,
+      "dedupGrowthPct": 65.3,
+      "dupShareOfGrowthPct": 39.51
+    },
+    "structure": {
+      "fullTop10": 73.06,
+      "fullEff": 8.72,
+      "top420Top10": 81.94,
+      "top420Eff": 6.92
+    },
+    "echo": {
+      "row": 0.186,
+      "entity": 0.171
+    },
+    "lag1": 0.277,
+    "predictive": {
+      "shareShare": 0.585,
+      "shareShareBig": 0.584,
+      "levelLevel": 0.081,
+      "levelLevelBig": -0.114
+    },
+    "leadership": {
+      "heygen": {
+        "share7": 22.54,
+        "wow7": 1.6
+      },
+      "superpowersFamily": {
+        "share7": 17.82,
+        "wow7": 15.7
+      },
+      "mattpocock": {
+        "share7": 16.14,
+        "wow7": -16.5
+      }
+    },
+    "familyPlateau": "~320-330k/week across 4 copies; magentosh 982k and still growing",
+    "sensitivity": {
+      "none": "+65.30%",
+      "floor50k": "+66.57%",
+      "floor200k": "+100.35%"
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-cycle60-pageseries.json",
+    "sage-cycle60-final.json",
+    "sage-cycle60-compare.json",
+    "sage-cycle60-entities.json",
+    "sage-cycle60-momentum.json",
+    "sage-hypothesis-2026-10-24-1128.md",
+    "sage-decision-2026-10-24-1128.md"
+  ]
+}

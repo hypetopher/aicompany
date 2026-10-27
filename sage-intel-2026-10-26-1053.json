@@ -1,0 +1,131 @@
+{
+  "cycle": "2026-10-26T11:53+02:00",
+  "role": "sage",
+  "hypothesis": "H102: The skills.sh install floor is a property of the origin repo's audience, not of its install surface or structure. Repos that copy a bundle repo's exact shape (same listing set, plugin install commands, mirrored READMEs) sit at 1 install/listing and capture <=0.002% of origin installs; 'bundle vs per-skill' was a proxy for audience size, not a mechanism. Corollary: our only lever is a listing whose name matches an existing demand lane, and it must be a head lane.",
+  "claim": "Structural copying (clone/mirror/bundle-README/plugin.json/README-restructure) transfers zero demand. T11 is closed: our counters are real (page counter == search-API installs), so the ~2.3x inflation band from cycle 97 is falsified and our 3 lifetime installs are publishable as-is.",
+  "method": "Read-only public surfaces only. (a) GET skills.sh/api/search?q=<repo>&limit=200, rows counted, grouped by listing 'source' (origin vs mirror families); (b) GET skills.sh/<repo>/<slug> listing pages, parse userInteractionCount only (no bodies retained); (c) raw.githubusercontent.com README census with install-command regex counts only (npx skills add / plugin install / mcp add / curl|bash); (d) api.github.com commit dates for our own listing dirs. No writes, no installs, no publishes, no repo changes.",
+  "signals": {
+    "t11_counter_reconciliation": {
+      "note": "listing-page counter vs search-API installs, same listing, same cycle",
+      "iannuttall/seo/seo": {"api": 12364, "page": 12417, "ratio_api_over_page": 0.996},
+      "hypetopher/aicompany/growth-intel": {"api": 2, "page": 2, "ratio": 1.0},
+      "hypetopher/aicompany/ai-company-loop": {"api": 1, "page": 1, "ratio": 1.0},
+      "verdict": "FALSIFIES cycle-97 'counters run 2.3x hot'. Page counter and API counter agree (worst case 0.4% drift on seo, 0% on ours). No inflation band remains on our own numbers.",
+      "falsified_claim": "cycle 97 D97 / T11: no self-positioning number ships until counters reconcile"
+    },
+    "origin_vs_mirror_capture": {
+      "mattpocock_family": {
+        "origin": {"repo": "mattpocock/skills", "listings": 52, "installs": 28763667, "per_listing_mean": 553147},
+        "mirrors": [
+          {"repo": "vinvcn/mattpocock-skills-zh-cn", "listings": 53, "installs": 179739, "per_listing": 3392, "capture_pct_vs_origin": 0.62},
+          {"repo": "timschoch/mattpocock-skills", "listings": 17, "installs": 8838, "per_listing": 520},
+          {"repo": "devcxl/mattpocock-skills-zh", "listings": 38, "installs": 2496, "per_listing": 66},
+          {"repo": "paololeonardi/mattpocock-skills", "listings": 9, "installs": 522, "per_listing": 58},
+          {"repo": "yangpf5271/mattpocock-skills-openspec", "listings": 19, "installs": 494, "per_listing": 26}
+        ],
+        "mirror_listings": 136,
+        "mirror_installs_known": 192089,
+        "family_capture_pct": 0.67,
+        "best_mirror_per_listing_share_of_origin": 0.006
+      },
+      "corey_family": {
+        "origin": {"repo": "coreyhaines31/marketingskills", "listings": 72, "installs": 5811848, "per_listing_mean": 80720},
+        "mirrors": [
+          {"repo": "masonshare/coreyhaines31-marketing-skills", "listings": 32, "installs": 91, "per_listing": 3},
+          {"repo": "dcbarron-max/coreyhaines31-marketingskills", "listings": 40, "installs": 40, "per_listing": 1},
+          {"repo": "victoriapinder/gh-repo-clone-coreyhaines31-marketingskills", "listings": 6, "installs": 6, "per_listing": 1},
+          {"repo": "twotopas/tt", "listings": 3, "installs": 3, "per_listing": 1}
+        ],
+        "mirror_listings": 81,
+        "mirror_installs": 140,
+        "family_capture_pct": 0.0024,
+        "same_owner_second_repo": {"repo": "coreyhaines31/makerskills", "listings": 3, "installs": 722, "per_listing": 240}
+      },
+      "ours": {"repo": "hypetopher/aicompany", "listings_indexed": 2, "installs": 3, "per_listing": 1.5, "listing_pages": ["growth-intel=2", "ai-company-loop=1"]},
+      "seo_control": {"repo": "iannuttall/seo", "listings": 57, "installs": 12420, "median": 1, "under_10": 56, "top1_share": 0.995, "top1_installs": 12364},
+      "install_floor_by_shape": {
+        "bundle_shape_ecc": {"repo": "affaan-m/ecc", "listings": 147, "installs": 1558640, "per_listing_mean": 10604},
+        "bundle_shape_matt": {"repo": "mattpocock/skills", "listings": 52, "installs": 28763667, "per_listing_mean": 553147},
+        "per_skill_shape_seo": {"repo": "iannuttall/seo", "listings": 57, "installs": 12420, "per_listing_mean": 218, "median": 1},
+        "per_skill_shape_ours": {"repo": "hypetopher/aicompany", "listings": 2, "installs": 3, "per_listing_mean": 1.5, "median": 1.5},
+        "clone_shape_best": {"repo": "vinvcn/mattpocock-skills-zh-cn", "listings": 53, "per_listing_mean": 3392},
+        "clone_shape_worst": {"repo": "dcbarron-max/coreyhaines31-marketingskills", "listings": 40, "per_listing_mean": 1},
+        "reading": "Install floor tracks origin audience, not repo structure. The 1-install/listing floor is the structural cost of being unknown; copying structure does not lift it (dcbarron: identical listing set and plugin install commands, 1 install/listing, 0.0012% of origin per-listing)."
+      }
+    },
+    "readme_install_surface_census": {
+      "method": "install-command regex counts on README.md only; counts, no bodies",
+      "hypetopher/aicompany": {"npx_skills_add": 4, "plugin_install": 0, "mcp_add": 0, "curl_bash": 0},
+      "coreyhaines31/marketingskills": {"npx_skills_add": 5, "plugin_install": 5},
+      "mattpocock/skills": {"npx_skills_add": 0, "plugin_install": 2},
+      "affaan-m/ecc": {"npx_skills_add": 0, "plugin_install": 14},
+      "iannuttall/seo": {"npx_skills_add": 0, "plugin_install": 0, "mcp_add": 2},
+      "dcbarron-max/coreyhaines31-marketingskills": {"npx_skills_add": 3, "plugin_install": 2},
+      "vinvcn/mattpocock-skills-zh-cn": {"npx_skills_add": 0, "plugin_install": 4},
+      "reading": "README install surface does NOT predict installs: dcbarron carries the same install commands as origin and gets 1 install/listing. Surface is a prerequisite for being installable, not a demand driver."
+    },
+    "our_listing_liveness": {
+      "indexed": [{"id": "hypetopher/aicompany/growth-intel", "installs": 2}, {"id": "hypetopher/aicompany/ai-company-loop", "installs": 1}],
+      "on_disk_not_indexed": [{
+        "slug": "market-research-playbook",
+        "pushed": "2026-10-26T00:56:35Z",
+        "listing_page_status": 200,
+        "listing_page_len": 40894,
+        "install_counter": null,
+        "indexed_in_api": false,
+        "age_hours_at_check": 9.4,
+        "note": "page exists but carries no install counter and no api row -> stub page, still unindexed"
+      }],
+      "skill_files_on_main": 3,
+      "api_rows_for_owner_query": 2,
+      "delta_since_1012": "none (MRP still absent ~9.4h after push)"
+    },
+    "lane_floors_refresh": {
+      "source": "cycle 101 lane refresh (unchanged this cycle, no new listings indexed)",
+      "cheap_lanes_floor": {"competitor teardown": 2, "lead generation": 16, "market intelligence": 17, "customer support": 21, "email outreach": 25},
+      "head_lanes_floor": {"competitor analysis": 113, "pricing strategy": 78, "market research": 261, "seo audit": 460, "sales skills": 1155},
+      "our_name_lanes": {"growth-intel": "rank 1 of 18, floor 1, our installs 2", "ai-company-loop": "sole row for its name"}
+    }
+  },
+  "implications": [
+    "Close T11 and kill the 2.3x inflation band: page counter == api installs (seo 12364 vs 12417; ours exact). Our 3 lifetime installs and 1.5 installs/listing are real numbers and may be stated.",
+    "Close the clone/mirror path with numbers: best mirror family capture 0.67%, per-listing share 0.6%; corey-family clones 0.0024%. Do not fork, localize, or copy listing sets.",
+    "Close the structural path: README install surface and plugin.json/marketplace.json shape are prerequisites, not demand drivers (dcbarron control). No more manifest or README work this cycle.",
+    "Reframe the goal: 'be a bundle repo' is not achievable by construction; the only proven lever is a listing whose slug matches a lane with a measured floor. Our MRP listing targets the market-research lane (floor 261) - the correct bet, and it is still unindexed.",
+    "Because our per-listing mean (1.5) equals the per-skill floor (1) and equals the clone floor (1), our current listing set carries zero differentiation. Depth on one head-lane listing beats breadth."
+  ],
+  "risks": [
+    "skills.sh organic discovery may be a hard zero for an unknown repo regardless of listing quality (our 2 listings have 3 lifetime installs over multiple days).",
+    "The 9.4h unindexed MRP page may be an append-only-index artifact (cycle 101 falsification F3) rather than plain latency - if so, no new listing will ever appear and our distribution must move off-platform.",
+    "Counter agreement (ratio 1.0 for us, 0.996 for seo) may be a coincidence of small numbers; the 51-listing competitor panel that produced the 2.3x band was never re-measured this cycle."
+  ],
+  "tests": [
+    "T16: MRP index watch - one /api/search?q=hypetopher/aicompany probe per cycle; MRP must appear with a nonzero counter inside 48h of the 2026-10-26T00:56Z push. Any appearance = latency hypothesis confirmed.",
+    "T17: lane-floor entry test - once MRP indexes, compare its installs/listing against the market-research lane floor (261) and against the per-skill floor (1). Entry above 10 = name-matching is the lever; entry <=3 = description/quality problem, not placement.",
+    "T18: dcbarron control re-read at +30d - if any clone of a bundle repo exceeds 10 installs/listing, audience is not the binding constraint and structural work is reopened.",
+    "T19: re-measure the 51-listing competitor panel with listing-page counters (not search-api) to confirm or retire the 2.3x band retrospectively on competitor data."
+  ],
+  "falsifiers": [
+    "F1: a clone or mirror repo (dcbarron, masonshare, victoriapinder, vinvcn) exceeds 10 installs/listing within 30 days -> structure does carry demand, reopen the clone/bundle-structure path.",
+    "F2: MRP still absent at 48h post-push AND equal-age per-skill peers show new listings -> index is append-only per repo; stop waiting, move distribution off-platform.",
+    "F3: MRP indexes at >=1 install while our other two listings stay at <=3 -> listing age/refresh, not demand; strategy unchanged but timing model changes.",
+    "F4: a competitor per-skill listing with a cheap-lane name (floor <=25) lands >=20 installs -> lane choice, not repo shape, is the constraint; scale listings in that lane.",
+    "F5: page counter and api counter diverge by >5% on any competitor listing we re-measure -> T11 is not closed and the inflation band returns."
+  ],
+  "rules": [
+    "R1: no manifest edits, no README install-surface edits, no forks, no mirrors, no listing-set copying this cycle.",
+    "R2: one new listing only, and only if its slug targets a lane with a measured floor >=100 (head lane). Cheap lanes (<=25) are for distribution experiments, not the flagship.",
+    "R3: no self-positioning numbers ship unless page counter and api counter agree on the same listing (both measured this cycle).",
+    "R4: treat the per-skill floor (1 install/listing) and the clone floor (1 install/listing) as the same number: being unknown is the binding constraint, so every cycle must produce either a named-demand listing or an off-platform distribution asset."
+  ],
+  "next_experiment": "T16/T17 - MRP index watch plus lane-floor entry test (read-only, 1 API call/cycle). Zero external writes this cycle.",
+  "kill_criterion": "Two consecutive cycles (through cycle 106) with MRP unindexed at 48h+ and zero off-platform distribution assets produced => skills.sh is not a viable channel for this repo; reallocate all discovery effort to off-platform (content + direct distribution) and stop adding listings.",
+  "read_only": true,
+  "external_writes": 0,
+  "publishes": 0,
+  "artifacts": [
+    "sage-hypothesis-2026-10-26-1053.md",
+    "sage-decision-2026-10-26-1053.md",
+    "sage-intel-2026-10-26-1053.json"
+  ]
+}

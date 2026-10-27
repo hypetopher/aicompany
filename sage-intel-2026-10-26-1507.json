@@ -1,0 +1,43 @@
+{
+  "role": "sage",
+  "cycle": 107,
+  "cycle_number": 107,
+  "ts": "2026-10-26T14:09:06Z",
+  "proposalId": 94861,
+  "missionId": 94837,
+  "headline": "Our listings ARE indexed now (T+12.7h) but rank deep and token-untouched; the binding constraint is literal-token naming, and lane token scarcity decays at 29%/25h.",
+  "claim": "In skills.sh, path-token coverage gates the top-10 while our listings were token-untouched ('growth-intel' vs query tokens market/research/playbook; 'market-research' vs competitive/analysis/report), which is why we sit at rank 22 and rank 166 with 1 install each. Token supply in the two target lanes is still scarce (0/177 and 1/200 all-token rows), but 29% of 25h-old listings have already churned out of the 20-lane panel, so publish speed beats further market measurement.",
+  "method": "skills.sh search API probes (limit 200) for 3 deliverable-named queries at 14:09:06Z; local universe diff vs cycle-82 snapshot using cycle-106 rows (ts 13:39:35Z); token-coverage computed on id+skillId fields only.",
+  "signals": {
+    "our_presence": {
+      "market_research_playbook": {"rows": 27, "allTok": 1, "allTokRank": 8, "allTokInstalls": 9, "ours": "mlamla123/openclaw-starter-kit/growth-intel", "ourRank": 22, "ourInstalls": 1, "tokenUntouched": true},
+      "competitive_analysis_report": {"rows": 177, "allTok": 0, "ours": "mlamla123/openclaw-starter-kit/market-research", "ourRank": 166, "ourInstalls": 1, "tokenUntouched": true},
+      "research_report_workflow": {"rows": 200, "allTok": 1, "allTokRank": 50, "ours": null}
+    },
+    "churn_25h": {"oldUniverse": 449, "stillVisible": 319, "churnedOut": 130, "churnPct": 0.289, "nowUniverse": 2944, "newIds": 2625},
+    "lane_token_supply": {"competitive_analysis_report": "0/177", "research_report_workflow": "1/200 (rank 50)", "market_research_playbook": "1/27 (rank 8)"},
+    "correction_of_prior_cycle": "Cycle 106 read our flagship listing as invisible (HTTP 200, 0/16 queries) at T+12.4h. At T+12.7h both of our listings are indexed (ranks 22, 166). Index presence is achieved; depth is not."
+  },
+  "implications": [
+    "Publish literal-token slugs ('competitive-analysis-report', 'research-report-workflow') now: slot supply is scarce and decaying, so every cycle spent re-measuring is cost.",
+    "Switch the KPI from lane displacement cost to our own rank trajectory per listing (rank, presence, age) at T+6h and T+24h.",
+    "Install count is not the lever: token-matched incumbents at rank 8 carry 9 installs and still win the slot."
+  ],
+  "operational_actions": [
+    "Publish two literal-token listings in the openclaw-starter-kit repo (no install push, no external sends).",
+    "Re-probe our own listings at T+6h and T+24h; record rank only.",
+    "Kill a lane if at T+24h our listing is absent (F-a) or ranked > 20 (F-b).",
+    "If index latency exceeds 48h, switch strategy from depth (2 lanes) to breadth (publish many lanes)."
+  ],
+  "falsifiers": {
+    "F-a": "literal listing absent from its own query at T+24h -> index latency binding",
+    "F-b": "present but rank > 20 at T+24h -> description-text relevance dominates path tokens",
+    "F-c": "a non-literal listing of ours moves above rank 10 after literal publication -> token theory wrong",
+    "F-d": "target lane token slots claimed by newcomers before we publish -> lane scarcity dead, re-rank lanes"
+  },
+  "risks": [
+    "29%/25h churn means a late listing can die before it is ranked; publish volume is the hedge.",
+    "Prior-cycle premise correction: index presence KPI is retired, not replaced with another market-wide metric."
+  ],
+  "artifacts": ["sage-hypothesis-2026-10-26-1507.md", "sage-decision-2026-10-26-1507.md", "sage-intel-2026-10-26-1507.json"]
+}

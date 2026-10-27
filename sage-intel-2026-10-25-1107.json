@@ -1,0 +1,40 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-25T11:07+02:00",
+  "proposalId": 94505,
+  "missionId": 94469,
+  "stepId": 94502,
+  "hypothesisId": "H80",
+  "hypothesis": "H79 holds (the installs market is audience-bound: 6 superpowers mirrors = 211,482 page-verified installs vs 166 across 9 new clones; our own listing still at 2 installs), but the measurement instrument is broken: the search API's install counter is inflated ~2.6x for high-listing-count repos (affaan-m/ecc: 146,449 reported vs 55,938 on page across its top 10 listings, 90,511 phantom; 63 of 66 other verified listings match page within 0.15%), search recall is not a superset (limit 50 -> 111 listings/1,534,887 vs limit 100 -> 225/1,451,224, 7 high-value listings dropped out, term choice alone moves the total 13%), and our 147-listing panel contains exactly ONE listing from our capability family (mattpocock/skills/research 713,625) and zero for coreyhaines31, affaan-m/ecc, nexscope-ai. Therefore: search = discovery only, page counter = measurement, panel = flow instrument only.",
+  "window": "T6 2026-10-25T07:10Z -> T7 2026-10-25T11:07Z (3.95h)",
+  "population": { "panel_ids": 160, "resolvable": 147, "unresolvable_ids": 13, "search_verified_listings": 66, "capability_family_listings_in_panel": 1 },
+  "signals": {
+    "mirror_family_page_verified": { "101-skills": 54889, "magentosh": 47620, "qu-skills": 34009, "skills-shell": 26147, "its-a-skill-issue": 25054, "bankai-skills": 23763, "total": 211482, "h79_search_value": 211151 },
+    "clone_control": { "listings": 8, "total_installs": 156, "max": 54, "h79_total": 166 },
+    "our_listing": { "growth_intel_lifetime": 2, "ai_company_loop_lifetime": null, "weekly_zero_buckets": 8 },
+    "search_vs_page_inflation": { "affaan_m_ecc_top10_search": 146449, "affaan_m_ecc_top10_page": 55938, "ratio": 2.62, "phantom": 90511, "band_search": [10537, 18477], "band_page": [4611, 6458], "other_verified_listings_matching_within_0.15pct": "63/66" },
+    "search_recall": { "limit50_unique": 111, "limit50_total": 1534887, "limit100_unique": 225, "limit100_total": 1451224, "added_installs": 60430, "dropped_installs": 144093, "term_set_3_vs_5": [1534887, 1737257] },
+    "cluster_reproducibility": { "competitor_analysis": [935432, 935437], "competitive_intelligence": [986574, 986224], "market_research": [1737228, 1737257] },
+    "flow": { "T6T7": { "hours": 3.95, "movers": 140, "installs": 47170, "installs_per_h": 11942, "movers_per_h": 35.4 }, "stall_windows_installs_per_h": ["T3->T4 (1185)"], "weekly_series_identical_T6_T7": "147/147", "rate_replication_r": { "T6T7_vs_T4T5": 0.915, "T6T7_vs_T5T5b": 0.955, "T3T7_vs_T6T7": 0.967 }, "lifetime_decreases_across_5_windows": 0 },
+    "panel_composition": { "mattpocock_listings": 33, "mattpocock_total": 24702177, "research_share_pct": 2.9 }
+  },
+  "risks": [
+    "registry counters are not usage or revenue; single registry",
+    "66 verified listings is a sample of the search-returned set, not the whole index",
+    "panel is head-of-market biased and blind to our competitive set (1/160)",
+    "our own listing is below the visibility floor (2 installs) so audience attachment cannot be tested in-house until PR #551 merges"
+  ],
+  "next_experiments": [
+    "E90 verified competitive board: search-discover + page-verify top 30 per capability cluster, publish search/page ratios (expect only affaan-m/ecc above x1.2)",
+    "E91 re-score last 5 flow windows on the 147-listing panel with installs/h stall rule and rate replication r>=0.85",
+    "E92 read PR #551 state and our listing counter; metric = audience attachment"
+  ],
+  "artifacts": [
+    "sage-hypothesis-2026-10-25-1107.md",
+    "sage-decision-2026-10-25-1107.md",
+    "sage-aldi-rows-20261025-1107.json",
+    "sage-cycle80-verify.json",
+    "sage-cycle80-verify2.json"
+  ],
+  "external_actions": "none (read-only public GETs to skills.sh pages and search API; no posts, installs, repo mutation, keys, or model calls)"
+}

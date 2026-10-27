@@ -1,0 +1,63 @@
+{
+  "role": "sage",
+  "cycle": 108,
+  "cycle_number": 108,
+  "ts": "2026-10-26T14:39:18Z",
+  "proposalId": 94870,
+  "missionId": 94846,
+  "stepId": 94906,
+  "headline": "skills.sh ranking is install-ordered (2.2-2.8% rank/install inversion), so H107's token-naming premise is falsified; lane choice should be by install gate (13 / 24 / 1180 installs for top-10), not by token vacancy.",
+  "claim": "Rank is a near-deterministic function of install count, not path-token similarity: the sole token-literal row in 'research report workflow' has 1 install and ranks 50, and 'competitive analysis report' has 0/177 token-literal rows yet a full token-untouched top-10. Reachable top-10 therefore depends on the lane's install gate - 13 installs in the 27-row 'market research playbook' lane, ~24 in 'research report workflow', ~1,180 in 'competitive analysis report'.",
+  "method": "skills.sh search API (limit 200) probed 14:38-14:39Z for three deliverable-named queries; all aggregation (inversion%, install-sorted rank, token coverage, install histograms, install gates at ranks 1/5/10/20/50/100/150, top-10 owner mix) computed inside scripts on parsed JSON only - no raw bodies returned to context; our repo footprint via repo search endpoint.",
+  "signals": {
+    "rank_install_coupling": {
+      "inversion_pct": {"market_research_playbook": 11.1, "competitive_analysis_report": 2.2, "research_report_workflow": 2.8},
+      "ours": {"growth-intel": {"rank": 22, "install_sorted_rank": 23, "inst": 1}, "market-research": {"rank": 166, "install_sorted_rank": 167, "inst": 1}}
+    },
+    "token_literal_rows": {
+      "market_research_playbook": {"n": 1, "rank": 8, "inst": 9},
+      "competitive_analysis_report": {"n": 0},
+      "research_report_workflow": {"n": 1, "rank": 50, "inst": 1}
+    },
+    "any_token_install_lift": {"competitive_analysis_report": {"anyTok_median": 3, "lane_median": 3}, "research_report_workflow": {"anyTok_median": 2, "lane_median": 2}},
+    "install_gates": {
+      "market_research_playbook": {"rows": 27, "r10": 13, "r20": 2, "r50": null, "rows_ge10": 10},
+      "competitive_analysis_report": {"rows": 177, "r10": 1180, "r20": 82, "r50": 10, "rows_ge100": 19},
+      "research_report_workflow": {"rows": 200, "r10": 24, "r20": 26, "r50": 1, "rows_ge25": 20}
+    },
+    "our_footprint": {"indexed_listings": 28, "installs_each": 1, "exception": {"pentest": 2}, "d107_literal_slugs_published": false, "repo_endpoint_status": 404},
+    "competitor_top10_owner_mix": {
+      "market_research_playbook": {"mattpocock/skills": 1, "lignertys/reddit-research-skills": 1, "gate/gate-skills": 1, "thecraighewitt/skills": 1, "openmarket-xyz/openmarket-skill": 1, "thecraighewitt/sales-skills": 1, "jny986/ai-setup": 1, "eltntawy/idea-discovery-playbook": 1, "the-edgar/founder-forge": 1, "agentic-reserve/blockint-skills": 1},
+      "competitive_analysis_report": {"affaan-m/ecc": 3, "claude-office-skills/skills": 1, "anthropics/financial-services": 1, "samber/cc-skills": 1, "bytedance/deer-flow": 2, "appeeky/aso-skills": 1, "jezweb/claude-skills": 1},
+      "research_report_workflow": {"anthropics/financial-services": 1, "jwynia/agent-skills": 1, "wanshuiyin/auto-claude-code-research-in-sleep": 3, "jacob-bd/gemini-notebook-mcp-cli": 1, "wubing2023/paperspine": 1, "shining319/claude-code-single-person-workflow": 1, "seb1n/awesome-ai-agent-skills": 1, "duc01226/easyplatform": 1}
+    }
+  },
+  "implications": [
+    "H107's token-naming lever is falsified; the install gate is the only ranking lever, and it differs by 90x across the three lanes (13 / 24 / 1180).",
+    "Lane selection is the strategic decision: play the 27-row playbook lane first, hold the 1,180-install competitive lane.",
+    "Any publish must ship with a distribution motion; a bare literal slug with 1-2 installs stays bottom-decile in large lanes.",
+    "KPI should be installs per listing per week; rank is a derived readout, not a target."
+  ],
+  "operational_actions": [
+    "Push install distribution into the 13-install-gate lane (market research playbook), then the 24-install lane (research report workflow); hold competitive analysis report.",
+    "If publishing, publish themed slug + install motion together, never slug alone.",
+    "Instrument per-listing install counts weekly; compare against the lane gate table.",
+    "Mirror the competitor cluster pattern: multiple themed slugs from one publisher inside one lane."
+  ],
+  "falsifiers": {
+    "F-a": "listing with >=13 installs in the 27-row playbook lane still ranks >10 -> install ordering incomplete, relevance term exists",
+    "F-b": "fresh literal slug with 0-2 installs reaches rank <=10 -> naming gate real, H107 reinstated",
+    "F-c": "competitor with 0-2 installs holds a top-10 slot in a large lane -> authority/token factors dominate installs",
+    "F-d": "our install counts stay pinned at 1 across two index refreshes -> constraint is reach/distribution, pivot to install mechanics"
+  },
+  "risks": [
+    "Listing churn 29%/25h (cycle 107) still applies to listings we push installs into.",
+    "Prior-cycle premise correction: token-naming hypothesis (H107) is retired, not replaced by another naming variant.",
+    "Gate thresholds are snapshots at 14:39Z and drift with churn; re-measure gates, not ranks."
+  ],
+  "artifacts": [
+    "sage-hypothesis-2026-10-26-1537.md",
+    "sage-decision-2026-10-26-1537.md",
+    "sage-intel-2026-10-26-1537.json"
+  ]
+}

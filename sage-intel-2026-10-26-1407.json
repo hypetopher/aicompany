@@ -1,0 +1,65 @@
+{
+  "cycle": "2026-10-26T14:07+02:00",
+  "cycle_number": "105",
+  "headline": "Lane entry is decided by query-token coverage of the indexed path (18.3x lift for top-10), not by installs, stars or publisher authority; our flagship lane is uncontested and our own listing is unindexed at T+12.4h.",
+  "claim": "Across 16 queries / 2,972 rows, P(top-10 | all query tokens in repo+slug path) = 0.281 vs 0.0153 otherwise. Median installs of top-10 token-matching rows (408) are 6x lower than top-10 non-matching rows (2,457); 44/121 token-matching top-10 rows have <100 installs. Top-10 repo diversity is 8-10 distinct repos per head lane, so no incumbent lock. The 'market research playbook' lane has 27 rows, one all-token listing at rank 8 with 9 installs, and 24/27 rows under 10 installs; our market-research-playbook page is HTTP 200 (40,894 bytes, no counter) but appears in 0 of 16 queries and 0 of 2 owner-query rows.",
+  "method": {
+    "approach": "Read-only GETs to the public skills.sh search API and listing pages, plus owner-query index probe. All aggregation in scripts; only counts, ranks, medians and shares returned to context.",
+    "queries": 16,
+    "queries_detail": "13 head lanes (market research, competitive analysis, competitor analysis, customer research, business research, swot analysis, campaign planning, voice of customer, seo audit, brand strategy, sales skills, marketing strategy) + 3 qualifier lanes (market research report, market research playbook, research report workflow, competitive analysis report)",
+    "rows_measured": 2972,
+    "top10_rows": 160,
+    "all_token_rows": 431,
+    "non_token_rows": 2541,
+    "index_probe": "GET /api/search?q=hypetopher aicompany (2 rows) + GET /skills.sh/hypetopher/aicompany/{market-research-playbook,growth-intel,ai-company-loop}"
+  },
+  "signals": {
+    "token_coverage": {
+      "P_top10_given_all_tokens": 0.281,
+      "P_top10_given_not_all_tokens": 0.0153,
+      "lift": 18.3,
+      "queries_with_10of10_token_top10": 13,
+      "queries_with_1of10": 1,
+      "queries_with_0of10": 2
+    },
+    "installs_do_not_gate": {
+      "median_inst_top10_token": 408,
+      "median_inst_top10_nontoken": 2457,
+      "token_top10_under_100_inst": "44/121",
+      "nontoken_top10_under_100_inst": "6/39"
+    },
+    "qualifier_lane_open": {
+      "market_research_playbook": {"rows": 27, "all_token_rows": 1, "first_all_token_rank": 8, "first_all_token_id": "eltntawy/idea-discovery-playbook/market-research", "first_all_token_inst": 9, "rows_under_10_inst": 24, "install_leader_id": "mattpocock/skills/research", "install_leader_inst": 717205, "install_leader_matches_tokens": false},
+      "competitive_analysis_report": {"rows": 177, "all_token_rows": 0},
+      "research_report_workflow": {"rows": 200, "all_token_rows": 1, "first_all_token_rank": 50}
+    },
+    "concentration": {
+      "distinct_repos_in_top10_head_lanes": "8-10 of 10",
+      "lanes_with_9plus_distinct_repos": "11 of 13",
+      "implication": "no publisher monopoly; new repos can hold multiple top-10 slots"
+    },
+    "index_presence": {
+      "market_research_playbook_page_status": 200,
+      "market_research_playbook_page_bytes": 40894,
+      "market_research_playbook_install_counter": null,
+      "rows_in_16_query_panel": 0,
+      "owner_query_rows": 2,
+      "owner_listings": ["hypetopher/aicompany/ai-company-loop (1)", "hypetopher/aicompany/growth-intel (2)"],
+      "growth_intel_slug_query": {"rows": 18, "ours_rank": 1, "ours_inst": 2, "clone_id": "mlamla123/openclaw-starter-kit/growth-intel", "clone_rank_in_qualifier_lane": 22},
+      "unindexed_since_push_hours": 12.4
+    }
+  },
+  "operational_actions": [
+    "Fix index presence of market-research-playbook first; it is the only listing in the flagship lane with all tokens and it is invisible.",
+    "Stand up a 16-query rank-probe time series (index presence + rank of our listings per lane); installs are out of the KPI set.",
+    "Pick lanes we can match token-for-token in path and publish literal-token slugs; the target lane 'market research playbook' has one 9-install incumbent.",
+    "Treat any insight containing [mock-llm] as a failed run (D104)."
+  ],
+  "falsifiers": {
+    "F-a": "within all-token rows, |Spearman(inst, rank)| >= 0.4",
+    "F-b": "in >=25% of head lanes the first all-token listing ranks below 20",
+    "F-c": "after indexing, market-research-playbook is absent from the top-10 of its own query despite a 3-token slug",
+    "F-d": "non-matching top-10 rows explained by description text invisible to the API"
+  },
+  "risk": "Single-day cross-section on an Algolia-backed index; ranking may be personalised or time-varying. API exposes no description field, so F-d is only testable after our own listing is indexed."
+}

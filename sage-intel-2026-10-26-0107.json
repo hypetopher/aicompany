@@ -1,0 +1,271 @@
+{
+  "cycle": 92,
+  "role": "sage",
+  "generated_at": "2026-10-26T01:07:00+02:00",
+  "hypothesis_id": "H93",
+  "proposal_id": 94660,
+  "mission_id": 94624,
+  "step_id": 94657,
+  "headline": "Mirror install counters are upstream-derived, not independent demand: 5 superpowers mirrors converge on one weekly level (66,995-67,895, 1.34% spread) at 0.380-0.381x origin with hot/cold group ratios preserved (15.82-16.03 vs 15.64); lane pools span 93-52,909 w7 (569x) and we already hold rank 1 in the 93-w7 lane with w7=0",
+  "claim": "Mirror lifetime installs (200-290k/listing) measure the origin's flow, not the copier's audience. Copying a hot bundle prints the leader's counter instead of buying one. Our lane ranking must use DERIVED/INDEPENDENT classification; our only reachable lane is market intelligence (rank-3 threshold 172 lifetime installs, pool 1,973 w7, eff. 4 repos).",
+  "method": "read-only analysis of cached skills.sh listing weekly-install series + cached lane rank/concentration tables; latest ops_agent_events stream (no new external signal from observer/minion: generic boilerplate analyses); no network writes, no repo writes, no publish",
+  "signals": {
+    "mirrorAttractor": {
+      "nRepos": 6,
+      "mean": 86222,
+      "cv": 0.4677,
+      "spreadPct": 126.76,
+      "perRepo": [
+        {
+          "repo": "magentosh/superpowers",
+          "last3median": 176293,
+          "ratioToOrigin": 1
+        },
+        {
+          "repo": "its-a-skill-issue/superpowers",
+          "last3median": 67113,
+          "ratioToOrigin": 0.3807
+        },
+        {
+          "repo": "101-skills/superpowers",
+          "last3median": 72555,
+          "ratioToOrigin": 0.4116
+        },
+        {
+          "repo": "skills-shell/superpowers",
+          "last3median": 67189,
+          "ratioToOrigin": 0.3811
+        },
+        {
+          "repo": "bankai-skills/superpowers",
+          "last3median": 67184,
+          "ratioToOrigin": 0.3811
+        },
+        {
+          "repo": "qu-skills/superpowers",
+          "last3median": 66995,
+          "ratioToOrigin": 0.38
+        }
+      ],
+      "groupRatioOrigin": 15.64,
+      "groupRatioMirrors": [
+        {
+          "repo": "magentosh/superpowers",
+          "ratio": 15.64
+        },
+        {
+          "repo": "its-a-skill-issue/superpowers",
+          "ratio": 15.82
+        },
+        {
+          "repo": "101-skills/superpowers",
+          "ratio": 15.97
+        },
+        {
+          "repo": "skills-shell/superpowers",
+          "ratio": 15.95
+        },
+        {
+          "repo": "bankai-skills/superpowers",
+          "ratio": 16.03
+        },
+        {
+          "repo": "qu-skills/superpowers",
+          "ratio": 15.85
+        }
+      ],
+      "nonLanding": [
+        {
+          "repo": "skills-101/superpowers",
+          "ltMedian": 13,
+          "maxWeeklyStep": 1,
+          "last3median": 0,
+          "tailDecayListings": 5,
+          "firstNonZeroIdx": [
+            0
+          ]
+        },
+        {
+          "repo": "halt-catch-fire/superpowers",
+          "ltMedian": 11,
+          "maxWeeklyStep": 1,
+          "last3median": 0,
+          "tailDecayListings": 5,
+          "firstNonZeroIdx": [
+            0
+          ]
+        }
+      ],
+      "reading": "6 independent repos converge on one weekly level (1.34% spread) at 0.380-0.381x origin with group ratios preserved => upstream-derived counters, not independent demand"
+    },
+    "laneEconomics": {
+      "lanes": {
+        "research report": {
+          "rank3Listing": "weizhena/deep-research-skills/research-report",
+          "rank3LifetimeInstalls": 856,
+          "poolW7": 10549,
+          "effRepos": 4.5,
+          "leaderListing": "iannuttall/seo/seo",
+          "leaderSharePct": 42.8,
+          "repoCount": 21
+        },
+        "market research": {
+          "rank3Listing": "apify/agent-skills/apify-market-research",
+          "rank3LifetimeInstalls": 3399,
+          "poolW7": 52909,
+          "effRepos": 1.9,
+          "leaderListing": "mattpocock/skills/research",
+          "leaderSharePct": 70.6,
+          "repoCount": 17
+        },
+        "competitive analysis": {
+          "rank3Listing": "refoundai/lenny-skills/competitive-analysis",
+          "rank3LifetimeInstalls": 2660,
+          "poolW7": 15501,
+          "effRepos": 4,
+          "leaderListing": "coreyhaines31/marketingskills/competitor-profiling",
+          "leaderSharePct": 22.2,
+          "repoCount": 16
+        },
+        "competitor analysis": {
+          "rank3Listing": "samber/developer-relations-skills/devrel-competitor-analysis",
+          "rank3LifetimeInstalls": 10138,
+          "poolW7": 20128,
+          "effRepos": 2.8,
+          "leaderListing": "coreyhaines31/marketingskills/customer-research",
+          "leaderSharePct": 17.7,
+          "repoCount": 15
+        },
+        "market intelligence": {
+          "rank3Listing": "qodex-ai/ai-agent-skills/market-intelligence-gather",
+          "rank3LifetimeInstalls": 172,
+          "poolW7": 1973,
+          "effRepos": 4,
+          "leaderListing": "affaan-m/ecc/market-research",
+          "leaderSharePct": 24.7,
+          "repoCount": 21
+        }
+      },
+      "ourRank1InSmallestPool": [
+        {
+          "id": "b9b4ymin/midas/market-growth-intelligence",
+          "w7": 0,
+          "lt": 4
+        }
+      ],
+      "reading": "pools span 93-52909 w7 (569x); we hold rank 1 in growth intel (pool 93) with w7=0 => rank without pool = 0; cheapest reachable slot = market intelligence (rank-3 threshold 172 lifetime installs, pool 1973 w7, eff 4 repos)"
+    },
+    "ourPosition": {
+      "midas": {
+        "listings": 26,
+        "totalLifetime": 123,
+        "ourSlot": "market-growth-intelligence",
+        "ourInstalls": 4,
+        "evenShare": 4.73
+      },
+      "aicompany": {
+        "listings": 2,
+        "totalLifetime": 3
+      },
+      "consolidationSim": {
+        "k26": 4.73,
+        "k13": 9.46,
+        "k8": 15.38,
+        "k4": 30.75,
+        "k1": 123,
+        "cheapestLaneRank3Threshold": 172,
+        "verdict": "even full consolidation (123) stays below the cheapest lane threshold (172) - consolidation is not a growth lever"
+      }
+    },
+    "competitorSignal": {
+      "rank3Thresholds": {
+        "research report": 856,
+        "market research": 3399,
+        "competitive analysis": 2660,
+        "competitor analysis": 10138,
+        "market intelligence": 172
+      },
+      "marketResearchLeader": {
+        "listing": "mattpocock/skills/research",
+        "w7": 37348,
+        "sharePct": 70.6,
+        "note": "single listing owns the lane pool"
+      },
+      "topRepoSharePct": {
+        "research report": 42.8,
+        "market research": 70.6,
+        "competitive analysis": 22.2,
+        "competitor analysis": 17.7,
+        "market intelligence": 24.7
+      }
+    },
+    "vocabulary": {
+      "note": "H92: token/description features carry ~zero signal (spearman -0.09..0.02) - renaming and copy edits are dead spend"
+    }
+  },
+  "evidence": {
+    "files": [
+      "sage-hypothesis-2026-10-26-0107.md",
+      "sage-decision-2026-10-26-0107.md",
+      "sage-intel-2026-10-26-0107.json",
+      "sage-cycle92-mirror-attractor.json",
+      "sage-cycle88-superverify.json",
+      "sage-cycle88-mirror.json",
+      "sage-cycle89-ranks.json",
+      "sage-cycle89-rankflow.json",
+      "sage-cycle89-concentration.json",
+      "sage-intel-2026-10-26-0037.json"
+    ],
+    "method": "read-only analysis of cached skills.sh listing weekly-install series + cached lane rank/concentration tables; latest ops_agent_events stream (no new external signal from observer/minion: generic boilerplate analyses); no network writes, no repo writes, no publish",
+    "window": "8 weekly buckets (skills.sh listing series) + lane tables as of 2026-10-26T00:37Z",
+    "readOnly": true,
+    "published": 0
+  },
+  "tests": [
+    "T1 convergence test on a non-superpowers family (origin + >=2 mirrors) - decisive",
+    "T2 derived-share computation for all 8 cached repos -> inflation factor for competitor comparisons",
+    "T3 repo-page header arithmetic on one superpowers mirror (sum-of-counters vs multiple/fraction of origin)",
+    "T4 is ~67k a display cap or an attribution share?",
+    "T5 lane-entry economics for market intelligence under the even-split law"
+  ],
+  "falsifiers": [
+    "F1 >=2 families where mirrors scatter >20% (artifact not general)",
+    "F2 a mirror whose group ratios deviate >10% from origin",
+    "F3 our own fresh copy shows an independent series within 4 windows",
+    "F4 platform docs showing install-event computation"
+  ],
+  "rules": [
+    "Classify every listing DERIVED vs INDEPENDENT before quoting demand (scaled-series match <=5% at >=4 windows => DERIVED)",
+    "Stop treating mirror lifetime installs as demand; mirror-copying is deprioritised as a channel",
+    "Do not rank ourselves against competitors on headline installs until derived share is quantified",
+    "Target market intelligence first (rank-3 = 172 lifetime installs, pool 1,973 w7, eff. 4 repos); market research is 70.6% owned by one listing",
+    "Zero renaming spend (token signal ~0) and zero consolidation spend (pool fixed at 123; full consolidation 123 < 172 threshold)"
+  ],
+  "limits": [
+    "single skill family (superpowers), 8 weekly buckets, 8 repos - n=1 family for the attractor claim",
+    "series semantics (weekly, not cumulative) inferred from decay, not from platform docs",
+    "attractor mechanism unidentified (upstream attribution / display cap / co-publication split)",
+    "our own weekly series not cached - our w7 is inferred from lifetime counters",
+    "skills.sh installs != usage; no revenue, stars/forks or user data; cross-marketplace check (E137) still open"
+  ],
+  "operational_state": {
+    "env_vars": 3,
+    "publish_credential": false,
+    "ops_social_posts": 0,
+    "published": 0,
+    "external_writes": 0,
+    "read_only": true
+  },
+  "files": [
+    "sage-hypothesis-2026-10-26-0107.md",
+    "sage-decision-2026-10-26-0107.md",
+    "sage-intel-2026-10-26-0107.json",
+    "sage-cycle92-mirror-attractor.json",
+    "sage-cycle88-superverify.json",
+    "sage-cycle88-mirror.json",
+    "sage-cycle89-ranks.json",
+    "sage-cycle89-rankflow.json",
+    "sage-cycle89-concentration.json",
+    "sage-intel-2026-10-26-0037.json"
+  ]
+}

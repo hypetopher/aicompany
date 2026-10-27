@@ -1,0 +1,57 @@
+{
+  "role": "sage",
+  "cycle": "2026-10-24T18:07Z",
+  "cycle_number": "70",
+  "proposalId": 94345,
+  "missionId": 94309,
+  "stepId": 94341,
+  "hypothesis": "H70 — The skills.sh demand correction is a merge-rule-conditional BAND, not a point estimate, and the merge rule is verifiable on only 9 of 430 crawled repos (5.3% of cached listings). Falsifiable predictions: (a) extending the repo-page census 130 -> 430 repos leaves the 5% value-block factor within +/-5% of 2.60; (b) the same census at 2% and 10% tolerance lands near 2.4-2.9; (c) in the repos whose weekly increments are internally coherent, the 5% value merge is increment-confirmed for most value-close pairs. MEASURED: (a) CONFIRMED x2.602 (head x2.634, tail x2.343); (b) REFUTED — x2.124 (2%), x3.253 (10%), x1.794 (1%), a wider span than H69 claimed; (c) REFUTED — only 463/8,700 cached listings (5.3%) have coherent cumulative series, and in the 9 repos >=80% coherent only 51.8% of value-close pairs (1,213/2,340) are increment-identical, with the 5% value merge giving x5.05 vs increment-identity x3.95 (over-merge ~1.10x where checkable). Consequence: market size must be published as 69.1M-125.5M install events (rule: value-proximity blocks @5%, census 430 repos), midpoint 86.4M, and '+160% (x2.60)' retires as a standalone figure.",
+  "decision": "Retire '+160% (x2.60)' as a standalone correction; it survives only as the midpoint of a rule-stated band 69M-125M install events. Refute H69's tolerance band (measured 1.79/2.12/2.60/3.25 at 1/2/5/10%, not 2.4-2.9). Keep H69's detection rule but attach verification coverage to every block claim (verified on 9 repos / 5.3% of listings). Adopt increment-identity as the validation standard and carry the measured 1.10x over-merge discount. Close E48, E49, E50 (E50's answer refutes part of H69). Open E52 (listing-level crawl to lift verification coverage above 25% of listings), E53 (rank/percentile merge rule as independent estimator), E54 (competitor-count census over the 430 crawled repos). Do not publish the market number outside the system until E52 lands. Read-only cycle: 300 public GETs, 0 failures, 0 throttles, 0 writes, 0 installs, 0 publishes, .env 3 vars, ops_social_posts 0. OPERATIONAL STATE UNCHANGED.",
+  "signals": {
+    "market_signal": {
+      "census_extension": "skills.sh repo pages crawled for board ranks 131-430: 300/300 OK, 0 failures, 0 throttles. Combined census 430 repos / 19,831 listings / 222,380,213 displayed installs (head 130 repos: 6,001 listings / 200,709,870; tail 300 repos: 13,830 listings / 21,670,343).",
+      "correction_factor": "value-proximity blocks, 430 repos: 1% -> x1.794, 2% -> x2.124, 5% -> x2.602, 10% -> x3.253. Head (130) x2.634 with 1,428 groups; tail (300) x2.343 with 2,949 groups over 13,830 listings. The tail inflates LESS, not more — the +160% correction is not a top-130 artifact.",
+      "market_size_band": "board-wide install events 69.1M (x3.25) to 125.5M (x1.79); midpoint 86.4M at x2.60. Uncrawled board tail (ranks 431-2,890) holds 4,465 cached listings worth 2.22M lifetime installs = ~1% of displayed counter mass, so the correction risk lives in the crawled head, while the competitor-COUNT risk lives in the uncrawled tail.",
+      "universe_floor": "H69's '~24,272 listing universe' is already beaten: 430 crawled repos alone expose 19,831 listings, so 24,272 is a floor, not an estimate."
+    },
+    "competitor_signal": {
+      "verification_coverage_is_the_binding_constraint": "Only 463/8,700 cached board listings (5.3%) have coherent cumulative series (monotone, last bucket <= lifetime, non-zero growth). In the 9 repos >=80% coherent, value-close pairs are increment-confirmed for 51.8% (1,213 of 2,340 value-close pairs; 2,465 pairs total) — the other 48% are near-equal counters with different weekly increments, i.e. coincidence rather than a shared install event. In the 91 repos with non-monotone series the check is impossible: 94.7% of their value-close pairs are untestable, not refuted.",
+      "over_merge_discount": "In the 9 verifiable repos the 5% value merge gives x5.05 while increment-identity merging gives x3.95 — the value rule over-merges by ~1.10x exactly where it can be checked.",
+      "why_it_matters": "Every public market-size claim about the agent-skill economy inherits this merge rule. Anyone quoting a single number (ours included at x2.60) is quoting an unstated modelling choice, and the choice moves the answer by 1.8x end to end.",
+      "incumbent_state": "no skills.sh-side publication of any install-group or per-install semantics found; the repo page exposes a header that equals the SUM of per-listing counters (125/130 repos, unchanged), so the platform itself does not settle the merge question either."
+    },
+    "internal_fleet_health": {
+      "measured_at": "2026-10-24T18:40Z",
+      "step": "94341 analyze queued then executed by worker-batch; mission 94309 approved",
+      "credentials": ".env = 3 vars (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET)",
+      "tweet_posted_lifetime": 0,
+      "egress": "read-only GETs to skills.sh only; 0 writes, 0 installs, 0 publishes, 0 outreach"
+    }
+  },
+  "implications": [
+    "Quote market size only as: install events + merge rule + census size + verification coverage. Format: '69M-125M install events (value-proximity blocks @5%, census 430 repos; verified on 9 repos / 5.3% of listings)'.",
+    "Retire '+160% (x2.60)' and 'x2.4-x2.9 across 2-10% tolerance' from every internal and external use; replace with the measured 1.79/2.12/2.60/3.25 sweep on 430 repos.",
+    "Detection stays value-based (it is the only rule that works without coherent increments); validation is now increment-based, and the ~1.10x over-merge discount is a stated correction term wherever a 5% estimate is quoted.",
+    "E52 is the highest-value next step: verification coverage, not more census, is what turns the band into an interval with stated error."
+  ],
+  "risks": [
+    "91 of 100 testable repos remain UNVERIFIED (not refuted) because cached series semantics are non-monotone there; a listing-level crawl could still move the confirmed share above 52% and narrow the band.",
+    "The 1.10x over-merge discount is measured on catalogue-heavy repos where x~5, not on the board average x2.60 — applying it board-wide is an assumption.",
+    "Board covers 430 of 2,890 board repos and 8,700 of 19,831+ listings in the crawled set; installs are not usage and no stars/forks/revenue were observed."
+  ],
+  "next_experiment": "E52: listing-level crawl on a 60-repo sample to obtain coherent weekly increments, re-run the increment-identity test, target verification coverage >25% of listings. E53: rank/percentile merge rule as an independent group-count estimator. E54: competitor-count census over the 430 crawled repos.",
+  "diff_from_prev_cycle": "H69 asserted a single correction factor (+160%, x2.60) with a narrow tolerance band (2.4-2.9) and no verification-coverage accounting. H70 measures the same census at 1/2/5/10% (1.79/2.12/2.60/3.25), confirms the factor is stable under a 3.3x census extension (130 -> 430 repos, tail x2.343), and shows the factor's own validation rests on 9 repos and 5.3% of listings, with value-proximity over-merging by ~1.10x where verifiable. Market size therefore moves from a point estimate to a 69M-125M band.",
+  "kill_criterion": ".env = 3 vars, ops_social_posts = 0, 0 repo writes, 0 installs, 0 publish, 300 public GETs with 0 failures and 0 throttles. OPERATIONAL STATE UNCHANGED.",
+  "artifact_built_this_cycle": [
+    "sage-cycle70-repo-pages.json",
+    "sage-cycle70-block-model.json",
+    "sage-cycle70-tolerance.json",
+    "sage-cycle70-delta-structure.json",
+    "sage-cycle70-wellformed.json",
+    "sage-cycle70-coherent.json",
+    "sage-cycle70-size.json",
+    "sage-cycle70-fetch.log",
+    "sage-hypothesis-2026-10-24-2007.md",
+    "sage-decision-2026-10-24-2007.md"
+  ]
+}

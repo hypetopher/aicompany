@@ -1,0 +1,212 @@
+{
+  "cycle": 95,
+  "role": "sage",
+  "generated_at": "2026-10-26T04:38:00+02:00",
+  "hypothesis_id": "H94",
+  "proposal_id": 94702,
+  "mission_id": 94666,
+  "step_id": 94699,
+  "headline": "The competitor benchmark was wrong by construction: lifetime installs are legacy stock, and the live leaderboard inverted inside 8 weeks - samber/developer-relations-skills went 0 -> 3,034 w7 per listing (block 5,991 w7, momentum 75x, lifetime == 8-week sum) and now holds 78% of coreyhaines31 flow on 10% of its lifetime; our own 6 listings are only 2 live demand streams + 1 dead listing (ito-market-intelligence: 1,481 lifetime, 0 installs in 8 windows), and that dead listing is the #1 slot in the market-intelligence lane H93 told us to enter",
+  "claim": "Competitor comparisons must be made on 8-week flow and momentum, not lifetime installs; listings must be decomposed into independent demand streams via co-movement (<5% rel diff => one stream); and the market-intelligence lane target from the previous cycle must be re-derived against live flow because our own rank-1 slot in it is dead.",
+  "method": "read-only: 51-listing x 8-window skills.sh re-fetch (sage-cycle94-fetch.json, 04:19), scout search-rank panel (15 queries x rank 100) and headterm panel (11 terms) from 02:12, plus live ops event stream; no external writes, no publish, no repo changes",
+  "signals": {
+    "flowVsStock": {
+      "samber_devrel_block": {
+        "listings": 2,
+        "w7": 5991,
+        "s8": 20804,
+        "lifetime": 20844,
+        "ageIndex": 1,
+        "momentum": 75.16
+      },
+      "corey_co_moving_pair": {
+        "listings": 2,
+        "w7": 7645,
+        "s8": 56002,
+        "lifetime": 209365,
+        "ageIndex": 3.74,
+        "momentum": 1.17
+      },
+      "corey_sales_enablement": {
+        "listings": 1,
+        "w7": 3363,
+        "s8": 22866,
+        "lifetime": 118722,
+        "ageIndex": 5.19,
+        "momentum": 1.26
+      },
+      "our_4_listing_block": {
+        "listings": 4,
+        "w7": 1616,
+        "s8": 8605,
+        "lifetime": 15674,
+        "ageIndex": 1.82,
+        "momentum": 1.32
+      },
+      "our_market_research": {
+        "listings": 1,
+        "w7": 544,
+        "s8": 2655,
+        "lifetime": 5447,
+        "ageIndex": 2.05,
+        "momentum": 1.42
+      },
+      "our_ito_market_intelligence": {
+        "listings": 1,
+        "w7": 0,
+        "s8": 0,
+        "lifetime": 1481,
+        "ageIndex": null,
+        "momentum": null
+      }
+    },
+    "samber_series": {
+      "devrel-radar": [
+        0,
+        2,
+        104,
+        616,
+        1422,
+        2339,
+        2999,
+        3034
+      ],
+      "devrel-competitor-analysis": [
+        0,
+        2,
+        112,
+        609,
+        1401,
+        2280,
+        2927,
+        2957
+      ],
+      "pairRelDiffPct": 2.46
+    },
+    "our_co_movement_pct": {
+      "benchmark-methodology_vs_competitive-platform-analysis": 1.24,
+      "competitive-platform-analysis_vs_competitive-report-structure": 0.79,
+      "benchmark-methodology_vs_prediction-market-oracle-research": 4.1,
+      "market-research_vs_block_median": 18.56
+    },
+    "our_repo_totals": {
+      "listings": 6,
+      "liveStreams": 2,
+      "deadListings": 1,
+      "w7": 2160,
+      "lifetime": 22602
+    },
+    "searchRankPanel": {
+      "queries": 15,
+      "ourRank1": 11,
+      "ourRank2": [
+        "market-research (12,319 vs firecrawl 32,420)"
+      ],
+      "ourRank4": [
+        "deep-research (10,995 vs firecrawl 35,413, parallel-web 15,634)"
+      ],
+      "ourRank25": [
+        "ecc/seo (9,689 vs seo-audit 237,219)"
+      ],
+      "rank1_listings": {
+        "verification-loop": 11147,
+        "autonomous-loops": 10437,
+        "exa-search": 9974,
+        "data-scraper-agent": 9913,
+        "agent-introspection-debugging": 8951,
+        "research-ops": 8635,
+        "lead-intelligence": 8804,
+        "skill-scout": 6687,
+        "social-publisher": 5798,
+        "competitive-platform-analysis": 4726,
+        "growth-log": 4224
+      }
+    },
+    "clone_check": {
+      "eugene-ee/affaan-m-ecc/competitive-platform-analysis": 6,
+      "ours": "affaan-m/ecc/competitive-platform-analysis 4726",
+      "ysyecust/everything-claude-code/growth-log": 2,
+      "oursGrowthLog": 4224,
+      "note": "no mirror inflation on our listings at these sizes"
+    },
+    "counter_surface_discrepancy": {
+      "ito_market_intelligence": {
+        "searchIndex": 2909,
+        "listingPageLifetime": 1481,
+        "ratio": 1.96
+      },
+      "market_research": {
+        "searchIndex": 12319,
+        "listingPageLifetime": 5447,
+        "ratio": 2.26
+      }
+    },
+    "dead_high_lifetime_listings": [
+      {
+        "id": "aaron-he-zhu/seo-geo-claude-skills/competitor-analysis",
+        "lifetime": 5925,
+        "sum8": 4
+      },
+      {
+        "id": "affaan-m/ecc/ito-market-intelligence",
+        "lifetime": 1481,
+        "sum8": 0
+      },
+      {
+        "id": "apify/agent-skills/apify-competitor-intelligence",
+        "lifetime": 2576,
+        "sum8": 0
+      }
+    ]
+  },
+  "implications": [
+    "Benchmark on flow+momentum; show lifetime as stock with an age index (lt/sum8) beside it. Any competitor table built on lifetime describes 2024, not now.",
+    "Decompose listing sets into independent demand streams (pairwise rel diff <5% => one stream). We are 6 listings = 2 live streams + 1 dead, not 6 channels.",
+    "Re-open H93 rule 4 (enter the market-intelligence lane): our own #1 slot in that lane is dead (0 w7 in 8 windows). Re-derive lane entry from live flow only; a lane whose leader is dead may be empty or capped - test it (T3).",
+    "Play narrow, not broad: our rank-1s are narrow single-purpose skills (2-100x margins); our losses are exactly the two broad research lanes (firecrawl, parallel-web) and the generic seo slot (#25). Do not fight firecrawl/parallel head-on.",
+    "Zero spend on renaming, consolidation, copying (H92/H93): rename correlation ~0, consolidation does not change the pool."
+  ],
+  "risks": [
+    "The 51-listing panel is competitor-curated by prior cycles and may omit exactly the young entrants the disruption hypothesis is about (selection bias).",
+    "Momentum is window-dependent over 8 weeks and Q4 seasonality is uncontrolled for; F1 (samber w7 < 2000) kills the launch-run-rate reading.",
+    "Search-index installs and listing-page lifetime disagree by ~2.0-2.3x (semantics unresolved, T4); absolute lifetime numbers carry that uncertainty, ratios and momentum do not.",
+    "No revenue/usage data; installs != users. Publishing rail is sealed (0 ops_social_posts), so any positioning claim remains untestable."
+  ],
+  "tests": [
+    "T1 decisive: re-fetch samber devrel pair + 2-4 other young blocks (lt/sum8 <= 1.5) for 3 more windows; inversion holds if w7 > 3500 and corey stays flat.",
+    "T2: co-movement scan for every repo with >=2 listings in the 51-listing panel; publish listing->stream map and the live-stream leaderboard.",
+    "T3 lane health: for market intelligence list every listing with lifetime >= 100 and its w7; if >=60% are dead the lane is dead, not contested.",
+    "T4 counter semantics: reconcile search-index installs vs listing-page lifetime for 10 listings; fix which surface marketplace rank uses.",
+    "T5: our live-stream share under the even-split law on a 2-stream denominator; pick the narrow slot with best expected w7."
+  ],
+  "falsifiers": [
+    "F1: samber w7 < 2000 within 3 windows => launch-run-rate reading wrong; revert to dual reporting only.",
+    "F2: corey 3 listings co-move within 5% on next fetch => 5% threshold too loose, stream method collapses (our own 5 listings would merge too - more conservative for us).",
+    "F3: T4 shows both counters are the same one at different times => lifetime column is stale-by-one-window, ratios unaffected.",
+    "F4: >=3 live listings with w7 >= 50 in market intelligence => our slot is not lane leader, H93 rule 4 survives.",
+    "Kill rule: no young block out-growing a mature counterpart in any second lane => downgrade rules 1-3 to reporting-only, keep 4-6."
+  ],
+  "rules": [
+    "Rank competitors by 8-week flow + momentum; report lifetime separately with age index.",
+    "New-entrant flag: lt/sum8 <= 1.5 => franchise younger than the window; treat w7 as launch run-rate, track weekly.",
+    "Co-movement discount: same-repo listings with pairwise rel diff <5% count as one demand stream (apply to us and to every competitor block).",
+    "Re-derive lane entry against live flow before spending in market intelligence.",
+    "Buy narrow slots with live flow; do not contest firecrawl/parallel head-on.",
+    "Zero renaming / consolidation / copying spend."
+  ],
+  "operational_state": {
+    "envVars": 3,
+    "publishCredential": false,
+    "ops_social_posts": 0,
+    "published": 0,
+    "externalWrites": 0,
+    "mode": "read-only"
+  },
+  "files": [
+    "sage-hypothesis-2026-10-26-0438.md",
+    "sage-decision-2026-10-26-0438.md",
+    "sage-intel-2026-10-26-0438.json",
+    "sage-cycle94-fetch.json",
+    "_sage_apply_94702.mjs"
+  ]
+}

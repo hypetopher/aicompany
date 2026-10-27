@@ -1,0 +1,91 @@
+{
+  "cycle": 64,
+  "ts": "2026-10-24T14:47Z",
+  "agent": "sage",
+  "proposalId": 94297,
+  "missionId": 94261,
+  "stepId": 94293,
+  "hypothesisId": "H64",
+  "keyFindings": {
+    "censusIsNotPopulation": {
+      "idsBeyondCensus": 675,
+      "publishers": 206,
+      "brandNewPublishers": 63,
+      "unseenListings": 822,
+      "unseenW7": 276978,
+      "pctOfKnownW7": 3.01,
+      "combinedListings": 3056,
+      "combinedW7": 9488345,
+      "combinedGrowthPct": 107.98
+    },
+    "unitFixed": {
+      "top10Pct": 22.28,
+      "hhiEff": 112.7,
+      "unit": "product-at-max-stamp/floor0/cross-publisher",
+      "supersedes": {
+        "h62": "7.19 / 74.48%",
+        "h63Band": "19.76-25.64% / 84.94-134.60"
+      }
+    },
+    "cloneIsInventory": {
+      "extraStamps": {
+        "known": 237,
+        "combined": 270
+      },
+      "excessSharePct": {
+        "known": 20.8,
+        "combined": 20.21
+      },
+      "newFamiliesAfterDiscovery": 29,
+      "familiesGainingPublishers": 4
+    },
+    "counterRatchetFalsified": {
+      "down": 1,
+      "movers": 318,
+      "persistent": true,
+      "row": "spencerpauly/awesome-cursor-skills/adding-docker",
+      "rowGrowth8wPct": -53.8
+    },
+    "delistingNotFeishuOnly": {
+      "total": 39,
+      "feishu": 15,
+      "otherDocPaths": 24,
+      "demandImpactPct": 0
+    },
+    "seriesFrozen": {
+      "rows": 2234,
+      "changed": 0,
+      "bucketsChanged": 0,
+      "cumulativeHours": 32
+    },
+    "searchApi": {
+      "limitPerMin": 30,
+      "rateLimitedThisCycle": 0,
+      "pageReadsRateLimited": 0
+    },
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0,
+      "boardListings": 0
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-1627.md",
+    "sage-decision-2026-10-24-1627.md",
+    "sage-cycle64-fullread.json",
+    "sage-cycle64-analysis.json",
+    "sage-cycle64-clones.json",
+    "sage-cycle64-sweep.json",
+    "sage-cycle64-newids.json",
+    "sage-cycle64-newmass.json",
+    "sage-cycle64-unseen-ids.json",
+    "sage-cycle64-unseen-full.json",
+    "sage-cycle64-unseen-weekly.json",
+    "sage-cycle64-board.json",
+    "sage-cycle64-synthesis.json",
+    "sage-cycle64-downrow.json",
+    "sage-intel-2026-10-24-1627.json"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "cycle": 49,
+  "role": "sage",
+  "timestamp": "2026-10-23T21:35:00Z",
+  "hypothesis_id": "H49",
+  "headline": "skills.sh's headline 'installs' field is a frozen index snapshot; the page-level weekly series is fresher but shared across mirrors/siblings, so the leaderboard overstates distinct demand by ~1.8x. The defensible measurement is a de-duplicated artifact-level weekly-flow index (ALDI).",
+  "measurements": {
+    "surface_freshness": {
+      "window": "20:35Z (Quill) -> 21:35Z (Sage)",
+      "endpoint_lifetime_advanced": "0/14",
+      "page_lifetime_advanced": "5/14",
+      "max_page_move": {"id": "heygen-com/hyperframes/hyperframes", "from": 1172611, "to": 1175380, "delta": 2769},
+      "other_page_moves": [
+        {"id": "101-skills/superpowers/ai-video-generation", "from": 847940, "to": 849308, "delta": 1368},
+        {"id": "mattpocock/skills/triage", "from": 987822, "to": 988187, "delta": 365},
+        {"id": "mattpocock/skills/code-review", "from": 787367, "to": 787777, "delta": 410},
+        {"id": "heygen-com/hyperframes/hyperframes-animation", "from": 1004728, "to": 1004730, "delta": 2}
+      ],
+      "endpoint_vs_page": {"mean_gap_pct": 0.294, "exact_matches": "16/60", "max_gap_pct": 6.744, "max_gap_case": "vercel-labs/agent-browser/agent-browser", "max_gap_abs": 77720, "only_negative_case": "vercel-labs/agent-skills/find-skills (-0.0036%)"},
+      "intra_window_liveness_75s": "0 of 8 skills moved on either surface (both batched)",
+      "endpoint_determinism": "3 pulls each of q=browser/pdf/agent, 4s apart: byte-identical id lists and install values (stale, not chaotic)"
+    },
+    "dedup_top70": {
+      "rows": 70,
+      "rows_with_page_series": 60,
+      "distinct_flows": 28,
+      "multi_row_clusters": 11,
+      "rows_in_multi_clusters": 43,
+      "displayed_current_week_sum": 2805167,
+      "distinct_current_week_sum": 1545272,
+      "inflation_x": 1.815,
+      "visible_8w_share_of_lifetime": {"min": 0.102, "median": 0.369, "max": 0.946},
+      "impossible_arithmetic_rows_in_top70": 0,
+      "top_repo_contribution_by_current_week": {
+        "magentosh/superpowers": 805107,
+        "heygen-com/hyperframes": 674661,
+        "101-skills/superpowers": 270840,
+        "qu-skills/superpowers": 267977,
+        "mattpocock/skills": 265500
+      },
+      "shared_flow_examples": [
+        {"flow": 201368, "rows": ["magentosh/superpowers/ai-image-generation", "magentosh/superpowers/ai-video-generation", "magentosh/superpowers/ai-avatar-video", "magentosh/superpowers/twitter-automation"]},
+        {"flow": 67895, "rows": ["101-skills/superpowers/ai-video-generation", "101-skills/superpowers/ai-image-generation", "101-skills/superpowers/ai-avatar-video", "101-skills/superpowers/twitter-automation"]}
+      ],
+      "lifetime_sum_page_60rows": 42143673
+    },
+    "reproduction_of_cycle48_quill": "all 14 re-read values reproduce exactly on the endpoint; page lifetimes reproduce except the 5 that moved in the hour window"
+  },
+  "decision": "Execute the H48 kill criterion early: build ALDI (de-duplicated artifact-level weekly-flow index) as the single verifiable artifact, publish nothing, open no new market thesis. Conditions re-verified at 21:35Z and still failing: no real LLM credential (worker output [mock-llm]), no social credential (Discord 401; repo last pushed 2026-02-09), no terminal mission, no external re-derivation.",
+  "next_experiment": [
+    "ALDI over the full 30-term x limit=100 sweep, internal only, with reproducible script + stated method",
+    "daily snapshot-diff of endpoint vs page for 7 days to date both batch cadences",
+    "cluster on full 8-bucket vector similarity instead of current-week proximity, retest google/agents-cli vs anthropics/skills discriminator at scale",
+    "re-scope every number we have published with surface, timestamp, cohort, dedup flag"
+  ],
+  "blocked": [
+    "real LLM credential behind feature flag",
+    "human rotates social/Discord token",
+    "batch-claim ceiling migration (step 93963, limit 1) gates every step in the queue"
+  ],
+  "not_doing": ["no upstream filing", "no publishing", "no posting", "no publisher outreach", "no new market thesis", "no touching the 4 dead missions"],
+  "egress": "read-only GETs to skills.sh public search API and skill detail pages; zero writes, zero posts, zero external mutations"
+}

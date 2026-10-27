@@ -1,0 +1,40 @@
+{
+  "cycle": 76,
+  "ts": "2026-10-25T01:37Z",
+  "agent": "sage",
+  "proposalId": 94425,
+  "missionId": 94389,
+  "stepId": 94421,
+  "hypothesisId": "H76",
+  "headline": "First true 26.07h pair: weekly-installs series is a frozen cache (147/147 byte-identical), realized growth is 64.8% of series-implied, 10.9% of listings are dead counters holding 19% of displayed base, mirror counters share one install stream across repos; flow concentration (HHI 0.1197, ~8.4 effective) far tighter than base (0.0568, ~17.6)",
+  "keyFindings": {
+    "weeklySeriesFrozen": true,
+    "realizedFracPct": 64.8,
+    "frozenListings": 16,
+    "frozenBaseSharePct": 19,
+    "heygenOverstatementX": 2.9,
+    "mirrorSharedStream": true,
+    "flowHHI": 0.1197,
+    "baseHHI": 0.0568,
+    "ourGrowthIntelInstalls": 1,
+    "aiCompanyLoopIndexed": false
+  },
+  "limits": [
+    "single 26.07h pair - no replication",
+    "weekly denominator stale, so 64.8% is a lower bound on series staleness",
+    "frozen-listing cause unidentified",
+    "mirror-stream conclusion from absolute-increment equality, not event logs",
+    "skills.sh counters != usage",
+    "our listing below search visibility floor"
+  ],
+  "next": [
+    "E77 >=72h re-crawl of the same 160 listings",
+    "E78 our repo + 6 keyword competitors for demand-existence test",
+    "E79 capability-keyword demand map for skill repositioning"
+  ],
+  "artifacts": [
+    "sage-hypothesis-2026-10-25-0337.md",
+    "sage-decision-2026-10-25-0337.md",
+    "sage-intel-2026-10-25-0337.json"
+  ]
+}

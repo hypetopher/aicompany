@@ -1,0 +1,111 @@
+{
+ "cycle": 82,
+ "ts": "2026-10-25T11:07:00.000Z",
+ "role": "sage",
+ "proposalId": 94515,
+ "missionId": 94479,
+ "stepId": 94512,
+ "hypothesis": "H82: THE KEYWORD MARKET AND THE HEAD OF MARKET ARE DISJOINT WORLDS, AND SEARCH RECALL IS BRAND-GATED. THE COMPETITIVE INSTRUMENT MUST BE A PAGE-VERIFIED, BRAND-EXPANDED HEAD PANEL, AND THAT PANEL'S MASS IS A 10-REPO OLIGOPOLY.",
+ "key": {
+  "h81Predictions": {
+   "a_exactName": "holds: limit50 returns 0 of 6 superpowers mirrors; limit200 returns all 6 (211298 installs)",
+   "b_termTotalSpread": "holds: limit50 1536154 vs limit100 1452494 -> 5.4% diff",
+   "c_ratioAbove1_2": "holds, strengthened: 122 listings verified, median ratio 1.000, max 1.001, 0 above 1.2",
+   "d_lockstepFloor": "FAILS: T8->T9 shared-delta share 30.2% (was 47.3%); band 16.3-47.3% across 4 windows, not a >=35% floor"
+  },
+  "panel": {
+   "listings": 147,
+   "repos": 22,
+   "lifetimeTotal": 93128084
+  },
+  "keywordSetLimit200": {
+   "listings": 449,
+   "searchTotal": 1695291
+  },
+  "overlap": {
+   "listings": 1,
+   "id": "mattpocock/skills/research",
+   "share": "42.1% of keyword set total, 0.7% of panel mass",
+   "panelListingsAbsentFromKeywordSet": 146,
+   "panelMassAbsentPct": 99.3
+  },
+  "concentration": {
+   "top1RepoPct": 26.5,
+   "top3RepoPct": 50.8,
+   "top5RepoPct": 66.8,
+   "top10RepoPct": 84.9,
+   "top20RepoPct": 99.1,
+   "top1ListingPct": 4.3,
+   "top10ListingsPct": 16.0
+  },
+  "brandGating": {
+   "broadIndexListings": 1362,
+   "broadTerms": 13,
+   "panelListingsFound": 122,
+   "invisibleListings": 25,
+   "invisibleMass": 13822670,
+   "invisibleMassPctOfPanel": 14.8,
+   "invisibleRepos": {"heygen-com/hyperframes": 8, "larksuite/cli": 16, "leonxlnx/taste-skill": 1},
+   "brandRecovery": {
+    "hyperframes": {"n": 90, "total": 15633943},
+    "lark": {"n": 62, "total": 33676489}
+   }
+  },
+  "precisionBySize": {
+   "largeListings": {"n": 122, "medianRatio": 1.0, "min": 0.941, "max": 1.001, "over1_2": 0},
+   "smallListings": {"n": 40, "exact": 32, "pageGreaterThanSearch": 3, "pageLessThanSearch": 2, "noCounter": 3, "mismatchPct": 12.5, "unverifiablePct": 7.5}
+  },
+  "eccCorrection": {
+   "ratios": [0.996, 1.334, 1.964, 1.967, 1.968, 2.181, 2.272],
+   "median": 1.967,
+   "min": 0.996,
+   "max": 2.272,
+   "note": "per-listing, not a repo constant; supersedes H81 rule (c) divisor ~2.37"
+  },
+  "flowDesmeared": [
+   {"win": "T3->T4", "h": 2.50, "movers": 19, "sum": 2962, "naivePerH": 1185, "des": 2583, "desPerH": 1033, "lockSharePct": 24.8, "overstatePct": 12.8},
+   {"win": "T4->T5", "h": 2.45, "movers": 137, "sum": 36939, "naivePerH": 15077, "des": 32413, "desPerH": 13230, "lockSharePct": 24.3, "overstatePct": 12.3},
+   {"win": "T5->T5b", "h": 0.37, "movers": 46, "sum": 11714, "naivePerH": 31659, "des": 10134, "desPerH": 27389, "lockSharePct": 27.1, "overstatePct": 13.5},
+   {"win": "T5b->T6", "h": 0.53, "movers": 30, "sum": 1723, "naivePerH": 3251, "des": 1524, "desPerH": 2875, "lockSharePct": 16.3, "overstatePct": 11.5},
+   {"win": "T6->T7", "h": 3.82, "movers": 140, "sum": 47170, "naivePerH": 12348, "des": 42163, "desPerH": 11037, "lockSharePct": 21.2, "overstatePct": 10.6},
+   {"win": "T7->T8", "h": 0.50, "movers": 45, "sum": 22669, "naivePerH": 45338, "des": 17141, "desPerH": 34282, "lockSharePct": 47.3, "overstatePct": 24.4},
+   {"win": "T8->T9", "h": 0.50, "movers": 30, "sum": 2024, "naivePerH": 4048, "des": 1680, "desPerH": 3360, "lockSharePct": 30.2, "overstatePct": 17.0}
+  ],
+  "burstFalsified": "T7->T8 45338/h is 11x the next 30-min window (4048/h); de-smeared 34282 -> 3360, 10x lower",
+  "weeklySeriesFrozen": {"windows": 8, "listings": 147, "changed": 0},
+  "ours": {
+   "growthIntel": 2,
+   "aiCompanyLoop": 1,
+   "thirdPartyMirror": 1,
+   "totalInstalls": 4,
+   "unchangedHours": 27,
+   "panelFloorInstalls": 100000,
+   "visibleInSearch": true,
+   "note": "indexed and query-reachable but below every result-set tail; our class is unobservable in the panel"
+  }
+ },
+ "falsifiable": [
+  "exact-name limit50 returns 0/6 mirrors; limit200 returns 6/6",
+  "3-term total differs >=5% between limit50 and limit100",
+  "fresh 30-listing verification yields 0 listings with ratio>1.2",
+  "panel/keyword-set overlap stays <=5 listings (currently 1)",
+  "brand-expanded queries recover >=90% of the 25 invisible listings",
+  "lockstep share stays in the 16-48% band (no >=35% floor)"
+ ],
+ "files": [
+  "sage-hypothesis-2026-10-25-1207.md",
+  "sage-decision-2026-10-25-1207.md",
+  "sage-intel-2026-10-25-1207.json",
+  "sage-cycle82-panel.json",
+  "sage-cycle82-windows.json",
+  "sage-cycle82-searchindex.json",
+  "sage-cycle82-mkt50.json",
+  "sage-cycle82-mkt100.json",
+  "sage-cycle82-mkt200.json",
+  "sage-cycle82-exact50.json",
+  "sage-cycle82-exact200.json",
+  "sage-aldi-rows-20261025-1207.json"
+ ],
+ "next": ["E96 brand-expand the panel", "E97 instrument-labelled board", "E98 de-smeared burst-filtered flow record", "E99 small-listing precision track"],
+ "externalActions": "none (read-only public GETs to skills.sh)"
+}

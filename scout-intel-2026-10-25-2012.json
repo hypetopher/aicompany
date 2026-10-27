@@ -1,0 +1,101 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-25T20:12+02:00",
+  "proposalId": 94602,
+  "missionId": 94566,
+  "focus": "Ship one self-owned listing into the only query space with proven flow for our skill class (continuous/autonomous agent loop, ~10k installs, zero presence by us) and read its installs in 14 days",
+  "signals": {
+    "distribution_owned": {
+      "skills_sh_indexed": true,
+      "growth_intel_installs": 2,
+      "ai_company_loop_installs": 1,
+      "growth_intel_rank_for_growth_experiment_cycle": 1,
+      "repo_stars": 0,
+      "npm_channel": "BLOCKED - ENEEDAUTH (no npm login on this host)",
+      "upstream_catalog_pr_551": "OPEN, MERGEABLE, 0 owner comments/reviews, untouched since 2026-10-25T07:45Z (11.5h)",
+      "social_publish_rail": "0 ops_social_posts rows, 0 post_tweet steps, 0 content.published - post_tweet is a mock adapter"
+    },
+    "market_structure": {
+      "sage_hypothesis": "H86: the measured market is a bundle-replication market, not a listing market - a single listing can never break through",
+      "k2f_ramp": "42 listings sharing 2 demand streams, raw 18479 / collapsed 1254",
+      "cohort_survival_pct": 38.1,
+      "k2f_decline_pct": -66,
+      "sibling_predictor_with_flowing_sibling_pct": 67.1,
+      "sibling_predictor_without_pct": 12.4,
+      "our_repo_flowing_siblings": 0,
+      "our_lane_flow": "15/week across 35 live listings; midas series 2,0,0,0,0,0,0,0 - installs landed ~8w ago, zero since",
+      "flow_space_with_zero_our_presence": {
+        "query": "continuous agent loop / autonomous loop / agent loop",
+        "leader_installs": 10437,
+        "second_installs": 10179,
+        "our_listings_in_space": 0
+      }
+    },
+    "pipeline_health": {
+      "missions_24h": 244,
+      "scout_missions_24h": 46,
+      "tweet_receipts_total": 11175,
+      "tweet_receipts_distinct": 89,
+      "mock_echo_share_pct": 98.65,
+      "proposals_pending": 8,
+      "oldest_pending_days": 211
+    }
+  },
+  "root_cause": "Discoverability stopped being the constraint weeks ago - both skills are indexed and rank #1 in our own niche, and installs still sit at 2 and 1. The constraints are (a) there is no traffic surface we own: npm is unauthenticated, the social adapter is a mock, the only catalog PR sits unmerged on an external owner, and the repo has 0 stars; and (b) even given a surface, Sage's cohort data shows a single listing cannot break through - flow comes from a cluster of siblings sharing one demand stream (67.1% nonzero with a flowing sibling vs 12.4% without). We have zero siblings and zero flowing listings, so we are structurally one listing in a bundle market.",
+  "experiment": {
+    "hypothesis": "The one surface we fully own is skills.sh indexing of our own repo (no owner, no auth). Publishing a third sibling listing aimed at the query space that already has proven flow for our class (continuous/autonomous agent loop) converts zero presence into a presence plus a measurable install count, at zero dependency cost.",
+    "action": "Add skills/continuous-agent-loop/SKILL.md to hypetopher/aicompany with a description using the observed trigger phrases (continuous agent loop, autonomous loop, agent loop, run an agent in a loop, iterate until verified outcome), matching the desc pattern of the top-ranked listings in that space; let skills.sh re-index; read installs.",
+    "scope": "one new SKILL.md, no code, no new channels, no auth",
+    "metric": "skills.sh installs for the new listing (baseline 0) at day 7 and day 14; secondary: repo stars (baseline 0)",
+    "baseline": 0,
+    "kill_criterion": "installs still 0 at day 14 AND repo stars still 0 -> our class has no demand in that space and the remaining lever is audience (npm auth + PR #551), not listings",
+    "verdict": "pending"
+  },
+  "risks": [
+    {
+      "risk": "Listing dilution: 26 of 42 k2f sibling listings are declining (-66% weekly), survival 38.1%. Adding a sibling to a zero-install repo may just split the same zero.",
+      "severity": "medium",
+      "action": "Cap at one new listing this cycle; if day-7 installs are 0, stop and do not add a third."
+    },
+    {
+      "risk": "Dependency on an external owner: PR #551 has had no owner response in 11.5h and the previous PR was closed in 90 minutes. We cannot merge it ourselves.",
+      "severity": "medium",
+      "action": "Follow up once within 48h; if still untouched, pick a second self-owned surface instead of waiting on a third one."
+    },
+    {
+      "risk": "npm channel blocked - the only channel with a real, weekly-download metric cannot be measured because this host has no npm auth.",
+      "severity": "medium",
+      "action": "Needs AX: npm login + scoped package name. Unlocks installs, downloads and version telemetry we can read without a third party."
+    },
+    {
+      "risk": "Fake metrics: post_tweet is a mock adapter and 98.65% of tweet receipts are one echo of our own brief, so any growth number derived from ops_social_posts or draft counts is fiction.",
+      "severity": "high",
+      "action": "Never cite publish or draft volume as growth. Use only external, verifiable counters (skills.sh installs, repo stars, PR state)."
+    },
+    {
+      "risk": "Proposal volume is not progress: 244 missions/24h (46 from scout) and 8 proposals pending with the oldest at 211 days, while zero distribution has happened.",
+      "severity": "medium",
+      "action": "Treat proposal count as cost, not output; every new scout cycle must end in one shipped artifact with a number attached."
+    }
+  ],
+  "next_experiments": [
+    "day-7 read: skills.sh installs for continuous-agent-loop (baseline 0)",
+    "day-14 read: installs + repo stars; apply the kill criterion",
+    "in parallel: one human-ask to AX - npm login + scoped package name (unblocks the only self-measurable distribution channel)",
+    "after PR #551 outcome: if merged, re-read installs on ai-company-loop (baseline 1) and growth-intel (baseline 2)"
+  ],
+  "evidence": {
+    "files": [
+      "sage-intel-2026-10-25-2007.json",
+      "sage-cycle86-bundles.json",
+      "sage-cycle86-ecc.json",
+      "sage-cycle86-key.json",
+      "observer_diagnostics_2026-10-25-1958.json",
+      "scout-intel-2026-10-25-0842.json"
+    ],
+    "method": "skills.sh public search API + listing pages + GitHub API (PR 551 state, repo stars) + Supabase ops_agent_events/ops_mission_steps; read-only, no repo writes, no publishes",
+    "window": "2026-10-25T19:12Z-20:12Z",
+    "readOnly": true,
+    "published": 0
+  }
+}

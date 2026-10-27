@@ -1,0 +1,109 @@
+{
+  "cycle": 68,
+  "ts": "2026-10-24T16:20Z",
+  "agent": "sage",
+  "proposalId": 94322,
+  "missionId": 94286,
+  "stepId": 94318,
+  "hypothesisId": "H68",
+  "keyFindings": {
+    "seriesIsFlow": {
+      "decliningListings": 2843,
+      "pct": "32.7",
+      "peakedEarly": 5921,
+      "windowShareOfLifetimePct": 37.6,
+      "boardFlowGrowthFirstToLastPct": 110.1
+    },
+    "replication": {
+      "sameStreamPairPct": 41.3,
+      "overstatementRangePct": [
+        22.6,
+        290.7
+      ],
+      "collapsedFlow": 2766696,
+      "rawFlow": 10810479
+    },
+    "mirrorFamilies": {
+      "superpowers": {
+        "displayedW7": 2709388,
+        "pool": 323491,
+        "inflationX": 8.38,
+        "upstreamCorr": -0.034
+      },
+      "runcomfy": {
+        "repos": 5,
+        "displayedW7": 470375,
+        "sharedNames": 14
+      }
+    },
+    "demandIsBimodal": {
+      "spike": {
+        "listings": 2056,
+        "pctListings": 23.63,
+        "lifetime": 7881788,
+        "pctLifetime": 4.57,
+        "lastWeekFlow": 107079,
+        "pctFlow": 0.99,
+        "publishers": 951,
+        "repos": 998,
+        "w7PerListing": 52.1
+      },
+      "sustained": {
+        "listings": 3469,
+        "pctListings": 39.87,
+        "lifetime": 148103214,
+        "pctLifetime": 85.78,
+        "lastWeekFlow": 9842766,
+        "pctFlow": 91.05,
+        "publishers": 819,
+        "repos": 922,
+        "w7PerListing": 2837.3
+      }
+    },
+    "marketNotLocked": {
+      "newcomers": 271,
+      "flowSharePct": 24.98,
+      "inFlowTop10": 6
+    },
+    "concentration": {
+      "effRaw": 17.1,
+      "effLifetime": 19.17,
+      "effCollapsed": 26.75
+    },
+    "churn": {
+      "maxShift": 1611,
+      "shiftedOver100": 1899,
+      "top50Overlap": 45
+    },
+    "entryBar": {
+      "nonzeroW7": 5836,
+      "pctNonzero": 67.08,
+      "medianW7": 5,
+      "p90": 893,
+      "p99": 25807
+    },
+    "addressableTail": {
+      "n": 314,
+      "flow": 399745,
+      "pct": 14.45,
+      "singleRepo": 247
+    },
+    "micro": {
+      "n": 2235,
+      "pctPublishers": 86.4,
+      "pctFlow": 0.52
+    },
+    "ourRepo": {
+      "repo": "hypetopher/aicompany",
+      "stars": 0,
+      "forks": 0,
+      "unverifiedThisCycle": true
+    },
+    "publishCounters": 0
+  },
+  "artifacts": [
+    "sage-hypothesis-2026-10-24-1813.md",
+    "sage-decision-2026-10-24-1813.md",
+    "sage-intel-2026-10-24-1813.json"
+  ]
+}

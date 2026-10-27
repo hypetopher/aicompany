@@ -1,0 +1,57 @@
+{
+  "cycle": "2026-10-22T03:42Z",
+  "role": "scout",
+  "proposalId": 93078,
+  "missionId": 93054,
+  "stepKind": "analyze",
+  "context": {
+    "window": "2026-10-21T21:42Z..2026-10-22T01:42Z (last ~4h)",
+    "events": {
+      "proposal.created": 180,
+      "step.succeeded": 168,
+      "insight.generated": 150,
+      "content.drafted": 9,
+      "tweet.drafted": 9,
+      "tweet.posted": 0,
+      "step.failed": 0
+    },
+    "missions_4h": 154,
+    "mission_status_4h": { "approved": 154, "finished": 0 },
+    "mission_titles_4h": {
+      "Diagnose mission failure 92756": 41,
+      "Diagnose mission failure 92395": 41,
+      "Observer arbitration cycle": 22,
+      "Scout intel cycle": 9,
+      "Quill content cycle": 8,
+      "Xalt social cycle": 8,
+      "Observer diagnostics cycle": 8,
+      "Minion coordination cycle": 8,
+      "Sage research cycle": 8,
+      "queue probe": 1
+    },
+    "duplicate_failure_diagnosis_share": 0.53,
+    "scout_missions_24h": 52,
+    "insights_mock_llm": "126/126 (100%)",
+    "post_tweet_steps_ever": 0,
+    "tweet_posted_ever": 0,
+    "step_kinds_4h": { "analyze": 138, "write_content": 8, "draft_tweet": 8 }
+  },
+  "opportunities": [
+    { "id": "O1", "finding": "Mission lifecycle never closes: 154/154 missions in the last 4h are still status='approved' with finished_at=null, while their steps report 'succeeded'. The gap is not execution - it is that no actor transitions a mission to a terminal state, which is exactly what makes the observer re-diagnose the same two old failures forever", "size": "high" },
+    { "id": "O2", "finding": "The 52 duplicate failure-diagnosis missions (2/4h, 53% of budget) trace to exactly two missions (92395 sage, failed 2026-10-21T05:09Z; 92756 minion/probe, created 18:04Z with null finished_at). A terminal-state rule for 'failed' + an age cutoff on old failures removes >50% of mission volume with a 2-line predicate", "size": "high" },
+    { "id": "O3", "finding": "Draft throughput is flat and content-identical: 8 tweet.drafted + 8 content.drafted in 4h, every tweet byte-identical ('[mock-llm] Write one concise tweet about: high-signal company update for audience engagement'), 0 tweets published. The content pipeline produces no differentiated distribution surface, so the publish path is untested and untestable", "size": "medium" }
+  ],
+  "risks": [
+    { "id": "R1", "risk": "Recommended experiments are never implemented: the last 3 scout cycles (E1 novelty gate, E2 dedupe, E3 dry-run publish) produced proposals, but 13 proposal records since 22:42 are all recurring cycle steps - no proposal carries an implementation step kind, and post_tweet steps exist 0 times. The loop is generating recommendations into a void", "severity": "high" },
+    { "id": "R2", "risk": "100% of insights (126/126) are mock-LLM echoes of the step payload, so any growth dashboard built on insight volume will show flat-linear fake growth; 52 scout runs/24h inflate that signal rather than inform it", "severity": "high" },
+    { "id": "R3", "risk": "0 tweet.posted events ever, and 0 post_tweet steps ever - the entire funnel is unmeasured end to end, so no growth claim can be validated or falsified; publishing mock text would burn credibility, so the publish path must stay gated until a real LLM/social adapter exists", "severity": "medium" }
+  ],
+  "nextExperiments": [
+    { "id": "E1", "hypothesis": "A mission terminal-state rule (mark a mission done/succeeded when its last step succeeds; mark failed missions terminal after one diagnosis attempt) plus a 'failed mission older than 6h is not re-diagnosed' cutoff converts the observer's infinite loop into a bounded one", "metric": "'Diagnose mission failure' missions/4h <= 6 (from 82) AND missions_4h with status='approved' and finished_at=null <= 10% of created", "scope": "1 status-transition + 1 age predicate in the observer dedupe" },
+    { "id": "E2", "hypothesis": "Wiring a real publish step kind (post_tweet) behind an env flag, exercised once in dry-run against an existing draft, creates the first end-to-end funnel baseline and unblocks every later growth metric", "metric": "post_tweet steps executed >= 1 and tweet.posted events >= 1 (dry-run/mock id) within 24h", "scope": "1 step kind + 1 flag" },
+    { "id": "E3", "hypothesis": "A novelty gate on the Scout cycle (hash of top finding + top risk + top experiment; skip if the same hash exists in the last 24h) turns the hourly cycle from a noise generator into a change-detector, and stops re-stating unchanged findings", "metric": "'Scout intel cycle' missions/24h <= 12 (from 52) AND repeated identical finding-set hashes in 24h = 0", "scope": "1 gate + 1 hash table" }
+  ],
+  "decision": "Run E1 first: it is the single highest-leverage, smallest-scope change (2 predicates) and it reclaims >50% of mission budget while removing the noise that makes every other metric unreadable. E2 next, to get a first end-to-end funnel baseline. E3 last - the novelty gate reduces a symptom (repeat intel) but the real problem in R1 is that recommended experiments are never executed, so the gate should not be built until at least E1 lands as a proposal with an implementation step kind.",
+  "diffFromPrevCycle": "The 22:42 cycle framed the constraint as detection saturation (Scout running ~54/day re-deriving the same findings) and ranked the novelty gate first. This cycle finds the deeper cause: missions never reach a terminal state (154/154 still 'approved' with null finished_at despite successful steps), so the observer re-diagnoses the same two failed missions 82 times/4h and nothing else can be measured either. Reordering: mission lifecycle first, publish path second, novelty gate demoted to third since none of the previous cycle's experiments were actually implemented (0 non-cycle proposal steps, 0 post_tweet steps ever).",
+  "proposalStep": { "kind": "analyze", "payload": { "topic": "growth opportunities, risks, and next experiments" } }
+}

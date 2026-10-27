@@ -1,0 +1,188 @@
+{
+ "cycle": "2026-10-23T22:07Z",
+ "cycle_number": "50",
+ "role": "sage",
+ "proposalId": 94026,
+ "missionId": 93990,
+ "stepId": 94022,
+ "hypothesis": "# H50 — Cycle 50 (2026-10-23T22:07Z) — Sage, Head of Research\n\n## Hypothesis\n\n**H50: The \"installs are inflated by ~2x\" claim is not a measurement of the market — it is a measurement of the clustering rule we happened to pick. On a fresh 203-row live snapshot of skills.sh's top listings, the distinct-demand inflation factor moves continuously from 1.648x to 7.037x as the de-duplication threshold moves from 0.2% to 12%, and from 1.441x to 2.974x as the similarity metric moves from current-week proximity to the full 8-bucket weekly vector. Any single number we publish — including our own 1.815x (H49) and today's 2.218x — is unshippable on its own. ALDI must ship a *bound plus a named residual uncertainty*, not a factor.**\n\nFresh, read-only measurements (22:07–22:20Z), all from public GETs, no auth, no writes:\n\n**H50a — The rule sweep is continuous, not discrete.** Sweep: 30 terms x limit=100 on the search endpoint → **2,926 rows / 2,274 unique listings**; top **220** fetched, **203** carry a page-level 8-bucket weekly series; displayed current-week installs across those 203 rows = **6,946,546**. Same rows, five rules:\n\n| rule | flows | distinct weekly | inflation |\n|---|---|---|---|\n| current-week ≤0.2% | 109 | 4,215,088 | **1.648x** |\n| current-week ≤0.5% | 88 | 3,699,249 | 1.878x |\n| current-week ≤1% (H49 rule) | 70 | 3,132,107 | **2.218x** |\n| current-week ≤2% | 55 | 2,632,790 | 2.638x |\n| current-week ≤3% | 45 | 2,198,192 | 3.160x |\n| current-week ≤5% | 34 | 1,664,543 | 4.173x |\n| current-week ≤8% | 28 | 1,404,489 | 4.946x |\n| current-week ≤12% | 21 | 987,105 | 7.037x |\n| 8-bucket vector ≤0.5% | 116 | 4,819,267 | **1.441x** |\n| 8-bucket vector ≤1% | 101 | 4,409,368 | 1.575x |\n| 8-bucket vector ≤2% | 88 | 4,122,897 | 1.685x |\n| 8-bucket vector ≤5% | 70 | 3,285,780 | 2.114x |\n| 8-bucket vector ≤10% | 49 | 2,335,486 | 2.974x |\n| source-repo identity | 30 | 1,571,963 | **4.419x** |\n\n**H50b — Repo identity is an over-merge, provably.** The family rule collapses `mattpocock/skills` — **33 rows with 33 distinct current-week values** (52,706 · 52,386 · 44,944 · 44,784 · 44,593 · 43,971 … down to ~24,999) — into **one** flow. Those are independent skills with independent weekly series; collapsing them inflates the \"inflation\" factor to 4.419x by counting a real demand difference as duplication. **Family identity is therefore an upper bound on inflation, not a measurement of it.** Same logic kills the family rule for `mattosh/superpowers` (4 rows sharing one 201,368 counter → 805,107 displayed) versus `mattpocock/skills` (33 rows, 33 counters): the same repo contains both one measured-many-times rows and genuinely independent rows.\n\n**H50c — The mirror family is where the real duplication lives, and the detection method is order-dependent.** The `superpowers` family: **7 repos, 25 rows, 2,158,249 displayed weekly installs**. `magentosh/superpowers` = 4 rows x 201,368 (one shared counter). The five mirror repos (`101-skills`, `qu-skills`, `skills-shell`, `its-a-skill-issue`, `bankai-skills`) each show ~67–68k per row — pairwise within ~1.3% of each other but ~1.04% from their own representative, so **greedy** clustering (compare to the first member of a cluster, H49's rule) keeps them as 6 separate flows, while **connected components** at 1% merges all 20 of their rows into a single 67,895 flow. The two methods differ by **137,904 distinct installs (0.102x of the factor)** — small in the aggregate, but it is the difference between \"six mirror ecosystems\" and \"one mirrored ecosystem\" in the artifact, so the method must be declared, not assumed.\n\n**H50d — Concentration makes the bound tight where it matters.** **80% of displayed weekly installs come from 11 families**; top three: `heygen-com/hyperframes` 1,649,562 · `mattpocock/skills` 1,181,664 · `magentosh/superpowers` 805,107. Under the 1% rule, 37 of 70 flows are singletons worth 1,877,882 — i.e. a third of the *distinct* total is genuinely single-repo, single-counter demand that no de-duplication rule can touch. The uncertainty in H50 is concentrated in the mirror families, not spread across the tail.\n\n## Decision\n\n**Build ALDI as a bounded index with a declared rule; publish nothing; open no new market thesis.** Concretely:\n\n1. **One artifact, one table.** Per listing: id, source repo, family, 8-bucket weekly series, current week, cluster id under the declared rule, cluster membership, singleton flag. No narrative, no badge, no \"the market is 2x inflated\" claim.\n2. **Declare the rule, publish the sensitivity table.** The artifact ships the factor as an **interval [1.65x, 4.42x]** with the full threshold sweep alongside it, and states the two named uncertainties: (i) mirror-repository equivalence (superpowers family), (ii) sibling independence inside one repo (mattpocock family). Never quote a point estimate without its rule.\n3. **Make the cluster id reproducible:** use connected-components on the 8-bucket vector (order-independent), report the greedy-rep variant as a sensitivity check (today: 61 flows / 2.320x vs 70 flows / 2.218x).\n4. **Honour the kill criterion early (deadline 2026-10-25, ~21h of runway).** Re-verified at 22:20Z: no LLM credential in env (only `SUPABASE_SERVICE_ROLE_KEY` + `CRON_SECRET`), **tweet.posted lifetime 0**, **social.posted lifetime 0**, no external party re-deriving anything. One condition changed: **missions with `finished_at` = 13** (was 4). Still no credentials → **publish nothing, 100% of proposal budget to the single verifiable artifact**. This cycle is that budget, spent on the artifact's rule sensitivity.\n5. **No file upstream, no publish, no post, no outreach.** Read-only GETs only.\n\n## Risks\n\n- Read-only public GETs only; zero writes, zero posts, zero outreach, zero external mutations; no auth used.\n- \"Installs\" are UI/structured-data labels; the marketplace's internal definition is not published. Every claim is about *rendered values* and *which surface moved when*.\n- The sweep's coverage is the top 220 of 2,274 unique listings by endpoint installs; tail listings are unmeasured, and Quill's four impossible-arithmetic rows were all tail rows — so the factor is measured where the money is, not everywhere.\n- Cluster membership is inferred from value/vector proximity, not from identity; the superpowers mirrors are *near*-identical, not proven identical, and a mirror that drifts past the threshold will split into several rows of the \"same\" ecosystem.\n- The endpoint-vs-page offset from H49 still holds: we read page-level series, so the numbers are page-level, not endpoint-level.\n- Our fleet LLM is still `[mock-llm]`; every number above was hand-measured by script, not by the model.\n\n## Next experiment\n\n1. Extend the sweep to all 2,274 listings (fetch page series for the remaining ~2,050) and recompute the factor interval on the full population, not the top 220.\n2. Prove or kill mirror equivalence with a second, independent signal: compare the 8-bucket *shape* (not magnitude) across the six superpowers mirror repos; if shapes are identical while magnitudes differ, the family is one ecosystem with per-mirror counters.\n3. Test the sibling-independence discriminator at scale: within `mattpocock/skills` and `anthropics/skills`, check whether distinct current-week values track distinct vector shapes (independent demand) or are the same shape scaled (shared counter).\n4. Daily snapshot-and-diff of the two surfaces (endpoint vs page) to date both batch cadences — unchanged from H49.\n5. Internal and unchanged: a real LLM credential behind a feature flag; a human rotates the social token; the operator decides the batch-claim ceiling migration (step 93963, limit 1) that gates every step in the queue.\n\n## Kill criterion\n\nBy 2026-10-25: if no real LLM credential, no real social credential, no terminal mission, and no external party has re-derived a check, stop all market-thesis work, publish nothing, move 100% of the proposal budget to the single verifiable artifact. **Unchanged, and now partially executed: this cycle produced the artifact's rule-sensitivity table and published nothing.** One condition improved (terminal missions 13) and the two credential conditions still fail.\n",
+ "decision": "# Sage decision — cycle 50 (2026-10-23T22:07Z)\n\n**Decision: build ALDI with a declared, order-independent cluster rule and ship the factor as an interval. Publish nothing. Open no new market thesis.**\n\nReasons, in order of weight:\n1. The inflation factor is continuous in the rule (1.441x–7.037x on one snapshot). Any point estimate we publish is an artifact of our choice of threshold, not a property of the market. H50 retires the \"installs are ~2x inflated\" phrasing we have been using since H49, including in our own queued drafts.\n2. The upper bound (repo identity, 4.419x) is provably an over-merge: `mattpocock/skills` has 33 rows with 33 distinct weekly values and is one repo. That kills the naive \"collapse by repo\" rule.\n3. The genuine duplication is mirror-repository fan-out (`superpowers`: 7 repos, 25 rows, 2,158,249 displayed weekly installs, one underlying ecosystem), and detection of it is order-dependent — greedy-rep clustering and connected components disagree by 0.102x. The artifact must state which method it uses.\n4. The kill criterion still binds on the credential side (no LLM key, tweet.posted lifetime 0). One condition improved — terminal missions 4 -> 13 — which does not change the verdict: publish nothing, all budget to the artifact.\n\n**This cycle's spend:** the rule-sensitivity table for the artifact, on 203 live rows, plus the mirror-family structure and the sibling-independence counter-example. Files: `sage-aldi-rows-20261023-2207.json` (raw rows), `sage-hypothesis-2026-10-23-2207.md`, `sage-intel-2026-10-23-2207.json`.\n\n**Explicitly not done:** no publishing, no posting, no upstream filing, no outreach, no writes outside our own workspace.\n",
+ "signals": {
+  "market_signal": {
+   "sweep": {
+    "terms": 30,
+    "limit": 100,
+    "rows": 2926,
+    "unique_listings": 2274,
+    "top_fetched": 220,
+    "with_page_series": 203,
+    "displayed_current_week_sum": 6946546
+   },
+   "rule_sensitivity_current_week": [
+    {
+     "threshold_pct": 0.2,
+     "flows": 109,
+     "distinct": 4215088,
+     "inflation": 1.648
+    },
+    {
+     "threshold_pct": 0.5,
+     "flows": 88,
+     "distinct": 3699249,
+     "inflation": 1.878
+    },
+    {
+     "threshold_pct": 1,
+     "flows": 70,
+     "distinct": 3132107,
+     "inflation": 2.218
+    },
+    {
+     "threshold_pct": 2,
+     "flows": 55,
+     "distinct": 2632790,
+     "inflation": 2.638
+    },
+    {
+     "threshold_pct": 3,
+     "flows": 45,
+     "distinct": 2198192,
+     "inflation": 3.16
+    },
+    {
+     "threshold_pct": 5,
+     "flows": 34,
+     "distinct": 1664543,
+     "inflation": 4.173
+    },
+    {
+     "threshold_pct": 8,
+     "flows": 28,
+     "distinct": 1404489,
+     "inflation": 4.946
+    },
+    {
+     "threshold_pct": 12,
+     "flows": 21,
+     "distinct": 987105,
+     "inflation": 7.037
+    }
+   ],
+   "rule_sensitivity_vector8": [
+    {
+     "threshold_pct": 0.5,
+     "flows": 116,
+     "distinct": 4819267,
+     "inflation": 1.441
+    },
+    {
+     "threshold_pct": 1,
+     "flows": 101,
+     "distinct": 4409368,
+     "inflation": 1.575
+    },
+    {
+     "threshold_pct": 2,
+     "flows": 88,
+     "distinct": 4122897,
+     "inflation": 1.685
+    },
+    {
+     "threshold_pct": 5,
+     "flows": 70,
+     "distinct": 3285780,
+     "inflation": 2.114
+    },
+    {
+     "threshold_pct": 10,
+     "flows": 49,
+     "distinct": 2335486,
+     "inflation": 2.974
+    }
+   ],
+   "rule_source_repo_identity": {
+    "flows": 30,
+    "rows_in_multi": 191,
+    "distinct": 1571963,
+    "inflation": 4.419,
+    "note": "over-merge: mattpocock/skills has 33 rows with 33 distinct current-week values collapsed into 1"
+   },
+   "headline": "inflation factor is continuous in the clustering rule (1.441x-7.037x on one snapshot); it is a parameter, not a property of the market",
+   "published_interval": "[1.65x, 4.42x] distinct-demand inflation with named residual uncertainty, never a point estimate"
+  },
+  "competitor_signal": {
+   "mirror_family_superpowers": {
+    "repos": 7,
+    "rows": 25,
+    "displayed_weekly_installs": 2158249,
+    "by_repo": {
+     "magentosh/superpowers": 805107,
+     "101-skills/superpowers": 270840,
+     "skills-shell/superpowers": 268755,
+     "its-a-skill-issue/superpowers": 268455,
+     "qu-skills/superpowers": 267977,
+     "bankai-skills/superpowers": 268279,
+     "obra/superpowers": 8836
+    },
+    "read": "one upstream ecosystem fanned out across 7 repos; magentosh's 4 rows share a single 201,368 counter"
+   },
+   "sibling_independence_counterexample": {
+    "repo": "mattpocock/skills",
+    "rows": 33,
+    "distinct_current_week_values": 33,
+    "top": [
+     "grilling 52706",
+     "grill-me 52386",
+     "grill-with-docs 44944",
+     "code-review 44784",
+     "tdd 44593"
+    ],
+    "read": "33 independent weekly series inside one repo - repo identity over-merges"
+   },
+   "method_order_dependence": {
+    "greedy_rep_th1pct": {
+     "flows": 70,
+     "distinct": 3132107,
+     "inflation": 2.218
+    },
+    "connected_components_th1pct": {
+     "flows": 61,
+     "distinct": 2994203,
+     "inflation": 2.32
+    },
+    "delta_distinct": 137904,
+    "delta_inflation": 0.102,
+    "note": "greedy keeps 6 superpowers mirror repos apart; connected components merges 20 rows into one 67,895 flow"
+   },
+   "concentration": {
+    "top3_families": {
+     "heygen-com/hyperframes": 1649562,
+     "mattpocock/skills": 1181664,
+     "magentosh/superpowers": 805107
+    },
+    "families_for_80pct_of_displayed_weekly": 11,
+    "singleton_flows_th1pct": 37,
+    "singleton_distinct_sum": 1877882
+   }
+  },
+  "operational": {
+   "kill_criterion_status": "2026-10-25 deadline, ~21h runway",
+   "llm_credential": "absent (env holds only SUPABASE_SERVICE_ROLE_KEY + CRON_SECRET)",
+   "social_credential": "absent - tweet.posted lifetime 0, social.posted lifetime 0",
+   "terminal_missions_with_finished_at": 13,
+   "external_rederivation": "none",
+   "verdict": "publish nothing; 100% of proposal budget to the single verifiable artifact (ALDI with declared rule)"
+  }
+ },
+ "implications": "Ship the factor as an interval with a declared, order-independent rule, never as a point estimate. Retire the 'installs are ~2x inflated' phrasing from every draft, including our own queued ones. Use connected-components on the 8-bucket vector for cluster ids (order-independent) and publish the greedy-rep variant as a sensitivity check. Repo-identity clustering is an upper bound and must never be quoted as a measurement. Name the two residual uncertainties explicitly in the artifact: mirror-repository equivalence and sibling independence inside one repo. Concentration means the uncertainty sits in the mirror families, so next cycle proves mirror equivalence with shape (not magnitude) comparison and extends the sweep from the top 220 to all 2,274 listings.",
+ "risks": "Read-only public GETs only; zero writes/posts/outreach; no auth. Claims are strictly about rendered values. Coverage is the top 220 of 2,274 unique listings - tail unmeasured. Cluster membership is inferred from value/vector proximity, not identity; mirrors are near-identical, not proven identical. Series are page-level, not endpoint-level (H49 offset stands). Fleet LLM is still [mock-llm]: every number was hand-measured by script, not produced by the model.",
+ "next_experiment": "1) full 2,274-listing sweep with the factor interval recomputed on the whole population; 2) prove/kill mirror equivalence by comparing 8-bucket SHAPES across the six superpowers mirrors; 3) test sibling independence at scale inside mattpocock/skills and anthropics/skills; 4) daily endpoint-vs-page snapshot diff to date both batch cadences; 5) internal: real LLM credential behind a feature flag, human rotates social token, operator decides the batch-claim ceiling migration (step 93963, limit 1).",
+ "diff_from_prev_cycle": "H49 fixed a single rule (current-week <=1%) and reported a point estimate (1.815x on the top 70) plus a +6.74% endpoint-vs-page gap. H50 shows that estimate was a property of the rule, not the market: at full-sweep scale (203 rows, 2,274 listings seen) the same rows yield 1.441x-7.037x across thirteen rule settings, the naive repo-identity rule (4.419x) is provably an over-merge (mattpocock/skills: 33 rows, 33 distinct weekly values), and the duplication that is real is mirror-repository fan-out (superpowers: 7 repos, 25 rows, 2,158,249 displayed weekly installs) whose detection is order-dependent (greedy 2.218x vs connected-components 2.320x). H50 also gives the artifact its concentration map (80% of displayed weekly installs from 11 families; 37 of 70 flows singleton worth 1,877,882) and one improved kill-criterion reading (terminal missions 4 -> 13; credentials still absent).",
+ "kill_criterion": "By 2026-10-25: if no real LLM credential, no real social credential, no terminal mission, and no external party has re-derived a check, stop all market-thesis work, publish nothing, move 100% of the proposal budget to the single verifiable artifact. Measured 22:20Z 2026-10-23: no LLM key in env, tweet.posted 0, social.posted 0, missions with finished_at 13, no external re-derivation. Unchanged; partially executed - this cycle produced the artifact's rule-sensitivity table and published nothing.",
+ "artifact_built_this_cycle": [
+  "sage-aldi-rows-20261023-2207.json (220 fetched rows, raw)",
+  "sage-hypothesis-2026-10-23-2207.md",
+  "sage-decision-2026-10-23-2207.md",
+  "sage-intel-2026-10-23-2207.json"
+ ]
+}

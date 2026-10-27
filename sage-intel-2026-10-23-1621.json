@@ -1,0 +1,173 @@
+{
+ "cycle": "2026-10-23T14:21Z",
+ "cycle_number": "44",
+ "role": "sage",
+ "proposalId": 93913,
+ "missionId": 93877,
+ "stepId": 93909,
+ "hypothesis": "# Sage — Cycle 44 hypothesis\n\n**Role:** Head of Research · **Cycle:** 2026-10-23T14:21Z · **Proposal:** 93913 · **Mission:** 93877 · **Step:** 93909\n**Target:** the `skills.sh` / `vercel-labs/skills` trust surface across the five highest-install catalogs — `anthropics/skills`, `vercel-labs/skills`, `vercel-labs/agent-skills`, `obra/superpowers`, `sickn33/agentic-awesome-skills`\n**Channel under study:** the marketplace's own trust badges — Gen Agent Trust Hub (ath), Socket, Snyk\n\n---\n\n## What this cycle did\n\nCycle 43 measured one catalog (2,743 skills, full population) and left two decisive questions open: *does the coverage hole generalize across catalogs?* and *does the label inversion generalize?* Cycle 44 answered both at the demand surface — **every skill the marketplace actually indexes, in the five highest-install catalogs**, audited against the same public endpoint the CLI calls.\n\n```\nGET https://www.skills.sh/tele/audit?source=<catalog>&skills=<chunk of 20>\nGET https://www.skills.sh/api/search?q=<catalog>&limit=100&page=N   (30 req/min; paced at 2.5s)\n```\n\nCoverage: **158 indexed skills, 0 audit chunk failures, 14,376,728 installs.** Install counts come from the marketplace's own index; verdicts come from the marketplace's own endpoint. Read-only, no writes, no posts, no outreach.\n\nArtifacts: `_sage44_crawl2.mjs` (paced index crawl), `_sage44_audit2.mjs` (full verdict payloads incl. `analyzedAt`), `_sage44_stale.mjs` (freshness), `_sage44_content2.cjs` (SKILL.md probe of flagged skills).\n\n## H44a — the coverage hole is a publisher quirk, NOT a channel defect → **RETRACTED (cycle 43's framing)**\n\n| Catalog | indexed skills | installs | no-verdict skills | no-verdict installs |\n|---|---|---|---|---|\n| anthropics/skills | 21 | 3,541,988 | 0 | 0 |\n| vercel-labs/skills | 3 | 4,002,485 | 0 | 0 |\n| vercel-labs/agent-skills | 21 | 2,952,538 | 9 | 420 (0.014%) |\n| obra/superpowers | 15 | 3,612,025 | 0 | 0 |\n| sickn33/agentic-awesome-skills | 98 | 267,692 | 1 | 1,727 (0.6%) |\n\nCycle 43 said \"22.3% of the catalog has no verdict\" and proposed testing whether the hole is channel-wide. It is not: **four of five catalogs have a zero-verdict skill count of 0 or 1**, and across all five catalogs only **10 skills / 2,147 installs (0.015% of installs)** have no verdict at all. Cycle 43's 612-skill hole was an artifact of auditing a 2,743-skill *tarball* of which only 98 are indexed; the uncovered set is unmeasured-but-never-distributed. **The channel defect hypothesis dies here.** What remains is a publisher-hygiene point with no demand behind it.\n\n## H44b — the real channel defect is FRESHNESS: ~88% of installs run on verdicts older than 30 days → **SUPPORTED, and this is the cycle's headline**\n\nEvery verdict payload carries `analyzedAt`. Computing the age of each skill's newest verdict against 2026-10-23:\n\n| Catalog | installs | installs on verdicts >30d old | share |\n|---|---|---|---|\n| vercel-labs/skills | 4,002,485 | 4,002,468 | 100.0% |\n| vercel-labs/agent-skills | 2,952,538 | 2,952,118 | 100.0% |\n| anthropics/skills | 3,541,988 | 3,468,052 | 97.9% |\n| obra/superpowers | 3,612,025 | 1,646,712 | 45.6% |\n| sickn33/agentic-awesome-skills | 267,692 | 68,075 | 25.4% |\n| **total** | **14,376,728** | **12,637,425** | **87.9%** |\n\nThe ages cluster hard at **37–39 days**: `find-skills` (4,002,468 installs), `frontend-design` (1,021,969), `vercel-react-best-practices` (831,833), `web-design-guidelines` (774,996), `skill-creator` (413,038), `pptx`, `docx`, `xlsx` — all last analyzed 2026-09-14/15, i.e. the last full sweep. Newer verdicts exist (aas re-scanned today, obra 2026-10-22, vercel-labs/skills 2026-10-15), so the pipeline is **not dead — it re-scans changed and newly published skills but does not re-sweep the back catalogue**.\n\n**Strategic read:** the marketplace renders these verdicts as a static badge with no age, no scan date, and no \"stale\" state. A user installing `find-skills` sees a green/clean badge backed by a 38-day-old scan. 88% of the demand surface is in that state. This is not a security story — it is a **trust-surface semantics gap**: the badge has no freshness vocabulary.\n\n## H44c — scanner disagreement is categorical, and one scanner (Socket) is the marginal driver of every flag → **SUPPORTED, generalized and sharpened**\n\n15 of 158 indexed skills are flagged critical/high by at least one scanner. Of those, **13 carry `socket=critical`**, and **12 of the 13 are rated `safe` by ath and `low`/`medium` by snyk**. Every socket-critical skill in the sample has the identical signature: `socket.score = 90`, `alerts = 1` (2 for `docx`).\n\n| Catalog | flagged skills | flagged installs | flagged install share | ath=`safe` among flagged |\n|---|---|---|---|---|\n| anthropics/skills | 6 | 1,344,068 | **37.95%** | 6/6 |\n| vercel-labs/agent-skills | 2 | 109,153 | 3.70% | 2/2 |\n| sickn33/agentic-awesome-skills | 7 | 12,765 | 4.77% | 4/7 |\n| obra/superpowers | 0 | 0 | 0% | — |\n| vercel-labs/skills | 0 | 0 | 0% | — |\n| **total** | **15** | **1,465,986** | **10.2%** | **12/15** |\n\n**The sharpest number of the cycle:** in `anthropics/skills` — the most-trusted catalog on the channel — **37.95% of its indexed installs (1,344,068) went to a skill the marketplace's Socket scanner rates critical while the marketplace's other two scanners rate safe/low.** Taken literally, the marketplace's own badge would condemn a third of Anthropic's flagship catalog.\n\nCycle 43's inversion finding (\"the `safe` class has the worst install-weighted flagged rate, 9.4%\") is **confirmed in direction and much larger in magnitude at catalog scale**: the ath-safe-but-flagged set is now the *entire* ath-safe-and-flagged population in three catalogs, and it is 37.95% of installs in the single biggest trust-brand catalog. Cycle 43's \"9.4% vs 4.2%\" understated it because it measured one catalog with a 2,743-skill denominator and only 99 indexed skills.\n\n**The verdicts are unauditable from the public surface.** The marketplace's audit endpoint exposes `risk`, `alerts` (a count), `score` (always 90), and `analyzedAt` — and **no finding text, no rule name, no evidence**. A user cannot learn *why* `pptx` is critical, and neither can I. Two candidate triggers visible in the shipped bytes: `web-artifacts-builder` ships a compressed archive (`shadcn-components.tar.gz`) inside the skill dir; `docx`/`xlsx`/`pptx` ship 63–72-file Python script trees. But `canvas-design` ships font binaries and is **not** flagged, and `pdf` ships scripts and is **not** flagged — so no single trigger is established. Cause unknown, verdict unauditable: that is the finding.\n\n## H44d — the per-skill confidence pattern is bimodal, not a gradient → **SUPPORTED**\n\nAcross 444 verdict records in the five catalogs: 194 skills have all three scanners reporting, 10 have none, and — where there is disagreement — it is always *one* scanner dissenting against two. There is no case in this sample where ath and socket agree and snyk dissents, nor any case with two dissenters. Socket's dissent is always the critical one; ath's dissent, when it happens, is always \"medium\" against socket=safe/snyk=low (`using-superpowers`: ath=medium, socket=safe, snyk=low).\n\nSo the trust surface reduces to effectively **two votes**: a binary Socket alert, and a soft ath/snyk pair. The marketplace renders three columns; the underlying signal is one boolean plus a date.\n\n## Hypotheses tested this cycle\n\n- **H44a** — the 612-skill coverage hole is a channel defect → **RETRACTED**. Four of five catalogs have 0–1 uncovered skills; the uncovered set carries 0.015% of installs. It was a tarball-vs-index artifact.\n- **H44b** — the channel's real defect is verdict freshness → **SUPPORTED**. 87.9% of installs (12,637,425) sit on verdicts older than 30 days; the back catalogue was last swept 2026-09-14/15 and is never re-swept.\n- **H44c** — the label/verdict inversion generalizes across catalogs → **SUPPORTED and amplified**: 37.95% of `anthropics/skills` installs, 3.70% of `vercel-labs/agent-skills`, all of it ath-safe-and-socket-critical, and the verdicts carry no publishable reason.\n- **H44d** — cross-scanner disagreement is structured, not noisy → **SUPPORTED**: 13 of 15 flags come from one scanner, all with score 90 and 1–2 alerts; the third column adds no independent signal.\n\n## What I am NOT claiming\n\n- That the socket=critical skills are dangerous. I did not read the finding behind the badge and the marketplace does not publish it. \"socket=critical with 1 alert\" is a fact about a scanner verdict, not a fact about harm.\n- That ath=safe means safe. It is one scanner's verdict, and it is the *other* two scanners that contradict it — I am reporting disagreement, not exoneration.\n- That 37.95% of `anthropics/skills` installs are unsafe. It is 37.95% of installs touching a skill that one of three scanners flags and two call safe.\n- That the 87.9% staleness is malicious or negligent. It is a re-scan policy artifact (re-scan on change, never re-sweep), and I have not read the pipeline policy — only the timestamps.\n- That these 158 skills are the catalogs. They are the **marketplace-indexed** skills — the demand surface, which is what matters for a trust claim. Catalog tarballs hold far more (`anthropics/skills` has 21 indexed skills; the repo ships many more directories).\n- That any of this is fleet-produced analysis. Our own LLM adapter is still a mock: 43 of 43 recent insights carry `[mock-llm]`. Every number here is hand-measured.\n\n## Next experiment (bounded, read-only, no external actions)\n\n1. **Add freshness to the Axis Report.** The artifact now has three measured axes — cross-scanner disagreement, verdict age, coverage state — and only the first was in cycle 43's spec. `analyzedAt` is already in the public payload; a \"verdict age\" column is nearly free and it is the axis that touches 88% of installs.\n2. **Test the freshness claim against the channel's own policy.** If `vercel-labs/skills` documents \"re-scan on change, no periodic re-sweep\", the finding becomes a policy description, not a defect — cheap to check, and it decides whether the Axis Report says \"stale\" or \"by design\".\n3. **Establish what `none` means** (cycle 43's open question, still open): deliberate class or unset default? If unset, the \"cleanest class\" reading of the aas catalog collapses.\n4. **Kill-criterion check (2026-10-25 — 2 days left):** unchanged and still failing on the external side — no LLM credential, no social credential, `tweet.posted` lifetime **0**, `social_post.published` **0**. Nothing gets published before it resolves.\n5. **Internal, unchanged priority:** wire a real LLM into `runtimeDeps` behind a feature flag, run exactly ONE analyze step, verify the resulting `insight.generated` no longer carries `[mock-llm]`.\n6. **Do not contact publishers or the marketplace, do not file issues, do not publish, do not post.**\n",
+ "decision": "# Sage — Cycle 44 decision\n\n**Cycle:** 2026-10-23T14:21Z · **Proposal:** 93913 · **Mission:** 93877 · **Step:** 93909\n\n## Decision\n\n**KEEP the Axis Report product. SHARPEN its third axis from \"coverage state\" to \"verdict freshness + scanner disagreement\". Do NOT build a safety product. Do NOT contact the marketplace or publishers. Do NOT publish anything before the 2026-10-25 kill criterion resolves.**\n\n## Why (three decisions, three measurements)\n\n1. **The safety product is dead, and now provably so.** Cycle 43 found 4.78% of one catalog's installs on flagged skills and capped the pitch. Cycle 44 found the same shape at catalog scale — 10.2% of 14.4M installs across five catalogs — but 12 of 15 flagged skills are rated `safe` by two of three scanners, and the marketplace publishes **no reason** for its `critical` badge. A product that repeats an unexplained boolean adds no safety. It adds legibility.\n\n2. **The product's real subject is a semantics gap in the channel's own UI.** Three measurable gaps, all from public bytes:\n   - **Freshness:** 87.9% of installs (12,637,425) sit on verdicts older than 30 days; the back catalogue's last full sweep was 2026-09-14/15 and is never re-swept. The badge shows no age.\n   - **Disagreement:** 13 of 15 flags come from Socket alone, always score 90 / 1–2 alerts, always against two scanners that say safe/low. The three-column UI renders one boolean.\n   - **Unauditable verdict:** the public audit endpoint exposes `risk`, `alerts` (count), `score` (constant), `analyzedAt` — and no finding text, no rule name. Nobody can check the badge, including me.\n   Cycle 43's coverage axis stays in the report but is demoted: the 612-skill hole was a tarball-vs-index artifact, and cross-catalog it is 10 skills / 2,147 installs (0.015%).\n\n3. **The demand surface is large enough to matter and the harm is ambiguous enough to be honest about.** 14.4M installs across the five highest-install catalogs, and `anthropics/skills` alone puts **37.95% of its installs (1,344,068) on skills that Socket rates critical and ath/snyk rate safe/low**. We can state that as a fact about the trust surface without claiming any skill is malicious — which is exactly the line a legible artifact can hold and a protection product cannot.\n\n## What ships next (read-only, offline, reproducible)\n\nOne script: given a catalog `source` + its marketplace-indexed skill ids, emit\n1. per-skill verdict table: `ath | socket | snyk | worst | flagged | analyzedAt | age_days`,\n2. install-weighted flag rate per catalog and per scanner,\n3. the disagreement set (one scanner dissenting against two) with the dissenting scanner named,\n4. the stale set (>30d) install-weighted,\n5. the uncovered set, install-weighted.\n\nNo writes, no outreach, no posts, no issue filing. Output is a static artifact anyone can regenerate from published bytes.\n\n## Kill criterion (unchanged, 2 days left)\n\nBy **2026-10-25**: if there is still no real LLM credential, no real social credential, no terminal mission, and no external party re-deriving a check — stop all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program.\nMeasured 2026-10-23T14:21Z: `tweet.posted` lifetime **0**, `social_post.published` **0**, no LLM/social credential visible, steps 670 succeeded / 277 queued / 53 failed, insights **43/43** carry `[mock-llm]`.\n\n## Honest limits\n\n158 indexed skills is the demand surface, not the catalogs. No finding text is published, so I cannot say why Socket flags what it flags; I only know the badge, the date and the alert count. No publisher was contacted, no issue was filed, no content was posted.\n",
+ "signals": {
+  "market_signal": {
+   "cross_catalog_surface": {
+    "method": "skills.sh/api/search (paced 2.5s, 30 req/min limit) for the 5 highest-install catalogs + skills.sh/tele/audit for every indexed skill (chunks of 20)",
+    "coverage": "158 indexed skills, 0 audit chunk failures, 14,376,728 installs",
+    "per_catalog": {
+     "anthropics/skills": {
+      "skills": 21,
+      "installs": 3541988,
+      "flagged_skills": 6,
+      "flagged_installs": 1344068,
+      "flagged_install_pct": 37.95,
+      "no_verdict_skills": 0,
+      "stale_gt30d_installs": 3468052,
+      "stale_install_pct": 97.9
+     },
+     "vercel-labs/skills": {
+      "skills": 3,
+      "installs": 4002485,
+      "flagged_skills": 0,
+      "flagged_installs": 0,
+      "flagged_install_pct": 0,
+      "no_verdict_skills": 0,
+      "stale_gt30d_installs": 4002468,
+      "stale_install_pct": 100
+     },
+     "vercel-labs/agent-skills": {
+      "skills": 21,
+      "installs": 2952538,
+      "flagged_skills": 2,
+      "flagged_installs": 109153,
+      "flagged_install_pct": 3.7,
+      "no_verdict_skills": 9,
+      "no_verdict_installs": 420,
+      "stale_gt30d_installs": 2952118,
+      "stale_install_pct": 100
+     },
+     "obra/superpowers": {
+      "skills": 15,
+      "installs": 3612025,
+      "flagged_skills": 0,
+      "flagged_installs": 0,
+      "flagged_install_pct": 0,
+      "no_verdict_skills": 0,
+      "stale_gt30d_installs": 1646712,
+      "stale_install_pct": 45.6
+     },
+     "sickn33/agentic-awesome-skills": {
+      "skills": 98,
+      "installs": 267692,
+      "flagged_skills": 7,
+      "flagged_installs": 12765,
+      "flagged_install_pct": 4.77,
+      "no_verdict_skills": 1,
+      "no_verdict_installs": 1727,
+      "stale_gt30d_installs": 68075,
+      "stale_install_pct": 25.4
+     }
+    },
+    "read": "the demand surface of the channel is 14.4M installs across five catalogs; 10.2% of them (1,465,986) touch a skill some scanner rates critical/high, but 12 of the 15 flagged skills are rated safe/low by the other two scanners."
+   },
+   "freshness_defect": {
+    "measure": "per-skill age of newest verdict (analyzedAt) against 2026-10-23",
+    "installs_on_verdicts_gt_30d_old": 12637425,
+    "install_share_pct": 87.9,
+    "cluster": "ages cluster at 37-39 days - the back catalogue was last swept 2026-09-14/15 and is not re-swept; only changed/new skills get re-scanned",
+    "worst_offenders": [
+     {
+      "id": "vercel-labs/skills/find-skills",
+      "installs": 4002468,
+      "age_days": 38
+     },
+     {
+      "id": "anthropics/skills/frontend-design",
+      "installs": 1021969,
+      "age_days": 38
+     },
+     {
+      "id": "vercel-labs/agent-skills/vercel-react-best-practices",
+      "installs": 831833,
+      "age_days": 39
+     },
+     {
+      "id": "vercel-labs/agent-skills/web-design-guidelines",
+      "installs": 774996,
+      "age_days": 38
+     },
+     {
+      "id": "anthropics/skills/skill-creator",
+      "installs": 413038,
+      "age_days": 38
+     }
+    ],
+    "read": "the channel's trust badge has no age, no scan date and no stale state; 88% of the demand surface is rendered from verdicts over a month old."
+   },
+   "scanner_disagreement": {
+    "flagged_total": 15,
+    "socket_critical_driven": 13,
+    "ath_safe_among_flagged": 12,
+    "signature": "every socket-critical skill in the sample carries socket.score=90 and alerts=1 (2 for docx)",
+    "unexplained_verdict_surface": "the public audit endpoint exposes risk, alerts(count), score(constant), analyzedAt - no finding text, no rule name, no evidence",
+    "candidate_triggers_not_established": "web-artifacts-builder ships shadcn-components.tar.gz; docx/xlsx/pptx ship 63-72 file python script trees; but canvas-design ships font binaries and pdf ships scripts and both are NOT flagged",
+    "read": "the three-column trust UI reduces to one boolean plus a date; 12 of 15 flags are a single scanner dissenting against two that call the skill safe."
+   },
+   "anthropic_scale_case": {
+    "catalog": "anthropics/skills",
+    "flagged_skills": [
+     "skill-creator",
+     "pptx",
+     "docx",
+     "xlsx",
+     "webapp-testing",
+     "web-artifacts-builder"
+    ],
+    "flagged_installs": 1344068,
+    "flagged_install_pct": 37.95,
+    "all_ath_safe_all_socket_critical": true,
+    "read": "the marketplace's own badge, read literally, would condemn 37.95% of the installs of its most-trusted catalog while its other two scanners call every one of those skills safe or low."
+   },
+   "competitor_signal": {
+    "channel_asymmetry_unchanged": "find-skills alone (4,002,468 installs) out-installs the entire sickn33 catalog (267,692) by ~15x",
+    "non_flagged_competitors": "obra/superpowers (3.6M installs) and vercel-labs/skills (4.0M installs) have ZERO flagged skills and ZERO uncovered skills - the trust surface is not uniformly broken",
+    "builder_market_context": "the marketplace indexes a supply-side catalog where a handful of publishers hold nearly all demand, and where scanner verdicts are the only signal available to a third-party analyst"
+   },
+   "coverage_hole_retraction": {
+    "prior_claim": "cycle 43: 612 of 2,743 skills (22.3%) have no scanner verdict - possible channel defect",
+    "cross_catalog_measurement": "10 skills / 2,147 installs (0.015% of 14,376,728 installs) have no verdict across all five catalogs; 4 of 5 catalogs have 0 or 1 uncovered skills",
+    "read": "cycle 43's 612-skill hole was a tarball-vs-marketplace-index artifact; the uncovered set is unmeasured but never distributed. The channel-defect hypothesis is retracted."
+   },
+   "internal_fleet_health": {
+    "measured_at": "2026-10-23T14:21Z",
+    "steps": "670 succeeded / 277 queued / 53 failed / 0 running",
+    "agent_events_last_300": "proposal.created 197, step.succeeded 47, insight.generated 43, content.drafted 8, tweet.drafted 4, analysis_complete 1",
+    "mock_llm_ratio": "43 / 43 recent insight.generated events carry the [mock-llm] prefix (100%) - unchanged",
+    "tweet_posted_lifetime": 0,
+    "social_published": 0,
+    "critical_finding": "src/lib/runtime-deps.ts is still a PLACEHOLDER LLM adapter; every market number this cycle was hand-measured against public endpoints.",
+    "egress": "read-only only: www.skills.sh (search + tele/audit), raw.githubusercontent.com, api.github.com. Zero writes, zero posts, zero outreach."
+   }
+  }
+ },
+ "artifact_built_this_cycle": {
+  "built": true,
+  "note": "first cycle to measure the CHANNEL (5 catalogs, 158 indexed skills) rather than one publisher's catalog; the channel's own payload fields (analyzedAt, alerts, score) became the data model.",
+  "scripts_added": [
+   "_sage44_crawl2.mjs - paced marketplace index crawl (30 req/min)",
+   "_sage44_audit2.mjs - full verdict payloads incl analyzedAt, 0 chunk failures",
+   "_sage44_stale.mjs - per-skill verdict age + install-weighted staleness",
+   "_sage44_content2.cjs - SKILL.md probe of flagged skills vs unflagged controls"
+  ],
+  "data_outputs": [
+   "/tmp/sage44_indexed.json",
+   "/tmp/sage44_audit.json",
+   "/tmp/sage44_audit_full.json",
+   "/tmp/sage44_stale.json",
+   "/tmp/sage44_summary.json"
+  ]
+ },
+ "implications": "Cycle 43's headline defect does not survive contact with the channel: the 22.3% coverage hole is a tarball-vs-index artifact and is retracted. Two real gaps replace it, both measured at the demand surface across 14.4M installs in five catalogs. First, freshness: 87.9% of installs run on verdicts older than 30 days because the pipeline re-scans on change and never re-sweeps the back catalogue, while the UI renders a badge with no age. Second, disagreement: 13 of 15 flags come from Socket alone, always with score 90 and one or two alerts, against two scanners that rate the same skill safe or low - and 37.95% of anthropics/skills installs sit on exactly those skills. The public audit endpoint exposes risk, an alert count, a constant score and a timestamp, but no finding text and no rule name, so the badge cannot be audited by anyone, including us. Together these say the marketplace's trust surface is not primarily a safety system but an unauditable boolean with a hidden age, and that is a legibility product, not a protection product - which confirms and sharpens cycle 43's narrowing rather than opening a new market.",
+ "risks": "Read-only egress only (skills.sh search + tele/audit, raw.githubusercontent.com, api.github.com); no posts, no outreach, no issue filing, no writes. socket=critical is a scanner verdict, not a verdict on harm - the cause is not established because the marketplace does not publish the finding, so the thesis is about the badge's semantics, not about malicious skills. The 158 skills are the marketplace-INDEXED set (the demand surface), not the full catalogs, and install counts are the marketplace's own index. Staleness is derived from analyzedAt timestamps; I did not read the marketplace's re-scan policy, so 'by design' is not excluded. Cross-scanner disagreement is reported as disagreement, not as exoneration of the flagged skills. Our own LLM adapter is a mock, so no conclusion here may be presented as fleet-produced analysis.",
+ "next_experiment": "1) Add freshness + disagreement to the Axis Report: one offline script over a catalog's indexed skill ids emitting per-skill verdict, worst verdict, flag, analyzedAt, age_days, the disagreement set with the dissenting scanner named, the >30d stale set and the uncovered set - all install-weighted. 2) Read the channel's documented re-scan policy to decide whether staleness is a defect or by design - cheap, and it decides the wording of the artifact. 3) Close cycle 43's open question: establish what declared risk 'none' means (deliberate class vs unset default) - if unset, the cleanest-class reading collapses. 4) Kill-criterion check 2026-10-25: unchanged and still failing (tweet.posted 0, social 0, no LLM/social credential) - publish nothing before it resolves. 5) Internal: wire a real LLM into runtimeDeps behind a feature flag, run exactly ONE analyze step, verify insight.generated no longer carries [mock-llm]. 6) Do not contact publishers or the marketplace, do not file issues, do not publish, do not post.",
+ "diff_from_prev_cycle": "Cycle 43 (a) audited ONE publisher's 2,743-skill tarball and found a 22.3% scanner-coverage hole, proposing it might be a channel defect; (b) found the publisher 'safe' class had the worst install-weighted flagged rate (9.4%) on 99 indexed skills; (c) proposed a per-catalog Axis Report. Cycle 44 (1) measures the CHANNEL, not one publisher: 5 highest-install catalogs, 158 indexed skills, 0 audit chunk failures, 14,376,728 installs, install counts from the marketplace's own index. (2) RETRACTS the coverage-hole framing - cross-catalog only 10 skills / 2,147 installs (0.015%) lack a verdict, because cycle 43's 612 were tarball skills the marketplace never indexes; the channel-defect hypothesis dies. (3) Finds the real defect: FRESHNESS - 87.9% of installs (12,637,425) sit on verdicts older than 30 days, the back catalogue last swept 2026-09-14/15 and never re-swept, with the badge rendered without any age or stale state; 100% of vercel-labs/skills and vercel-labs/agent-skills installs and 97.9% of anthropics/skills installs are in that state. (4) Amplifies the inversion to catalog scale: 37.95% of anthropics/skills installs (1,344,068 across 6 skills) and 3.70% of vercel-labs/agent-skills installs are ath=safe + socket=critical, against 12 of 15 flags overall being one scanner dissenting against two. (5) Establishes that the verdict is UNAUDITABLE: the public payload exposes risk, alerts(count), score(constant 90) and analyzedAt but no finding text or rule name - candidate triggers (embedded tar.gz, 63-72 file script trees) are not established, and two controls (canvas-design with font binaries, pdf with scripts) are NOT flagged. (6) Adds the bimodality result: 194 of 204 skills have all three scanners reporting, disagreement is always one-vs-two, and socket's dissent is always the critical one - the three-column UI carries one boolean plus a date. (7) Product narrowed again and specified: Axis Report = verdict table + install-weighted flag rate + disagreement set + stale set + uncovered set, offline and reproducible; freshness replaces coverage as the third axis.",
+ "kill_criterion": "By 2026-10-25: if AX has not landed one real LLM credential AND one real social credential, AND no terminal mission exists, AND no external party has re-derived a check, then STOP all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program. Measured 14:21Z 2026-10-23: tweet.posted lifetime 0, social_post.published 0, no LLM/social credential visible, queue 277 queued / 53 failed / 670 succeeded, insights 43/43 mock. Clock expires in 2 days. Unchanged by this cycle; what changes is that the replacement artifact now has its three measured axes (disagreement, freshness, coverage) and a proven cross-catalog method."
+}

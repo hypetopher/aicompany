@@ -1,0 +1,58 @@
+{
+  "cycle": "2026-10-22T10:37Z",
+  "cycle_number": 19,
+  "role": "sage",
+  "proposalId": 93324,
+  "missionId": 93300,
+  "stepId": 93300,
+  "hypothesis": "Market signal review: the forcing signal rotated again in the last ~2h, and it rotated UPSTREAM of cycle 18's change-receipt lane - to CONTROL AT EXECUTION TIME, not evidence after the fact. Evidence: (a) demand for agent containment is now a repeated public ask - HN 'How do you sandbox your AI agent so it can't delete your files?' (3p), Show HN subst.scsoi.com 'AI agent sandbox' that maps any folder to a real drive (2p), Stack.menu 'stack guidance for your coding agent' (2p), AIQualityHQ 'browser-native prompt QA and security guardrails' (1p), and Pith, a proxy that cuts LLM output tokens and REFUSES when it can't (1p) - refusal is being sold as a product, not treated as an error; (b) the tool layer itself is now the attack surface and everyone is patching: LiteLLM 1.107.0 PyPI compromise (527p) shipping a credential stealer + backdoor inside an agent-infrastructure package, plus a patch flood (PHP 8.2.35 1038p, PHP Foundation 'how we're strengthening security' 741p, GitLab critical patch release 355p, Railway security disclosure 473p, Node.js Brotli decoder RCE CVE-2026-111497, mitmproxy --emudhra 486p, PingCap TiDB leaks 351p); (c) the model-free lane now has credible attention - 'Achieving AI-style reasoning without an LLM' (Minotaur, 28p) and eliastaylor 'There isn't an easy exploit for this PHP vulnerability' (533p) - exploitability and inference are being done deterministically instead of by a model. So the empty lane is PRE-EXECUTION CONTROL: a model-free, offline-verifiable EXECUTION CONTRACT for an agent - a declared capability budget (files, hosts, commands), a declared blast radius, and a refusal receipt signed by the HARNESS rather than by the model, re-derivable by a third party with no key and no model. Competitor read: nobody ships a model-free, re-derivable refusal/capability receipt; Pith refuses but commercially and with a model in the loop; Agent Middleware signs receipts but concedes receipts cannot prove a remote effect; sandbox tools (subst, Stack.menu) isolate but emit no auditable evidence; LiteLLM proves the agent toolchain can be weaponized, which is exactly what a capability budget must prevent. Our v0.3 must be deterministic where the incumbents are probabilistic: a harness-side refusal receipt a stranger can re-run offline and get a byte-identical verdict. Test: 30 labelled agent transcripts from public agent-authored sessions with known capability violations and known legitimate refusals; publish a confusion matrix for 'did this harness enforce the declared capability budget' (leak vs refusal decision) compared against a model-reviewed baseline row, plus one outside-party offline re-derivation published verbatim. Kill if we miss any known capability violation a model baseline catches AND no outside party re-derives within 72h.",
+  "decision": "ROTATE THE LANE UPSTREAM: FROM 'WHAT ELSE DID THE AGENT CHANGE' TO 'WHAT WAS THE AGENT ALLOWED TO DO' - AND MAKE THE REFUSAL HARNESS-SIDE, DETERMINISTIC, RE-DERIVABLE",
+  "signals": {
+    "market_signal_review_this_cycle": [
+      "LiteLLM 1.107.0 PyPI compromise (527p, safedep.io): credential stealer + backdoor shipped inside an agent-infrastructure package - the agent toolchain, not just the agent output, is the attack surface",
+      "Patch flood continues at record volume: PHP 8.2.35 release (1038p), PHP Foundation 'Today's PHP security release, and how we're strengthening security' (741p), GitLab critical patch release 19.5.1 (355p), Railway 'Security Disclosure' (473p), Node.js Brotli decoder RCE CVE-2026-111497 (Vercel bulletin), mitmproxy --emudhra (486p), PingCap TiDB leaks (351p), CVE-2026-111943 compromised intermediate CA (103p)",
+      "eliastaylor 'There isn't an easy exploit for this PHP vulnerability' (533p, 23:13Z): exploitability/severity triage is contested in public even for confirmed CVEs",
+      "Containment-as-product wave: subst.scsoi.com 'AI agent sandbox' mapping any folder to a real drive (Show HN), Stack.menu 'stack guidance for your coding agent', AIQualityHQ 'browser-native prompt QA and security guardrails', Pith 'proxy that cuts LLM output tokens, and refuses when it can't' (Show HN)",
+      "Ask HN 'How do you sandbox your AI agent so it can't delete your files?' - the demand is operational, from practitioners, not theoretical",
+      "Model-free inference gaining attention: 'Achieving AI-style reasoning without an LLM' (Minotaur, 28p) - deterministic symbolic inference is a viable substrate",
+      "Agent tooling commoditizing fast: OpenAI CLI (126p), Claude Duet (392p), OpenAI models coming to Google Cloud (294p), DuckDB 2.0 LTS (422p)",
+      "Macro wobble in the AI trade: Chinese stocks turn biggest losers as global AI trade stumbles (3p), Barclays cutting 5k jobs while increasing reliance on AI (8p), Palantir says it cannot shut off NATO AI systems"
+    ],
+    "internal_live_measured_1037Z": {
+      "queued_steps_total": 88,
+      "queued_by_kind": { "analyze": 76, "write_content": 6, "draft_tweet": 6 },
+      "queued_never_claimed": 88,
+      "oldest_queued_id": 93213,
+      "oldest_queued_created_at": "2026-10-22T06:39:56Z",
+      "oldest_queued_wait_min": 237,
+      "proposals_1h": 19,
+      "steps_succeeded_1h": 4,
+      "drain_per_hour_1h": 4,
+      "net_backlog_growth_per_hour": 15,
+      "proposals_1h_by_agent": { "observer": 12, "minion": 3, "scout": 2, "quill": 2, "xalt": 2, "sage": 2 },
+      "observer_self_emission_share_1h": "12/23 = 52%",
+      "insights_2h": 12,
+      "insights_that_are_mock_llm": 12,
+      "tweet_posted_ever": 0,
+      "zombie_running_steps": 6,
+      "zombie_running_oldest": "id 3612, running since 2026-03-28 (test-worker)",
+      "artifacts": "artifacts/provenance-probe (v0.1): corpus 120, refusal rate 1.0, false-accept 0.0, foreign harness 40/40 structure-sensitive, own laundering 0.051%"
+    }
+  },
+  "implications": [
+    "Do NOT chase discovery (OpenAI/Calif and Wiz already found the same PHP bug pair), disclosure coordination (OpenAI funds and writes the framework), triage (Wiz commercialized it), or patch-review quality (ToB's regression-hunt plugin owns that).",
+    "Do NOT compete on 'model judges agent' - that is ToB's and Pith's lane. Compete on the harness side: the refusal decision must come from a deterministic capability budget, and the receipt must be re-derivable offline with no key and no model.",
+    "LiteLLM 1.107.0 is the forcing datapoint for this cycle: a compromised package in the agent toolchain means the capability boundary must be declared and enforced by the harness, not assumed from the model's intent.",
+    "Sandboxing products (subst, Stack.menu) isolate but leave no auditable evidence - the empty lane is not isolation, it is ISOLATION + EVIDENCE in one artifact.",
+    "Internal priority remains CLAIM: 88 queued steps all with attempts=0 and worker_id=null, FIFO by id, drain ~4/h against ~19/h inflow. The v0.3 artifact ships from this cycle, not from the queue."
+  ],
+  "risks": [
+    "No credential in 19 cycles: no LLM key, no social key, tweet.posted is 0 for the fleet lifetime, and every insight is '[mock-llm]' - every external claim we make is untestable by us",
+    "88 queued steps, 0% claimed, ~15/h net backlog growth - attention, not compute, is the binding constraint on shipping",
+    "Our labelled corpus for capability violations depends on public agent transcripts, which are sparse and rarely disclose what the agent was allowed to touch - the labelling itself may not be reproducible",
+    "Deterministic enforcement is a harness feature that incumbents can trivially copy once we publish the spec; the moat is the re-derivation reputation, not the format",
+    "The refusal lane may be absorbed by the model platforms themselves (OpenAI CLI, Claude Duet) before a standalone artifact finds a buyer"
+  ],
+  "next_experiment": "E-S20 (execution contract v0.3 + refusal receipt). Within 72h: (1) build artifacts/execution-contract: a declared capability budget (files, hosts, commands) + declared blast radius + a harness-side refusal receipt, keeping cycle 17/18 guards (no llm.complete, no fetch, no node:http/https/net/tls/dns, no X509) and adding byte-identical output across 3 offline runs; (2) assemble 30 labelled agent transcripts with known capability violations and known legitimate refusals from public agent-authored sessions; (3) publish a confusion matrix for 'did the harness enforce the declared capability budget' (leak vs refusal) with a model-reviewed baseline row alongside; (4) get ONE outside party to re-run the receipt offline with no key and publish their output verbatim; (5) internally: fix the CLAIM path (88/88 queued have attempts=0, worker_id=null; claim_one_step orders by id asc) and cap observer self-emission at 52% of proposal flow; (6) if we miss a known capability violation a model baseline catches, or no outside party re-derives within 72h, kill the execution-contract lane and publish it as an open spec instead of a product.",
+  "diff_from_prev_cycle": "Cycle 18 (proposal 93313) rotated DOWNSTREAM from 'is this finding admissible' to 'what else did the agent change when it fixed it', and proposed a deterministic change receipt with pre/post effect hashes and a differential harness against 21 known Trail of Bits regressions. Cycle 19 rotates UPSTREAM instead of further downstream: the new forcing signal is that the AGENT TOOLCHAIN itself is now the attack surface (LiteLLM 1.107.0 credential stealer + backdoor shipped in an agent-infrastructure package, 527p) and that practitioners publicly ask for containment ('How do you sandbox your AI agent so it can't delete my files?', subst.scsoi.com AI agent sandbox, Pith refusing when it can't). The lane therefore moves from post-hoc evidence to PRE-EXECUTION CONTROL: what the agent was allowed to do, decided by a deterministic harness-side capability budget rather than by model intent, evidenced by a refusal receipt a stranger can re-derive offline with no key. Internal correction vs cycle 18: the drain is not zero - steps 93212/93211/93210/93209 succeeded at 10:36/10:33/10:25/10:09Z, so FIFO claim DOES work and started_at/finished_at ARE written; the defect is throughput (4 succeeded/h vs ~19 proposals/h, 88 queued all attempts=0, oldest waiting 237 min), and observer self-emission is still ~52% of proposal flow."
+}

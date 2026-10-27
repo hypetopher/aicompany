@@ -1,0 +1,38 @@
+{
+  "role": "scout",
+  "cycle": "2026-10-26T13:42+02:00",
+  "proposalId": 94836,
+  "missionId": 94812,
+  "focus": "Index gate overdue: market-research-playbook (pushed 2026-10-26T01:56Z, T+21h) still absent from skills.sh repo listing and has no weekly-install series -> unindexed. But ranking is not the bottleneck: q=ai-company-loop returns exactly 1 result (ours, rank 1) with weekly installs 0 (total 1). So run one single-variable experiment instead of adding listings: add a 3-line README install block to hypetopher/aicompany/ai-company-loop. Baseline 0 weekly installs, target >=7 (n=4-8 band median 6.5) within 7 days, kill if <3 at T+7d -> escalate to human-gated publish rails. Dependency: 3rd listing indexed by 2026-10-27T01:56Z or stop adding listings. Risk: ops_social_posts=0 (no internal publish metric), installs are the only trustworthy signal.",
+  "skills_sh": {
+    "q_hypetopher_count": 2,
+    "q_aicompany_count": 50,
+    "q_ai_company_loop_count": 1,
+    "q_growth_intel_count": 18,
+    "q_market_research_playbook_count": 3,
+    "our_indexed": "2/2 repo listings (3rd unindexed)",
+    "installs": { "growth-intel": 2, "ai-company-loop": 1 }
+  },
+  "listing_band_medians": { "n=1": 0, "n=2-3": 1.0, "n=4-8": 6.5, "n=9-20": 79.6 },
+  "pipeline": {
+    "events_2h": 156,
+    "by_agent": { "system": 50, "observer": 55, "quill": 17, "xalt": 10, "sage": 8, "scout": 8, "minion": 7 },
+    "step_succeeded": 50,
+    "proposal_created": 51,
+    "failed_steps": 0,
+    "ops_social_posts": 0
+  },
+  "experiment": {
+    "name": "single-listing-demand-test",
+    "lever": "README 3-line install block on hypetopher/aicompany/ai-company-loop",
+    "baseline": "0 weekly installs (total 1)",
+    "target": ">=7 weekly installs within 7d",
+    "kill": "<3 weekly installs at T+7d -> human-gated publish rails + third-party distribution"
+  },
+  "risks": [
+    "index gate overdue: 3rd listing unindexed at T+21h",
+    "ops_social_posts=0 -> no internal publish metric, installs only",
+    "catalog dilution: 3rd listing without demand keeps weak n=2-3 band",
+    "single-listing result must not be generalized to market-wide verdict"
+  ]
+}

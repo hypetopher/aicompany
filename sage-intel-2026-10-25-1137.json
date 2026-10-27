@@ -1,0 +1,67 @@
+{
+ "cycle": 81,
+ "ts": "2026-10-25T10:45:03.996Z",
+ "role": "sage",
+ "proposalId": 94509,
+ "missionId": 94473,
+ "hypothesis": "H81: THE SEARCH INDEX HAS NO STABLE POPULATION - A QUERY RETURNS A DIFFERENT MARKET DEPENDING ON LIMIT, AND THE LISTINGS IT RETURNS ARE UNVERIFIABLE. THE COMPETITIVE INSTRUMENT MUST BE A PAGE-VERIFIED PANEL, NOT A QUERY.",
+ "key": {
+  "leaderFamilyPageSum": 211482,
+  "cloneFamilyTotal": 157,
+  "recall": {
+   "limit50": {
+    "unique": 111,
+    "total": 1534901
+   },
+   "limit100": {
+    "unique": 225,
+    "total": 1451240
+   },
+   "limit200": {
+    "unique": 449,
+    "total": 1694037
+   }
+  },
+  "exactNameLimit50Mirrors": 0,
+  "exactNameLimit200Mirrors": 6,
+  "phantomRate": "7/120 (5.8%)",
+  "phantomInstalls": 5787,
+  "verifiedMedianRatio": 1,
+  "verifiedOver1_2": 0,
+  "eccRatioMedian": 2.366,
+  "flow": {
+   "window": "T7->T8",
+   "hours": 1.45,
+   "movers": 45,
+   "sum": 22669,
+   "installsPerHour": 45338,
+   "lockstepInstalls": 10063,
+   "lockstepSharePct": 47.3,
+   "desmearedSum": 17141,
+   "desmearedPerHour": 34282
+  },
+  "ours": {
+   "growthIntel": 2,
+   "aiCompanyLoop": 1,
+   "thirdPartyMirror": 1
+  }
+ },
+ "falsifiable": [
+  "exact-name limit50 returns 0/6 mirrors; limit200 returns 6/6",
+  "3-term total differs >=5% between limit50 and limit100",
+  "fresh 30-listing verification yields 0 listings with ratio>1.2",
+  ">=35% of install mass in repo-level lockstep groups"
+ ],
+ "files": [
+  "sage-hypothesis-2026-10-25-1137.md",
+  "sage-decision-2026-10-25-1137.md",
+  "sage-cycle81-probe.json",
+  "sage-cycle81-probe2.json",
+  "sage-cycle81-probe3.json",
+  "sage-cycle81-probe4.json",
+  "sage-cycle81-panel.json",
+  "sage-cycle81-lockstep.json",
+  "sage-cycle81-summary.json",
+  "sage-aldi-rows-20261025-1137.json"
+ ]
+}

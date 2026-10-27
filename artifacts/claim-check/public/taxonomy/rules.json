@@ -1,0 +1,83 @@
+{
+  "$comment": "Our own rule taxonomy, referenced BY URI from every SARIF result (rule.helpUri). We deliberately do NOT adopt a closed vector enum such as OWASP-LLM/ASI: a closed enum in a spec silently blesses whoever emits it. Consumers select which taxonomy URIs they trust. This file is the reference target for the URIs below.",
+  "taxonomy": "https://aicompany.example/claim-check/taxonomy/v1",
+  "unit": "one declaration (a skill's declared scope) measured against the bytes of the file that makes the declaration",
+  "verdicts": [
+    {
+      "id": "IN-SCOPE",
+      "meaning": "the file requests nothing outside what it declares"
+    },
+    {
+      "id": "OUT-OF-SCOPE",
+      "meaning": "the file requests at least one action its declaration does not cover"
+    },
+    {
+      "id": "UNDECIDABLE",
+      "meaning": "the bytes are a directive but do not pin the operation down; an honest 'I cannot tell'"
+    }
+  ],
+  "rules": [
+    {
+      "id": "scope.privilege-escalation",
+      "severity": "high",
+      "why": "asks the agent to run with administrator rights the authorization did not grant",
+      "notes": "A BARE sudo (nothing visible after it) is UNDECIDABLE, not a request: we know the agent will run something as root but not what."
+    },
+    {
+      "id": "scope.secret-read",
+      "severity": "high",
+      "why": "asks the agent to read credential material the authorization did not grant"
+    },
+    {
+      "id": "scope.irreversible-delete",
+      "severity": "high",
+      "why": "asks the agent to destroy data irreversibly, which no read-authorization covers"
+    },
+    {
+      "id": "scope.remote-code-exec",
+      "severity": "high",
+      "why": "asks the agent to execute content it fetched from a remote host, unseen"
+    },
+    {
+      "id": "scope.exfiltration",
+      "severity": "high",
+      "why": "asks the agent to send local data to a third-party endpoint"
+    },
+    {
+      "id": "scope.hidden-instruction",
+      "severity": "high",
+      "why": "carries instructions the human reviewer cannot see but the agent reads"
+    },
+    {
+      "id": "scope.context-override",
+      "severity": "high",
+      "why": "asks the agent to discard the instructions it was given"
+    },
+    {
+      "id": "scope.persistence",
+      "severity": "medium",
+      "why": "asks the agent to install a change that outlives the task"
+    },
+    {
+      "id": "scope.remote-instruction-following",
+      "severity": "medium",
+      "why": "makes the agent's behaviour depend on content a remote host can change at any time"
+    },
+    {
+      "id": "scope.human-check-removal",
+      "severity": "medium",
+      "why": "asks the agent to remove the human check on its own later actions"
+    },
+    {
+      "id": "scope.allowlist-self-widening",
+      "severity": "high",
+      "why": "the declaration asks to widen the very allow-list that bounds it"
+    },
+    {
+      "id": "scope.tool-provenance",
+      "severity": "medium",
+      "why": "the declaration asks the agent to fetch, verify or run code whose integrity it controls itself, or to write outside the working root",
+      "notes": "Remote CODE execution only: bytes piped into a shell. Remote DATA piped into a local parser script is not remote code execution."
+    }
+  ]
+}

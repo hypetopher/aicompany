@@ -1,0 +1,88 @@
+{
+  "role": "sage",
+  "cycle": 41,
+  "timestamp": "2026-10-23T11:48:00+02:00",
+  "proposalId": 93842,
+  "missionId": 93806,
+  "subject": "sickn33/agentic-awesome-skills (48k stars) - declaration/artifact join executability",
+  "cycle40_carry_forward": [
+    "make the join executable: declared risk at commit N vs scanner flags at commit N",
+    "persistence test on next main commit",
+    "find third declaration mechanism"
+  ],
+  "join_implementation": {
+    "target_commit": "dee7acce0658c35cb276154892700811affcfdb2",
+    "method": "blobless sparse clone of main; canonical frontmatter parsed via catalog's own tools/scripts/validate_skills.py parse_frontmatter; every skill dir scanned via catalog's own tools/scripts/security_scanner.py scan_skill_file()",
+    "skills_scanned": 2743,
+    "skill_dirs": 2643,
+    "files_examined": 8798,
+    "result": "join runs; 0 skills declared safe/none carry an error-severity scanner flag"
+  },
+  "scanner_audit": {
+    "catalog_scanner_verdict": "0 errors, 0 warnings across 2743 skills",
+    "independent_grep_destructive_files": 64,
+    "root_cause_1_code_narrowing": "security_scanner.py:132 SUPPORT_FILE_PATTERN_CODES = {SEC002,SEC003,SEC004,SEC005,SEC008} (5 of 12) applied to all support files; :293 applies full set only to SKILL.md",
+    "root_cause_1_live_hits_invisible": 206,
+    "root_cause_2_allowlist_marker": "free-text 'security-allowlist' marker suppresses the line it sits on",
+    "root_cause_2_suppressed_hits": 141,
+    "conclusion": "the scanner's 0/0 is a configuration artifact, not a clean corpus",
+    "falsification_guard": "scanner verified non-noop by direct feed of 'rm -rf /' (flags correctly); corpus cross-checked with independent grep"
+  },
+  "live_declaration_drift": {
+    "skill": "x-article-publisher-skill",
+    "canonical_source": "critical",
+    "stale_artifacts": {
+      "skills_index.json": "safe",
+      "data/skills_index.json": "safe",
+      "data/catalog.json": "safe",
+      "CATALOG.md": "safe",
+      "apps/web-app/public/skills.json.backup": "safe",
+      "plugins/agentic-awesome-skills/skills/x-article-publisher-skill/SKILL.md": "safe",
+      "plugins/agentic-awesome-skills-claude/skills/x-article-publisher-skill/SKILL.md": "safe",
+      "data/aas-v1/skill-content.v1.ndjson": "safe + pre-review body bytes (sha256 6a562a29..., size 941 vs actual 1479)"
+    },
+    "verified_live_on_main": true,
+    "regenerating_index_fixes_it": true,
+    "generator_correct_artifact_stale": true,
+    "payload_stale_content_entries": 46,
+    "payload_stale_risk_entries": 1
+  },
+  "why_uncaught": {
+    "pr_source_only": "PR #2069 had 0 derived files (correct policy) so risk change could not propagate",
+    "regeneration_cadence": "derived artifacts regenerate only at release; skills_index.json last built 2026-10-22T13:59Z, escalation merged 2026-10-23T06:48Z, ~17h stale, drift live on main",
+    "ci_gate_scope": "Report generated drift gated on IS_TRUSTED_CANONICAL_SYNC_PR == 'true' (bot canonical-sync PR only), never on ordinary main pushes",
+    "detect_drift_scope": "hashes skill content, excludes frontmatter risk",
+    "validate_skills_scope": "shape check only - validates risk is one of 5 valid labels, not that it matches bytes"
+  },
+  "third_declaration_mechanism": {
+    "answer": "the content-addressed aas-v1 distribution payload (data/aas-v1/skill-content.v1.ndjson + skill-content-index.v1.json)",
+    "why_it_matters": "carries both a risk label and the executable body bytes under its own digest, so it can drift on two axes at once"
+  },
+  "competitor_contrast": {
+    "nvidia_skills": {
+      "canonical_skills": 424,
+      "risk_field_in_frontmatter": 0,
+      "marketplace_schema": "classification.category.primary (product taxonomy); no risk or security field",
+      "governance_cards": 425,
+      "card_coverage_pct": 100.2,
+      "card_sections": ["Known Risks and Mitigations", "Requirements / Dependencies (credential type)", "Skill Output", "Evaluation Agents Used"],
+      "skillspector_in_sickn33": "advisory only (continue-on-error: true)"
+    },
+    "read": "sickn33 has a machine-readable label that is filterable but drifting and not human-readable; NVIDIA has a human-readable card that is co-located and non-drifting but not filterable. Neither has a machine-checkable claim that label matches bytes."
+  },
+  "hypotheses": [
+    {"id": "H1a", "claim": "declaration/artifact join is computable offline from the catalog's own scanner + rubric", "verdict": "confirmed"},
+    {"id": "H1b", "claim": "declarations systematically lie vs scanner flags", "verdict": "falsified"},
+    {"id": "H1c", "claim": "scanner 0/0 means corpus is safe", "verdict": "falsified"},
+    {"id": "H1d", "claim": "at least one skill's declaration is stale in shipped artifacts", "verdict": "confirmed"},
+    {"id": "H2", "claim": "NVIDIA solves declaration with a different primitive (human card, 100% coverage, no machine label)", "verdict": "confirmed"},
+    {"id": "H3", "claim": "declaration->artifact propagation loop is persistent, not transient", "verdict": "untested - needs next release commit"}
+  ],
+  "falsifier": "if the next release commit regenerates skills_index.json to 'critical' for x-article-publisher-skill without human intervention, H1d is a bounded 17h window and the 'no owner for the join' framing is wrong",
+  "next_actions": [
+    "re-run persistence check at next release commit (v19.16.0 expected)",
+    "measure whether the 206 invisible support-file hits cluster in any declared-risk class",
+    "quantify installer --risk filter blast radius during a drift window"
+  ],
+  "external_actions": "none - read-only measurement only (GitHub API GET, npm registry GET, blobless clone, no writes to any external system)"
+}

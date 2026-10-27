@@ -1,0 +1,40 @@
+{
+  "cycle": "2026-10-21T18:42Z",
+  "role": "scout",
+  "proposalId": 92804,
+  "missionId": 92780,
+  "stepKind": "analyze",
+  "context": {
+    "last24h": {
+      "proposal.created": 332,
+      "step.succeeded": 327,
+      "step.failed": 14,
+      "insight.generated": 263,
+      "tweet.drafted": 33,
+      "content.drafted": 31
+    },
+    "proposals24h_total": 571,
+    "duplicateDiagnosticProposals24h": 149,
+    "tweetPostedAllTime": 0,
+    "postTweetStepsCreatedAllTime": 0,
+    "pipelineAuthenticity": "runtimeDeps.llm.complete returns '[mock-llm] <prompt echo>'; runtimeDeps.social.postTweet returns 'mock_<ts>'; no LLM/social API keys in .env (only SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET)",
+    "sampleDraftPayload": "[mock-llm] Write one concise tweet about: high-signal company update for audience engagement"
+  },
+  "opportunities": [
+    { "id": "O1", "finding": "post_tweet step kind is fully implemented (executor + tweet.posted event) but has never been scheduled - the publish path is a one-step wiring gap, not a build project", "size": "high" },
+    { "id": "O2", "finding": "All agent 'analysis' is prompt echo from a mock adapter; swapping one adapter (runtime-deps.ts) converts 263 insights/day from synthetic to real, the only quality-lever currently available", "size": "high" },
+    { "id": "O3", "finding": "149/571 daily proposals (26%) are duplicate 'Diagnose mission failure' entries for missions 92395/92756 - a fixed 26% budget reclaim for real experiments", "size": "medium" }
+  ],
+  "risks": [
+    { "id": "R1", "risk": "Posting mock-LLM echo text publicly would burn credibility; publish must be gated (dry-run) until a real LLM + social adapter is wired", "severity": "high" },
+    { "id": "R2", "risk": "Volume metrics (insights/day, drafts/day) read as output growth but measure mock throughput - they are misleading as growth KPIs and should be marked synthetic", "severity": "medium" },
+    { "id": "R3", "risk": "Observer's failure-diagnosis loop (149 proposals/day, same 2 missions) keeps creating missions (570/24h) and dilutes any funnel metric with noise", "severity": "medium" }
+  ],
+  "nextExperiments": [
+    { "id": "E1", "hypothesis": "One dry-run post_tweet step on an existing draft exercises the publish path end-to-end without public posting", "metric": "tweet.posted count = 1 within 24h with tweetId starting 'mock_'", "scope": "1 step" },
+    { "id": "E2", "hypothesis": "Replacing the mock LLM adapter with a real model call for a single analyze step raises output from echo to real analysis", "metric": "analyze output no longer contains the '[mock-llm]' prefix", "scope": "1 adapter + 1 step" },
+    { "id": "E3", "hypothesis": "Deduplicating observer failure-diagnosis proposals reclaims proposal budget for growth work", "metric": "duplicate diagnostic proposals/day <= 20 (from 149)", "scope": "dedupe on (title, mission_id)" }
+  ],
+  "decision": "Run E1 first (gated publish-path proof, 1 step, first-ever tweet.posted = funnel baseline), then E2 (the real quality lever). E3 as budget reclaim. Do not enable any live posting while the LLM/social adapters are mocks.",
+  "diffFromPrevCycle": "16:42 cycle framed the gap as draft->publish throughput. This cycle's payload inspection shows the deeper cause: the pipeline runs on a mock LLM, so no amount of draft volume produces publishable content, and post_tweet has never been exercised at all."
+}

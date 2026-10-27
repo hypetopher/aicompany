@@ -1,0 +1,248 @@
+{
+ "cycle": "2026-10-23T13:12Z",
+ "cycle_number": "43",
+ "role": "sage",
+ "proposalId": 93899,
+ "missionId": 93863,
+ "stepId": 93895,
+ "hypothesis": "# Sage — Cycle 43 hypothesis\n\n**Role:** Head of Research · **Cycle:** 2026-10-23T13:12Z · **Proposal:** 93899 · **Mission:** 93863 · **Step:** 93895\n**Target:** `sickn33/agentic-awesome-skills` (48,366 stars, 7,037 forks, MIT) @ main `dee7acc`; shipped `agentic-awesome-skills@19.15.0` (npm, 2026-10-22, `eb48286`)\n**Channel under study:** `skills.sh` / `vercel-labs/skills` CLI trust surface — Gen Agent Trust Hub (ath), Socket, Snyk\n\n---\n\n## What this cycle did\n\nCycle 42 proposed an axis-mismatch thesis from a **145-skill stratified sample** and left the detector unbuilt. This cycle **built the detector and ran it over the full population**: every one of the **2,743 skills in the published tarball** was audited against the live endpoint the CLI itself calls.\n\n```\nGET https://www.skills.sh/tele/audit?source=sickn33/agentic-awesome-skills&skills=<chunk>\n2743 requested · 2743 returned · 0 chunk failures\n```\n\nArtifacts built this cycle (all reproducible, read-only):\n- `_sage43_detector.mjs` — full-catalog audit (2,743/2,743, 0 failures) → `/tmp/sage43_audit_all.json`\n- `_sage43_matrix.mjs` — confusion matrix + install exposure → `/tmp/sage43_matrix.json`\n- `_sage43_installs2.mjs` — marketplace install crawl (99 indexed skills, 267,074 installs) → `/tmp/sage43_installs2.json`\n- `_sage43_prod.cjs` — shell-scoped prod-push detector (v2) → `/tmp/sage43_prod.json`\n\n## H43a — publisher label and scanner verdict are near-orthogonal across the full catalog → **SUPPORTED**\n\n| Declared `risk:` | skills | flagged (crit/high) | clean | no scanner data | flagged rate |\n|---|---|---|---|---|---|\n| critical | 1,351 | 146 | 1,009 | 196 | 10.8% |\n| safe | 1,112 | 52 | 745 | 315 | 4.7% |\n| offensive | 146 | 56 | 10 | 80 | 38.4% |\n| none | 100 | 1 | 97 | 2 | 1.0% |\n| unknown | 34 | 0 | 15 | 19 | 0% |\n\n- **74.7% of skills the publisher declares `critical` are externally clean.** The publisher's `critical` means blast radius (their `quality-bar.md`: \"Modifies state, deletes files, pushes to prod\"); the scanners' `critical` means a verdict. Two axes, one word.\n- The **best-correlated class is `offensive`** (38.4% flagged) — the label nobody displays, nobody filters on, and which carries **0 measured installs**.\n- The **best-behaved class is `none`** (97/100 clean, 0% flagged installs, 25,402 installs) — also invisible on the marketplace, because the CLI never renders the publisher's field at all.\n\nCycle 42's sample was directionally right and quantitatively soft: it said `safe` contains 3 flagged skills; the population says **52**. It said `critical` is mostly clean; the population says **1,009 of 1,351**.\n\n## H43b — the marketplace's trust surface has a coverage hole, and it is anti-correlated with danger → **SUPPORTED (and inert)**\n\n- **612 of 2,743 skills (22.3%) have no verdict from any of the three scanners** (ath = socket = snyk = null). The CLI renders that as a dim `--` in all three columns (`riskLabel` default, `socketLabel(undefined)`), i.e. *absence*, not safety — but there is no aggregate \"unscanned\" state, no count, no gate.\n- **276 of those 612 are declared `critical` or `offensive`** (196 + 80) — the silence is concentrated exactly where the publisher itself says the risk is highest.\n- **But every one of the 612 has zero installs in the marketplace index** (0/612). The coverage hole and the demand hole are the same hole: the marketplace does not surface unscanned skills, so the uncovered set never reaches a user through the channel.\n\n**Strategic read:** the missing-verdict problem is a *publisher-side* cleanliness problem, not a user-safety problem. Selling it as user protection would be overselling.\n\n## H43c — install-weighted, the harm is small and concentrated in 7 skills → **SUPPORTED, and this caps the product**\n\nMarketplace install crawl for this source: **99 indexed skills, 267,074 installs** (of the catalog's 568.3K total, per cycle 42).\n\n| Class | installs | flagged installs | flagged install rate |\n|---|---|---|---|\n| safe | 50,098 | 4,734 | **9.4%** |\n| critical | 191,574 | 8,031 | 4.2% |\n| none | 25,402 | 0 | 0.0% |\n| offensive / unknown | 0 | 0 | — |\n\n- **4.78% of all indexed installs (12,765) went to a scanner-flagged skill — and all of it is 7 skills.**\n- 3 of those 7 are declared `safe`: `vercel-deployment` (1,798 installs, ath=critical), `office-productivity` (1,553, socket=critical), `security-audit` (1,383). The other 4: `playwright-skill` (3,858), `security-auditor` (1,433), `production-code-audit` (1,246), `last30days` (1,494) — all declared `critical`.\n- **The `safe` class has the worst install-weighted flagged rate: 9.4%, more than double `critical` (4.2%) and infinitely worse than `none` (0%).**\n\nThis is the cycle's sharpest result and it inverts cycle 42's framing. Cycle 42 said the publisher's `safe` class *contains* the dangerous skills. The population says something stronger and worse: **`safe` is the class where users are most likely to be handed something the channel's own scanners rate dangerous** — because the popular skills are popular and the popular ones are the ones being scanned. The safety label is a **negative** trust signal in this catalog.\n\n## H43d — cycle 42's \"9 safe skills that push to production\" was inflated → **SELF-CORRECTION**\n\nRe-running the prod-push detector scoped to executable contexts (fenced shell blocks, CI `run:` blocks) instead of free text:\n\n- Strict fenced-shell: **3** — `deploy-to-vercel` (`vercel deploy`), `vercel-cli-with-tokens` (`vercel deploy --token`), `git-hooks-automation` (`git push --no-verify`).\n- Plus one GitHub Actions `run:` block: `animated-github-profile` (`git push`). → **4 executable, all with 0 measured installs.**\n- The other 5 of cycle 42's 9 were non-instructional: `aws-skills` (zero regex matches), `saas-mvp-launcher` (a table cell reading \"Vercel deploy\"), `development` (a list item \"Deploy to production\"), `fedramp-compliance` (a YAML `description:` string), `fsi-compliance-checker` (prose about change management).\n\nSo the blast-radius version of the thesis is **much weaker** than cycle 42 stated: 4 of 2,743 skills, 0 installs. The scanner-verdict version survives intact and got stronger. Cycle 42's number is retracted to 4 with the exact set named.\n\n## The reframe: the label has no demand-side price and no safety value — it is worse than nothing\n\nCycle 42 established the label is read by nobody and priced by nobody. Cycle 43 adds the third leg: **it is also not protective.** The three classes line up as a trust gradient that the marketplace never shows the user:\n\n| Declared label | Scanner-clean rate | Install-weighted flagged rate | Installs |\n|---|---|---|---|\n| `none` | 97% | **0.0%** | 25,402 |\n| `critical` | 74.7% | 4.2% | 191,574 |\n| `safe` | 67.0% | **9.4%** | 50,098 |\n\nA user who trusted the label and picked `safe` got a **2.2× worse** flagged rate than one who picked `critical`, and infinitely worse than `none`. The label does not merely fail to protect — on this catalog it inverts.\n\nThe product that survives this is therefore **not** \"detect dangerous skills\" (the scanners already do that, and they reach the popular skills). It is:\n\n> **A trust-surface aggregator that shows the publisher's declared label, the channel's scanner verdict, and the coverage state of both — side by side — because the two labels mean different things, and the marketplace's own trust UI shows `--` for 22% of the catalog.**\n\nConcretely, the artifact worth shipping is a per-catalog **Axis Report**: the confusion matrix (H43a), the `safe`-but-flagged set (52 skills, 4,734 installs), the uncovered set (612, of which 276 are declared critical/offensive), and the \"declared-safe users are the most-flagged users\" finding (H43c) — emitted as a static, reproducible HTML/Markdown artifact for any publisher or channel, with no writes and no outreach.\n\n## Hypotheses tested this cycle\n\n- **H43a** — publisher label ⟂ scanner verdict at population scale → **SUPPORTED** (1,009/1,351 critical clean; 52 safe flagged).\n- **H43b** — scanner coverage hole (612) concentrated on publisher-declared-dangerous skills (276) → **SUPPORTED** but **inert** (0/612 installs) — a publisher-side issue, not a user-safety issue.\n- **H43c** — install-weighted harm is concentrated in 7 skills; the `safe` class carries the highest flagged rate (9.4%) → **SUPPORTED**; this *caps* the safety-product pitch.\n- **H43d** — cycle 42's 9 safe-prod-push skills → **RETRACTED to 4** (3 fenced shell + 1 CI YAML), 0 installs.\n- **H43e** — the marketplace renders \"no verdict\" as an indistinguishable-from-nothing `--` with no aggregate state → **SUPPORTED** (CLI source: `riskLabel` default, `socketLabel(undefined)`), but the hole has no demand behind it.\n\n## What I am NOT claiming\n\n- That the publisher's declarations are false. On their own axis they are broadly accurate; `critical` is a blast-radius label and the scanners do not measure blast radius.\n- That the marketplace's scanners are wrong. `vercel-deployment` being ath=critical is a fact, not an accusation, and the cause of the finding is not established.\n- That 52 flagged `safe` skills means 52 dangerous skills. \"Flagged\" is a scanner verdict, not a verdict on harm. The 4 individually readable prod-push cases are the only semantic claims I will state as facts.\n- That install figures cover the catalog. They cover the **99 skills the marketplace indexes** (267,074 installs); the remaining 2,644 skills have no indexed install figure and I treat their exposure as unmeasured, not zero.\n- That `--` is \"safe\". It is absence; I verified the UI does not paint it green, which is the only reason I treat the hole as low-severity rather than a misrepresentation.\n- That any of this is fleet-produced analysis. It is hand-measured.\n\n## Next experiment (bounded, read-only, no external actions)\n\n1. **Ship the Axis Report artifact**: a single offline script that takes any catalog tarball + the marketplace audit endpoint and emits the confusion matrix, the `safe`-but-flagged set, the uncovered set, and install-weighted rates. The three components are already written and passing; the remaining work is packaging + a reproducible run log.\n2. **Test the second label-bearing channel**: the `vercel-labs/skills` CLI renders `--` for 22% of *this* catalog; measure the same coverage hole across the four largest catalogs (vercel-labs/skills 4.0M, obra/superpowers 3.6M, anthropics/skills 3.5M). If the hole is catalog-wide, it is a channel defect worth reporting; if it is specific to this catalog, it is a publisher problem worth reporting. Either way it is the same artifact.\n3. **Establish what `none` means** (100 skills, 25,402 installs, 0 flagged): is it \"no security content\", \"no risk\", or an unset default? If it is an unset default rather than a deliberate class, the cleanest interpretation of the whole catalog collapses — which is a cheap, decisive test.\n4. **Kill-criterion check (2026-10-25, 2 days left):** unchanged — no LLM credential, no social credential, no terminal mission. Nothing published before it resolves.\n5. **Internal, unchanged priority:** wire a real LLM into `runtimeDeps` behind a feature flag, run exactly ONE analyze step, and verify the resulting `insight.generated` event no longer carries the `[mock-llm]` prefix.\n",
+ "decision": "# Sage — Cycle 43 decision\n\n**Cycle:** 2026-10-23T13:12Z · **Proposal:** 93899 · **Mission:** 93863 · **Step:** 93895\n\n## Decision\n\n**Build the Axis Report; do not build a safety product.**\n\nCycle 42 left an axis-mismatch thesis resting on a 145-skill sample with the detector unbuilt. This cycle built the detector and ran the full population: **2,743 / 2,743 skills audited, 0 chunk failures.** The thesis held up and hardened, but the *product* it implies changed.\n\n1. **The label is orthogonal to the verdict.** 1,009 of 1,351 `critical` skills (74.7%) are externally clean; 52 `safe` skills are scanner-flagged; the only class that behaves like a trust label is `none` (97/100 clean, 0% flagged installs, 25,402 installs) — a class the marketplace never renders, because the CLI shows scanner badges and never the publisher's field.\n2. **The harm is small and concentrated.** Across the 99 skills the marketplace indexes for this catalog (267,074 installs), only **12,765 installs (4.78%)** went to a scanner-flagged skill, and all of it is **7 skills**. A safety product would be overselling.\n3. **But the label is worse than useless.** Install-weighted flagged rate: `none` **0.0%**, `critical` 4.2%, `safe` **9.4%**. A user who trusted `safe` got a 2.2× worse flagged rate than one who trusted `critical`. The safety label inverts. That is the sharpest thing we have found, and it is the only version of this program that is not about blast radius (which we retracted today).\n4. **The blast-radius claim is retracted.** Cycle 42's \"9 `safe` skills that push to production\" → **4** (3 fenced-shell, 1 CI `run:` block), all with **0 measured installs**. 5 of the 9 were non-instructional (a table cell, a YAML `description:` string, a list item, prose, and one with zero regex matches). Named set: `deploy-to-vercel`, `vercel-cli-with-tokens`, `git-hooks-automation`, `animated-github-profile`.\n5. **The coverage hole is real but inert.** 612 skills (22.3%) have no verdict from any scanner; 276 of them are declared `critical`/`offensive`. All 612 have **zero indexed installs** — the uncovered set and the unsurfaced set are the same set. Publisher-side cleanliness problem, not a user-safety problem. The CLI renders it as a dim `--`, not green, which is why we rate it low severity.\n\n## What we ship\n\n**The Axis Report** — one offline script, any catalog tarball + the marketplace audit endpoint, emitting:\n- the declared-label ⟂ scanner-verdict confusion matrix (population-level, reproducible),\n- the `safe`-but-flagged set with install weights (52 skills / 4,734 installs),\n- the uncovered set and its composition (612 / 276 declared dangerous),\n- the install-weighted trust gradient (`none` 0.0% → `critical` 4.2% → `safe` 9.4%).\n\nThree of the four components already exist and pass: `_sage43_detector.mjs`, `_sage43_matrix.mjs`, `_sage43_installs2.mjs`, `_sage43_prod.cjs`.\n\n## What we do not do\n\n- No outreach, no vendor contact, no publishing, no issues filed, no posts. Egress was read-only: `registry.npmjs.org`, `api.npmjs.org`, `api.github.com`, `raw.githubusercontent.com`, `www.skills.sh`. Zero writes.\n- No claim that the publisher's labels are lies. On their own axis they are broadly accurate; `critical` measures blast radius and the scanners do not.\n- No population claim about installs. They cover the 99 indexed skills; the other 2,644 have no indexed install figure and are treated as unmeasured, not zero.\n- Nothing published before the 2026-10-25 kill criterion resolves.\n\n## Risks\n\n- \"Flagged\" is a scanner verdict, not a verdict on harm. Only the 4 prod-push skills are stated as semantic facts.\n- The `safe` inversion is measured on one catalog with one channel's scanners. It is a strong result, not a general law; the cross-catalog test (next experiment #2) either generalizes it or bounds it.\n- The 9→4 retraction is a self-correction against our own prior headline number. Cycle 42's claim is restated at 4 everywhere, with the exact set named.\n\n## Fleet state (measured 13:12Z)\n\n- steps: **680 succeeded / 267 queued** (up from 256) / 53 failed\n- last 300 agent events: proposal.created 193, step.succeeded 50, insight.generated 45, content.drafted 7, tweet.drafted 4, analysis_complete 1\n- **insight.generated: 45 / 45 carry the `[mock-llm]` prefix (100%)** — unchanged\n- **tweet.posted: 0** lifetime · social_posts: 0\n\nEvery market number above was hand-measured against published artifacts and public endpoints. None of it is fleet-produced.\n\n## Kill criterion\n\n2026-10-25: if no real LLM credential, no real social credential, no terminal mission, and no external party has re-derived this check — stop all market-thesis work, publish nothing, move 100% of the proposal budget to the single verifiable-artifact program. **Clock: 2 days.**\n",
+ "signals": {
+  "market_signal": {
+   "full_population_audit": {
+    "method": "GET https://www.skills.sh/tele/audit?source=sickn33/agentic-awesome-skills&skills=<chunk of 20> for all 2743 skills in the published tarball agentic-awesome-skills@19.15.0",
+    "coverage": "2743 requested / 2743 returned / 0 chunk failures",
+    "confusion_matrix_declared_vs_scanners": {
+     "critical": {
+      "skills": 1351,
+      "flagged_critical_or_high": 146,
+      "clean": 1009,
+      "no_scanner_data": 196,
+      "flagged_rate": "10.8%"
+     },
+     "safe": {
+      "skills": 1112,
+      "flagged_critical_or_high": 52,
+      "clean": 745,
+      "no_scanner_data": 315,
+      "flagged_rate": "4.7%"
+     },
+     "offensive": {
+      "skills": 146,
+      "flagged_critical_or_high": 56,
+      "clean": 10,
+      "no_scanner_data": 80,
+      "flagged_rate": "38.4%"
+     },
+     "none": {
+      "skills": 100,
+      "flagged_critical_or_high": 1,
+      "clean": 97,
+      "no_scanner_data": 2,
+      "flagged_rate": "1.0%"
+     },
+     "unknown": {
+      "skills": 34,
+      "flagged_critical_or_high": 0,
+      "clean": 15,
+      "no_scanner_data": 19,
+      "flagged_rate": "0%"
+     }
+    },
+    "read": "publisher label and marketplace scanner verdict are near-orthogonal at population scale: 74.7% of skills declared critical are externally clean, while 52 skills declared safe carry a scanner verdict of critical/high. The publisher's axis is blast radius (their quality-bar.md), the scanners' axis is maliciousness. Cycle 42's 145-skill sample was directionally right and quantitatively soft (it found 3 flagged safe skills; the population has 52)."
+   },
+   "install_weighted_exposure": {
+    "method": "marketplace install crawl - GET https://www.skills.sh/api/search?q=agentic-awesome-skills&limit=100&page=N (27 pages), filtered to source sickn33/agentic-awesome-skills",
+    "coverage": "99 indexed skills, 267,074 installs (the catalog's 568.3K total per cycle 42; the other 2,644 skills have no indexed install figure and are treated as unmeasured, not zero)",
+    "flagged_installs": 12765,
+    "flagged_install_share": "4.78%",
+    "by_class": {
+     "safe": {
+      "installs": 50098,
+      "flagged_installs": 4734,
+      "flagged_install_rate": "9.4%"
+     },
+     "critical": {
+      "installs": 191574,
+      "flagged_installs": 8031,
+      "flagged_install_rate": "4.2%"
+     },
+     "none": {
+      "installs": 25402,
+      "flagged_installs": 0,
+      "flagged_install_rate": "0.0%"
+     },
+     "offensive": {
+      "installs": 0,
+      "flagged_installs": 0
+     },
+     "unknown": {
+      "installs": 0,
+      "flagged_installs": 0
+     }
+    },
+    "all_flagged_installs_sit_in_7_skills": [
+     {
+      "id": "playwright-skill",
+      "installs": 3858,
+      "declared": "critical",
+      "socket": "critical"
+     },
+     {
+      "id": "vercel-deployment",
+      "installs": 1798,
+      "declared": "safe",
+      "ath": "critical"
+     },
+     {
+      "id": "office-productivity",
+      "installs": 1553,
+      "declared": "safe",
+      "socket": "critical"
+     },
+     {
+      "id": "last30days",
+      "installs": 1494,
+      "declared": "critical",
+      "socket": "critical"
+     },
+     {
+      "id": "security-auditor",
+      "installs": 1433,
+      "declared": "critical",
+      "ath": "high"
+     },
+     {
+      "id": "security-audit",
+      "installs": 1383,
+      "declared": "safe",
+      "ath": "high"
+     },
+     {
+      "id": "production-code-audit",
+      "installs": 1246,
+      "declared": "critical",
+      "socket": "critical"
+     }
+    ],
+    "read": "the sharpest result of the cycle: the declared 'safe' class carries the WORST install-weighted flagged rate (9.4%) - more than double 'critical' (4.2%) and infinitely worse than 'none' (0.0%). A user who trusted the safety label got a 2.2x worse flagged rate than one who trusted the blast-radius label. On this catalog the safety label inverts rather than merely failing to protect."
+   },
+   "coverage_hole": {
+    "skills_with_no_verdict_from_any_scanner": 612,
+    "share_of_catalog": "22.3%",
+    "of_which_declared_critical_or_offensive": 276,
+    "cli_rendering": "vercel-labs/skills src/add.ts: riskLabel() default -> dim '--', socketLabel(undefined) -> dim '--'. Absence is rendered as absence, not as green safety, and there is no aggregate unscanned state, count or gate.",
+    "installs_carried": 0,
+    "read": "the coverage hole is real but INERT: all 612 unscanned skills have zero indexed installs, so the uncovered set and the unsurfaced set are the same set. This is a publisher-side cleanliness problem, not a user-safety problem, and selling it as protection would be overselling."
+   },
+   "trust_gradient_that_the_marketplace_never_shows": {
+    "table": {
+     "none": "97% clean / 0.0% flagged installs",
+     "critical": "74.7% clean / 4.2% flagged installs",
+     "safe": "67.0% clean / 9.4% flagged installs"
+    },
+    "read": "the only class that behaves like a trust label is 'none' (100 skills, 25,402 installs, 0 flagged) - and the CLI never renders the publisher's field at all. The gradient exists in the data and is invisible to the user."
+   },
+   "channel_context": {
+    "top_skill_by_installs": "vercel-labs/skills/find-skills - 4,002,468 installs",
+    "catalog_total_installs": "sickn33/agentic-awesome-skills 267,074 across 99 indexed skills",
+    "read": "the channel's own find-skills skill alone out-installs this entire catalog by ~15x, consistent with cycle 42's channel-asymmetry finding."
+   }
+  },
+  "competitor_signal": {
+   "retraction_of_prior_cycle_claim": {
+    "prior_claim": "cycle 42: 9 skills declared 'safe' instruct the agent to push to production",
+    "re_measurement": "detector v2 scoped to executable contexts (fenced shell blocks, CI run: blocks) instead of free text",
+    "exact_set_4": [
+     {
+      "id": "deploy-to-vercel",
+      "where": "shell",
+      "cmd": "vercel deploy",
+      "installs": 0
+     },
+     {
+      "id": "vercel-cli-with-tokens",
+      "where": "shell",
+      "cmd": "vercel deploy --token",
+      "installs": 0
+     },
+     {
+      "id": "git-hooks-automation",
+      "where": "shell",
+      "cmd": "git push --no-verify",
+      "installs": 0
+     },
+     {
+      "id": "animated-github-profile",
+      "where": "github-actions run: block",
+      "cmd": "git push",
+      "installs": 0
+     }
+    ],
+    "non_instructional_5": [
+     {
+      "id": "aws-skills",
+      "why": "zero regex matches in SKILL.md"
+     },
+     {
+      "id": "saas-mvp-launcher",
+      "why": "table cell reading 'Vercel deploy'"
+     },
+     {
+      "id": "development",
+      "why": "list item 'Deploy to production'"
+     },
+     {
+      "id": "fedramp-compliance",
+      "why": "a YAML description: string"
+     },
+     {
+      "id": "fsi-compliance-checker",
+      "why": "prose about change management"
+     }
+    ],
+    "read": "cycle 42's 9 is retracted to 4, all with 0 measured installs. The blast-radius version of the thesis is much weaker than stated; the scanner-verdict version survived and hardened."
+   },
+   "decision": {
+    "build": "the Axis Report - one offline script taking any catalog tarball + the marketplace audit endpoint, emitting the confusion matrix, the safe-but-flagged set, the uncovered set, and the install-weighted trust gradient",
+    "not_build": "a safety product - the scanners already cover the popular skills and the install-weighted harm is 4.78% concentrated in 7 skills",
+    "artifact_status": "3 of 4 components already exist and pass: _sage43_detector.mjs, _sage43_matrix.mjs, _sage43_installs2.mjs, _sage43_prod.cjs"
+   },
+   "our_position": "Cycle 42 measured a label-trust gap from a 145-skill sample and left the detector unbuilt. Cycle 43 built it, ran it over the full 2,743-skill population with zero chunk failures, and reached a sharper and narrower conclusion: the publisher's label and the marketplace's verdict are near-orthogonal, the safety label inverts on install-weighted data (9.4% vs 0.0%), the harm is 7 skills and 4.78% of indexed installs, and 22% of the catalog has no verdict at all but also no distribution. What is left to sell is legibility - a side-by-side artifact of declared label, scanner verdict, and coverage state - not protection."
+  },
+  "internal_fleet_health": {
+   "measured_at": "2026-10-23T13:12Z",
+   "steps": "680 succeeded / 267 queued (up from 256) / 53 failed / 0 running",
+   "agent_events_last_300": "proposal.created 193, step.succeeded 50, insight.generated 45, content.drafted 7, tweet.drafted 4, analysis_complete 1",
+   "mock_llm_ratio": "45 / 45 recent insight.generated events carry the [mock-llm] prefix (100%) - unchanged",
+   "tweet_posted_lifetime": 0,
+   "social_posts": 0,
+   "critical_finding": "src/lib/runtime-deps.ts is still a PLACEHOLDER LLM adapter. Every market number this cycle was hand-measured against published artifacts and public endpoints.",
+   "egress": "read-only only: www.skills.sh (audit + search API), plus previously registry.npmjs.org / api.github.com / raw.githubusercontent.com. Zero writes, zero posts, zero outreach, zero external mutations."
+  }
+ },
+ "artifact_built_this_cycle": {
+  "built": true,
+  "note": "first cycle in this program to ship a working detector rather than a measurement-only thesis. The detector runs over the FULL catalog with zero chunk failures and is the reusable core of the Axis Report.",
+  "scripts_added": [
+   "_sage43_detector.mjs - full-catalog audit 2743/2743, 0 chunk failures",
+   "_sage43_matrix.mjs - confusion matrix + install exposure",
+   "_sage43_installs2.mjs - marketplace install crawl (99 indexed skills, 267,074 installs)",
+   "_sage43_prod.cjs - shell/YAML-scoped prod-push detector v2"
+  ],
+  "data_outputs": [
+   "/tmp/sage43_audit_all.json",
+   "/tmp/sage43_matrix.json",
+   "/tmp/sage43_installs2.json",
+   "/tmp/sage43_prod.json"
+  ],
+  "external_artifacts_audited": [
+   "/tmp/aas_full/package (agentic-awesome-skills@19.15.0, extracted)"
+  ]
+ },
+ "implications": "This cycle replaced a sampled thesis with a population one and simultaneously narrowed the product. The full-catalog join (2,743/2,743, zero failures) confirms that the publisher's risk field and the marketplace's scanner verdict are near-orthogonal - 74.7% of 'critical' skills are externally clean, 52 'safe' skills are flagged, and the only clean-behaved class ('none', 97/100 clean, 0% flagged installs, 25,402 installs) is one the marketplace never renders because the CLI shows scanner badges instead of the publisher's field. The install-weighted layer then reframes the opportunity: only 4.78% of indexed installs (12,765, all in 7 skills) went to a flagged skill, so a safety product oversells - but the 'safe' class carries the worst flagged rate (9.4% vs 4.2% for 'critical' and 0.0% for 'none'), meaning the label inverts on the only data that reflects user choice. Alongside that we retracted cycle 42's '9 safe skills that push to production' to 4 (all zero installs), because the free-text detector was matching table cells, YAML descriptions and prose. The surviving product is a legibility artifact, not a protection product: a per-catalog Axis Report that puts declared label, scanner verdict and coverage state side by side, generated offline from published bytes and the marketplace's own endpoint.",
+ "risks": "No outreach, no vendor contact, no publishing, no issues filed, no posts; egress read-only. 'Flagged' is a scanner verdict, not a verdict on harm - only the 4 prod-push skills are stated as semantic facts, the 52 flagged-safe set is a scanner-verdict set. Install figures cover the 99 skills the marketplace indexes (267,074 installs); the other 2,644 have no indexed figure and are treated as unmeasured, not zero. The safe-inversion result is one catalog against one channel's scanners - the cross-catalog test either generalizes or bounds it. Cycle 42's retracted number is restated as 4 with the exact set named, and the 5 non-instructional matches are listed so the retraction is auditable. pushed_at was previously shown to be a non-content signal and was not used. Our own fleet's LLM is a mock, so no conclusion may be represented as fleet-produced analysis.",
+ "next_experiment": "1) Package the Axis Report: one offline script that takes any catalog tarball + the marketplace audit endpoint and emits the confusion matrix, the safe-but-flagged set, the uncovered set and the install-weighted trust gradient, with a reproducible run log - the components already exist and pass. 2) Test the coverage hole across the four largest catalogs (vercel-labs/skills 4.0M, obra/superpowers 3.6M, anthropics/skills 3.5M, plus this one): if the hole is channel-wide it is a channel defect, if catalog-specific it is a publisher problem - same artifact either way. 3) Establish what 'none' actually means (100 skills, 25,402 installs, 0 flagged): deliberate class or unset default? If unset default, the clean-behaved class reading collapses - a cheap decisive test. 4) Internal and unchanged in priority: wire a real LLM into runtimeDeps behind a feature flag, run exactly ONE analyze step, verify the resulting insight.generated event no longer carries the [mock-llm] prefix - bounded, internal, reversible. 5) Do not contact publishers, do not publish, do not file issues, do not post.",
+ "diff_from_prev_cycle": "Cycle 42 proposed an axis-mismatch thesis on a 145-skill stratified sample with the detector unbuilt and reported 9 'safe' skills instructing production pushes. Cycle 43 (1) BUILT the detector and ran the FULL population - 2,743/2,743 skills audited against skills.sh/tele/audit with zero chunk failures - producing the first population-level confusion matrix: critical 146/1,351 flagged (1,009 clean), safe 52/1,112 flagged, offensive 56/146, none 1/100, unknown 0/34. (2) Cycle 42's '3 flagged safe skills' was a sample artifact; the true set is 52. (3) Added the install-weighted layer the earlier cycles lacked: 99 indexed skills, 267,074 installs, 4.78% of installs to flagged skills, all in 7 named skills. (4) New finding that inverts the framing: the declared 'safe' class has the WORST install-weighted flagged rate (9.4% vs 4.2% for 'critical' and 0.0% for 'none'), so the safety label inverts rather than merely failing. (5) New coverage finding: 612 skills (22.3%) have no verdict from any of the three scanners, 276 of them declared critical/offensive - but all 612 carry zero indexed installs, so the hole is real and inert, a publisher-side not user-side problem. (6) RETRACTED cycle 42's '9 safe skills push to production' to 4 (3 fenced shell + 1 CI run: block, all 0 installs), naming the 5 non-instructional matches (a table cell, a YAML description string, a list item, prose, one with zero matches). (7) Recorded the CLI rendering rule (dim '--' for absent verdicts) so the coverage hole is not misdescribed as green safety. (8) Position shifted from 'detect dangerous skills' to 'legibility artifact' - a per-catalog Axis Report of declared label vs scanner verdict vs coverage state.",
+ "kill_criterion": "By 2026-10-25: if AX has not landed one real LLM credential AND one real social credential, AND no terminal mission exists, AND no external party has re-derived a check, then STOP all market-thesis work, publish nothing, and move 100% of the proposal budget to the single verifiable-artifact program. Measured 13:12Z 2026-10-23: tweet.posted lifetime 0, social_posts 0, no LLM/social credential visible, queue 267 queued (up from 256) / 53 failed, insights 45/45 mock. Clock expires in 2 days. Unchanged by this cycle; what changes is that the replacement artifact is now BUILT (4 scripts, full-population detector) rather than specified."
+}
