@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   pull_request:
 
+permissions:
+  contents: read
+  checks: write # EnricoMi/publish-unit-test-result-action creates a check run
+
 jobs:
   test:
     runs-on: ubuntu-latest

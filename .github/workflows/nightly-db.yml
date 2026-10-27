@@ -5,6 +5,11 @@ on:
     - cron: '30 1 * * *' # 01:30 UTC daily
   workflow_dispatch:
 
+permissions:
+  contents: read
+  checks: write # EnricoMi/publish-unit-test-result-action creates a check run
+  issues: write # auto-create/close the nightly-failure issue
+
 jobs:
   db-integration:
     runs-on: ubuntu-latest
