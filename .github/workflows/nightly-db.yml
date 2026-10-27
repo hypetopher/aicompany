@@ -9,7 +9,13 @@ jobs:
   db-integration:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: ${{ secrets.SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    # `secrets` is not a valid context inside a job-level `if:` expression.
+    # The gate is done on the env value instead: an unset secret resolves to
+    # an empty string, so `env.SUPABASE_URL != ''` is false without a DB.
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,6 +33,7 @@ jobs:
         run: npm run build
 
       - name: Run DB harness integration tests
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -48,7 +55,9 @@ jobs:
             reports/integration-junit.xml
 
       - name: Notify Discord on failure
-        if: failure() && secrets.DISCORD_WEBHOOK_URL != ''
+        # `secrets` is not a valid context inside an `if:` expression; gate on
+        # the env value instead (an unset secret resolves to an empty string).
+        if: failure() && env.DISCORD_WEBHOOK_URL != ''
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |

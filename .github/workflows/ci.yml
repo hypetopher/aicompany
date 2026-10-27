@@ -31,12 +31,11 @@ jobs:
       - name: Unit tests (coverage + junit)
         run: npm run test:unit:ci
 
-      - name: Integration tests (no DB)
-        if: ${{ !secrets.SUPABASE_URL || !secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: npm run test:integration:ci
-
-      - name: Integration tests (with DB harness)
-        if: ${{ secrets.SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      # `secrets` is not a valid context inside an `if:` expression, so the
+      # DB/no-DB switch is driven by env instead. The integration tests
+      # self-detect the harness (hasDbEnv in tests/integration/*), and an
+      # unset secret resolves to an empty string, which reads as "no DB".
+      - name: Integration tests
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
