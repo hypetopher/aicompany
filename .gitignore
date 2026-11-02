@@ -134,3 +134,6 @@ check_proposal.js
 temp-query.ts
 temp_fetch_hook.js
 supabase/.temp/
+
+# repo-root throwaway artifacts moved aside by cleanup-debris.sh
+_archive_debris/
