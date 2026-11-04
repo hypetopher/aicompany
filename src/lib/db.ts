@@ -209,14 +209,49 @@ export const db = {
   },
 
   async saveTweetDraft(row: { stepId: number; text: string }): Promise<void> {
+    const agentId = await this.resolveStepAuthor(row.stepId, 'quill');
     await this.insertEvent({
-      agent_id: await this.resolveStepAuthor(row.stepId, 'quill'),
+      agent_id: agentId,
       step_id: row.stepId,
       kind: 'tweet.drafted',
       title: 'Tweet drafted',
       summary: row.text.slice(0, 180),
       payload: { text: row.text },
     });
+    await this.saveDurableDraft(row.stepId, 'x', row.text, agentId);
+  },
+
+  /**
+   * Persist a drafted artifact as a durable row.
+   *
+   * Until now every draft_tweet / write_content output existed only as an
+   * ops_agent_events row, so the loop produced ~90 artifacts a day and stored
+   * zero of them. A draft is not a publish: the row lands with status draft,
+   * no external_post_id and no posted_at, and no tweet.posted /
+   * content.published event is emitted.
+   */
+  async saveDurableDraft(
+    stepId: number,
+    platform: 'x' | 'content',
+    content: string,
+    agentId: string,
+  ): Promise<void> {
+    const sb = getSupabase() as any;
+    const { data: step } = await sb
+      .from('ops_mission_steps')
+      .select('mission_id')
+      .eq('id', stepId)
+      .maybeSingle();
+    const { error } = await sb.from('ops_social_posts').insert({
+      platform,
+      content,
+      status: 'draft',
+      author_agent_id: agentId,
+      mission_id: step?.mission_id ?? null,
+      step_id: stepId,
+      metrics: {},
+    });
+    if (error) throw error;
   },
 
   async saveInsight(row: { stepId: number; report: string }): Promise<void> {
@@ -231,14 +266,16 @@ export const db = {
   },
 
   async saveContentDraft(row: { stepId: number; body: string }): Promise<void> {
+    const agentId = await this.resolveStepAuthor(row.stepId, 'quill');
     await this.insertEvent({
-      agent_id: await this.resolveStepAuthor(row.stepId, 'quill'),
+      agent_id: agentId,
       step_id: row.stepId,
       kind: 'content.drafted',
       title: 'Content drafted',
       summary: row.body.slice(0, 180),
       payload: { body: row.body },
     });
+    await this.saveDurableDraft(row.stepId, 'content', row.body, agentId);
   },
 
   async savePostedTweet(row: { stepId: number; text: string; tweetId: string }): Promise<void> {
