@@ -1,3 +1,5 @@
+import { extractNumericTokens } from '../lib/db.js';
+
 export async function executeStepByKind(step: {
   id: number;
   kind: string;
@@ -71,10 +73,66 @@ async function execDraftTweet(step: any, deps: any) {
 }
 
 async function execAnalyze(step: any, deps: any) {
+  // The analyze executor used to prompt with only the step payload, which
+  // carries no measurements, so the model invented numbers: 29 pct of numeric
+  // tokens in reports did not exist in the input and 39 pct of reports carried
+  // a percentage absent from it. Downstream lanes cite these insights as
+  // findings. Now a real counter snapshot is handed to the model, every
+  // number in the report is checked back against the supplied evidence, and
+  // the receipt names the result so the effect is measurable.
   const target = JSON.stringify(step.payload);
-  const report = await deps.llm.complete(`Analyze this target and return 5 bullet insights: ${target}`);
-  await deps.db.saveInsight({ stepId: step.id, report });
-  return { kind: step.kind, report };
+  let evidence = '';
+  let allowed: string[] = [];
+  if (typeof deps.db?.getAnalyzeContext === 'function') {
+    try {
+      const ctx = await deps.db.getAnalyzeContext();
+      evidence = ctx.evidence;
+      allowed = ctx.tokens ?? [];
+    } catch {
+      evidence = '';
+    }
+  }
+  // Numbers the producer authored in the payload are legitimate inputs too.
+  const payloadTokens = extractNumericTokens(target);
+  const allowedSet = new Set([...allowed, ...payloadTokens]);
+
+  const prompt = evidence
+    ? [
+        `Analyze this target and return 5 bullet insights: ${target}`,
+        `Use ONLY these measured facts as evidence. Do not state any number that is not in this list or in the target: ${evidence}`,
+      ].join('\n')
+    : `Analyze this target and return 5 bullet insights: ${target}`;
+
+  let report = await deps.llm.complete(prompt);
+  let unmatched = allowedSet.size ? extractNumericTokens(report).filter((t) => !allowedSet.has(t)) : [];
+
+  if (unmatched.length) {
+    // One corrective pass: name the offending numbers and ask for a version
+    // that only uses the supplied evidence.
+    const retry = await deps.llm.complete([
+      prompt,
+      `Your previous answer used numbers that are not in the evidence: ${unmatched.join(', ')}.`,
+      'Rewrite it using only numbers present in the evidence or the target. If a fact is missing, say it is missing instead of estimating.',
+    ].join('\n'));
+    const retryUnmatched = extractNumericTokens(retry).filter((t) => !allowedSet.has(t));
+    if (retryUnmatched.length <= unmatched.length) {
+      report = retry;
+      unmatched = retryUnmatched;
+    }
+  }
+
+  const grounded = unmatched.length === 0;
+  const body = grounded ? report : `UNGROUNDED REPORT (numbers not in evidence: ${unmatched.join(', ')})\n${report}`;
+  await deps.db.saveInsight({ stepId: step.id, report: body, grounded, unmatched });
+  if (!grounded) {
+    await deps.db.insertEvent({
+      kind: 'insight.ungrounded',
+      title: `Step ${step.id} produced ungrounded numbers`,
+      step_id: step.id,
+      payload: { unmatched },
+    });
+  }
+  return { kind: step.kind, grounded, unmatched, evidence: evidence ? 'counters' : 'none' };
 }
 
 async function execWriteContent(step: any, deps: any) {

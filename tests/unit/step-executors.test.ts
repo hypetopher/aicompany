@@ -32,6 +32,26 @@ describe('step executors', () => {
     expect(d.state.insights).toBe(1);
   });
 
+  it('flags ungrounded numbers in an analyze report and names them in the receipt', async () => {
+    const d = mkDeps();
+    d.db.getAnalyzeContext = async () => ({ evidence: '{"steps_24h":213}', tokens: ['213'] });
+    d.llm = { async complete() { return 'Bullets: 41 pct of drafts fail.'; } };
+    const out = await executeStepByKind({ id: 21, kind: 'analyze', payload: { topic: 'x' } }, d as any);
+    expect(out.kind).toBe('analyze');
+    expect(out.grounded).toBe(false);
+    expect(out.unmatched).toContain('41');
+    expect(d.state.insights).toBe(1);
+  });
+
+  it('marks a grounded analyze report when every number is in the evidence', async () => {
+    const d = mkDeps();
+    d.db.getAnalyzeContext = async () => ({ evidence: '{"steps_24h":213}', tokens: ['213'] });
+    d.llm = { async complete() { return 'Bullets: 213 steps ran.'; } };
+    const out = await executeStepByKind({ id: 22, kind: 'analyze', payload: { topic: 'x' } }, d as any);
+    expect(out.grounded).toBe(true);
+    expect(out.unmatched).toEqual([]);
+  });
+
   it('executes write_content', async () => {
     const d = mkDeps();
     const out = await executeStepByKind({ id: 3, kind: 'write_content', payload: { brief: 'b' } }, d as any);

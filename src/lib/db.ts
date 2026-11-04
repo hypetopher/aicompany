@@ -34,6 +34,24 @@ export function stepPriority(step: { kind: string; payload?: unknown }): number 
 export const ZERO_STEP_GRACE_MS = 30 * 60 * 1000;
 
 /**
+ * Pull the numeric tokens out of a blob of text.
+ *
+ * Used to decide whether a report can be grounded: a number in a report must
+ * appear in the evidence that was handed to the model, otherwise the report
+ * invented it. Percentages are matched on the number itself plus the pct
+ * suffix so "41 pct" and "41%" both resolve against "41".
+ */
+export function extractNumericTokens(text: string): string[] {
+  const out = new Set<string>();
+  const re = /(\d+(?:\.\d+)?)\s*(?:%|pct|percent)?/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    out.add(m[1]);
+  }
+  return [...out];
+}
+
+/**
  * Idempotency key for a mission step.
  *
  * The old key embedded the raw payload JSON: `proposal:1:kind:analyze:{...}`.
@@ -254,14 +272,61 @@ export const db = {
     if (error) throw error;
   },
 
-  async saveInsight(row: { stepId: number; report: string }): Promise<void> {
+  /**
+   * Real counters the analyze lane is allowed to cite.
+   *
+   * The analyze executor used to prompt with only the step payload, which
+   * carries no measurements, so the model invented numbers: 29 pct of
+   * numeric tokens in reports did not exist in the input and 39 pct of
+   * reports carried a percentage absent from it. Downstream lanes cite those
+   * insights as findings. This returns an evidence snapshot (counts only, no
+   * row bodies) plus the numeric tokens that are allowed to appear.
+   */
+  async getAnalyzeContext(): Promise<{ evidence: string; tokens: string[] }> {
+    const s = getSupabase() as any;
+    const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    const day = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+    const count = async (table: string, from: string, extra?: (q: any) => any) => {
+      let q = s.from(table).select('id', { count: 'exact', head: true }).gte('created_at', from);
+      if (extra) q = extra(q);
+      const { count: c, error } = await q;
+      if (error) return null;
+      return c ?? 0;
+    };
+    const [proposals24h, steps24h, failed24h, postsTotal, draftsTotal, postedTotal, events24h] = await Promise.all([
+      count('ops_mission_proposals', since),
+      count('ops_mission_steps', since),
+      count('ops_mission_steps', since, (q: any) => q.eq('status', 'failed')),
+      count('ops_social_posts', since),
+      count('ops_social_posts', since, (q: any) => q.eq('status', 'draft')),
+      count('ops_social_posts', since, (q: any) => q.eq('status', 'posted')),
+      count('ops_agent_events', day),
+    ]);
+    const evidence = JSON.stringify({
+      window: 'last 24h unless noted',
+      proposals_24h: proposals24h,
+      steps_24h: steps24h,
+      failed_steps_24h: failed24h,
+      social_posts_24h: postsTotal,
+      draft_rows_24h: draftsTotal,
+      posted_rows_24h: postedTotal,
+      agent_events_7d: events24h,
+    });
+    return { evidence, tokens: extractNumericTokens(evidence) };
+  },
+
+  async saveInsight(row: { stepId: number; report: string; grounded?: boolean; unmatched?: string[] }): Promise<void> {
     await this.insertEvent({
       agent_id: await this.resolveStepAuthor(row.stepId, 'observer'),
       step_id: row.stepId,
       kind: 'insight.generated',
       title: 'Insight generated',
       summary: row.report.slice(0, 180),
-      payload: { report: row.report },
+      payload: {
+        report: row.report,
+        grounded: row.grounded ?? true,
+        unmatched: row.unmatched ?? [],
+      },
     });
   },
 
