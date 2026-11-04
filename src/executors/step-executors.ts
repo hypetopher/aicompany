@@ -55,10 +55,19 @@ async function execPublishSkill(step: any, deps: any) {
 }
 
 async function execDraftTweet(step: any, deps: any) {
+  // The producer authors payload.hook as the intended opening line, but the
+  // executor used to read only payload.topic, so the authored judgement was
+  // dropped before the model call and every persisted draft was filler.
+  // Prefer hook, fall back to topic, and name the source field in the receipt.
   const topic = String(step.payload.topic ?? 'AI company update');
-  const text = await deps.llm.complete(`Write one concise tweet about: ${topic}`);
+  const hook = step.payload.hook ? String(step.payload.hook) : '';
+  const source = hook ? 'hook' : 'topic';
+  const brief = hook || topic;
+  const text = await deps.llm.complete(
+    `Write one concise tweet about: ${topic}\nOpen with this hook: ${brief}`
+  );
   await deps.db.saveTweetDraft({ stepId: step.id, text });
-  return { kind: step.kind, draft: text };
+  return { kind: step.kind, draft: text, source };
 }
 
 async function execAnalyze(step: any, deps: any) {
@@ -69,12 +78,16 @@ async function execAnalyze(step: any, deps: any) {
 }
 
 async function execWriteContent(step: any, deps: any) {
-  // Producer writes payload.topic, executor used to read only payload.brief,
-  // so ~99.9% of articles were the hardcoded default sentence.
-  const brief = String(step.payload.brief ?? step.payload.topic ?? 'Write a short ops update.');
+  // Producer writes payload.topic and payload.angle, executor used to read only
+  // payload.brief, so ~99.9% of articles were the hardcoded default sentence.
+  // Prefer the authored angle, fall back to brief then topic, and name the
+  // source field in the receipt so the effect is measurable.
+  const angle = step.payload.angle ? String(step.payload.angle) : '';
+  const brief = String(step.payload.brief ?? ((angle || step.payload.topic) ?? 'Write a short ops update.'));
+  const source = step.payload.brief ? 'brief' : (angle ? 'angle' : 'topic');
   const article = await deps.llm.complete(`Write a structured post (title + 5 sections): ${brief}`);
   await deps.db.saveContentDraft({ stepId: step.id, body: article });
-  return { kind: step.kind };
+  return { kind: step.kind, source };
 }
 
 async function execPostTweet(step: any, deps: any) {
