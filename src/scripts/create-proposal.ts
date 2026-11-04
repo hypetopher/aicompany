@@ -15,10 +15,12 @@ async function main() {
       payload = { topic: payloadArg };
     }
   }
-  // write_content's executor reads `brief`; the producer wrote `topic`.
-  if (stepKind === 'write_content' && !payload.brief && payload.topic) {
-    payload = { ...payload, brief: payload.topic };
-  }
+  // Do NOT synthesize payload.brief from payload.topic here.
+  // Producers author the judgement in payload.angle (write_content) and
+  // payload.hook (draft_tweet). The executor resolves payload.brief first,
+  // so injecting brief=topic made every article topic-derived filler and
+  // silently discarded the authored angle. Only honor brief when a
+  // producer actually authored one.
 
   const out = await createProposalAndMaybeAutoApprove(db, {
     agentId,
