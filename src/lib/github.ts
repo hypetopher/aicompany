@@ -1,4 +1,28 @@
 import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
+
+/**
+ * Resolve the gh binary.
+ *
+ * The worker runs from a service/cron environment whose PATH does not include
+ * the linuxbrew bin dir, so a bare execFile('gh') dies with spawn ENOENT and
+ * every publish_skill attempt fails with a misleading "gh api failed".
+ * Fall back to well known absolute locations when PATH lookup cannot work.
+ */
+function resolveGhBin(): string {
+  const found: string[] = [];
+  if (process.env.GH_BIN && existsSync(process.env.GH_BIN)) found.push(process.env.GH_BIN);
+  for (const dir of (process.env.PATH || '').split(':')) {
+    if (!dir) continue;
+    const p = `${dir}/gh`;
+    if (existsSync(p)) { found.push(p); break; }
+  }
+  found.push('/home/linuxbrew/.linuxbrew/bin/gh', '/usr/local/bin/gh', '/usr/bin/gh', '/opt/homebrew/bin/gh');
+  for (const c of found) {
+    if (existsSync(c)) return c;
+  }
+  return 'gh';
+}
 
 /**
  * Minimal GitHub adapter built on the `gh` CLI.
@@ -29,7 +53,7 @@ export type PublishResult = {
 
 function gh(args: string[], input?: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = execFile('gh', args, { maxBuffer: 32 * 1024 * 1024 }, (err, stdout, stderr) => {
+    const child = execFile(resolveGhBin(), args, { maxBuffer: 32 * 1024 * 1024 }, (err, stdout, stderr) => {
       if (err) {
         reject(new Error(`gh ${args[0]} failed: ${String(stderr || err.message).trim().slice(0, 400)}`));
         return;
