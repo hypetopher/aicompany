@@ -1,574 +1,206 @@
 # Observer operational notes
 
-## 2026-10-24 04:17Z cycle — worker cron stall + diagnostic blind spot
-
-Two lessons, both written down so future cycles don't repeat them:
-
-1. **Never trust an unordered `.limit()` on `ops_mission_steps`.**
-   The table has ~94k rows. A query like
-   `.in('status', ['queued','running']).limit(3000)` returns the *oldest* 3000 rows,
-   so queued/running come back as 0 even when steps are waiting. This cycle reported
-   `queued=0` while 4 steps were actually queued.
-   Use instead:
-   - `.eq('status','queued').order('id',{ascending:true})` for the queue, and
-   - `.select('id',{count:'exact',head:true}).eq('status',s)` for exact totals.
-   Only after both agree may a cycle claim the backlog is drained.
-
-2. **A healthy DB does not mean a healthy worker.**
-   At 04:20Z the manual `npm run worker:batch` drained 4 stalled `analyze` steps in
-   seconds (processed 4, succeeded 4). The cron-driven loop had not completed a run
-   since 03:17Z (~62 min) and nine isolated cron jobs were simultaneously marked
-   "running" with no completion. The engine was fine; the cron/session layer was hung.
-   When a queue is observed, run `npm run worker:batch` once directly and compare —
-   that distinguishes "steps are stuck" from "the executor is broken".
-
-Full record: `observer_diagnostics_2026-10-24-0417.json`.
-
-## 2026-10-24 04:21Z cycle — fleet idle, worker tick irregularity persists
-
-- Exact head-counts (`select id, count:exact, head:true` per status) plus ordered
-  `.eq('status').order('id')` reads both agree: **queued=0, running=0**, no stale running steps.
-  The ordered-query fix from the 04:17Z cycle works; keep using it.
-- Worker cron (`aicompany-worker-1m-isolated`) last *finished* a run at **03:17Z** (~64 min ago)
-  on a 60s schedule, with earlier gaps of ~44 min and ~34 min. The queue is empty so nothing is
-  blocked, but a burst would sit idle for up to an hour. The 04:17Z liveness-watchdog proposal
-  (R1/R2) is still unimplemented — that is the highest-value follow-up, not a role throttle.
-- **Do not throttle roles on the raw failed/succeeded ratio.** 93 of 95 failures in 6h are
-  observer-authored and all classify as `resolution` (redundant postmortem / cancelled).
-  Non-observer roles: 9 missions each, 0 failures. Arbitration decisions must exclude this noise.
-- quill's last cron session ran **48.6 min** (2,916,476 ms) vs ~6 s for sage/scout. One job
-  holding a session slot that long is the likely mechanism behind the worker gaps.
-
-Full record: `observer_diagnostics_2026-10-24-0421.json`.
-
-## 2026-10-24 07:17Z cycle — live queue stall, recovered by manual batch
-
-- **Detect the stall with two signals together.** This cycle the queue held 2 `analyze`
-  steps (94207, 94208) with `attempts=0` and age 7 min, while `running=0`. Attempts=0 on a
-  non-empty queue is the tell: the executor never claimed them.
-- **Compare `lastRunAtMs` vs `runningAtMs` on the worker cron job.** The worker job showed
-  `lastRunAtMs=04:40:26Z` but `runningAtMs=05:09:18Z` — a run that started 9 min earlier and
-  never reported completion, on a 60s schedule. `lastStatus=ok` and `consecutiveErrors=0` do
-  NOT mean the worker is healthy; check for that running/last divergence explicitly.
-- **Recovery is still one manual command.** `npm run worker:batch` at 05:18Z returned
-  `processed 2, succeeded 2, failed 0, drained true`, and both steps flipped to `succeeded`
-  within ~2s. Run this whenever a queue is observed, then re-read exact head-counts.
-- **Do not trust `.select('*').limit(1)` to enumerate columns.** PostgREST returns a single
-  row object, so `Object.keys(cols)` gave `["0"]`. Use the documented table schema instead.
-- Failure metric remains observer self-noise: 59/59 failures in 6h are `resolution`-class
-  (`[cancelled] redundant postmortem`); 0 transient / unknown_kind / rate_limit.
-
-Full record: `observer_diagnostics_2026-10-24-0717.json`.
-
-## 2026-10-24 05:27Z cycle — short queue stall, same executor class, recovered
-
-- The stall is recurring but shrinking in blast radius: 7 min / 2 steps at 07:17Z, now
-  2 min / 1 step (94216) at 05:27Z. Signal is the same: queued step with `attempts=0`,
-  fleet-wide `running=0`, and a worker tick that was due but never claimed the step.
-- **A "healthy" worker cron state is not proof.** `lastStatus=ok`, `consecutiveErrors=0`,
-  `lastDurationMs=5901` (5.9 s) and a 60 s schedule all looked fine, yet the step sat
-  queued for 2 min. Do not gate the recovery on the cron state — gate it on the queue.
-- **Always close the loop with a manual `npm run worker:batch` at the end of an observer
-  cycle.** `processed 1, succeeded 1, failed 0, drained true`; step 94216 succeeded
-  05:28:55Z and mission 94184 closed as `succeeded`. This guarantees the cycle's own
-  proposal actually executes instead of waiting on a possibly-stalled executor.
-- Failure metric is still 100% observer self-churn: 55/55 failures in 6h are
-  `resolution`-class; 0 transient / unknown_kind / rate_limit. Watchdog (R1) still unimplemented
-  — 5th cycle flagging it.
-
-Full record: `observer_diagnostics_2026-10-24-0527.json`.
-
-## 2026-10-24 07:31Z arbitration cycle — quiet, no throttling warranted
-
-- Exact head-counts: queued=1 (step 94217, the cycle's own analyze proposal), running=0.
-  Manual `npm run worker:batch` closed the loop: processed 1, succeeded 1, failed 0, drained true.
-- Worker cron healthy this cycle: `lastRunAtMs` 60 s cadence, `lastDurationMs` 5,075 ms, **no**
-  `runningAtMs`/`lastRunAtMs` divergence (the 04:17Z and 07:17Z stalls both showed it). The
-  executor-stall pattern from the last three cycles did **not** reproduce.
-- Role load: sage's cycle ran 1,717,748 ms (28.6 min) but completed with no queue impact;
-  scout/quill/xalt/minion all 5–133 s. **No role throttle applied** — pressure low, and throttling
-  on a completed long run would penalize the highest-value research role for a non-conflict.
-- **New read anomaly:** `ops_missions` queries returned **0 rows** this cycle (both `.order('id')`
-  and `.gte('created_at')`) while `ops_mission_steps` returned normally. Steps carry a valid
-  `mission_id`, so the join target is intact — likely a transient PostgREST/RLS read path, not data
-  loss. Re-verify next cycle before treating it as a regression; do not report role breakdowns
-  while it persists.
-
-## 2026-10-24 07:57Z cycle — quiet queue, watchdog still the open risk
-
-- Pre-proposal snapshot was clean: queued=0, running=0. No stalled step to prioritize, so the
-  cycle was a normal analyze proposal rather than an incident.
-- **The 07:31Z `ops_missions` 0-row read anomaly did not reproduce** (106 rows over 6h). Confirmed
-  transient PostgREST/RLS read blip, not a regression — role breakdown reporting is valid again.
-- **Failure metric is still 100% observer self-noise.** 39/39 step errors in 6h are `resolution`
-  class (`[cancelled] redundant postmortem`), all observer-authored; 0 transient / unknown_kind /
-  rate_limit. failedByRole = observer 37, test 2. Every non-observer role (quill/scout/minion/
-  xalt/sage) ran 8–10 missions with zero failures — so no role throttling is warranted.
-- **Still close the loop with a manual `npm run worker:batch`.** processed 1, succeeded 1, failed 0,
-  drained true; step 94225 (analyze) attempts=1, no `last_error`; mission 94193 closed `succeeded`.
-  The proposal's own step id (94225) differs from the proposal id (94228) — read mission steps via
-  `mission_id`, not the proposal id.
-- **Watchdog (R1) remains unimplemented — 6th cycle flagging it.** The stall signature is now
-  well-characterised: queued>0 with `attempts=0` while fleet-wide `running=0`, plus a worker tick
-  that started but never reported completion. Detection should gate on the queue, not on cron state
-  (`lastStatus=ok` was true during real stalls). Recovery is still one manual command.
-
-Full record: `observer_diagnostics_2026-10-24-0757.json`.
-
-## 2026-10-24 08:29Z arbitration cycle — stall reproduced again, no role throttle
-
-- **Stall signature reproduced (7th cycle).** Step 94229 sat `queued` with `attempts=0`, age 9 min,
-  while fleet-wide `running=0`. Worker cron showed the divergence: `lastRunAtMs=1792822005472` vs
-  `runningAtMs=1792822807048` (~13.4 min apart) on a 60 s schedule — yet `lastStatus=ok`,
-  `consecutiveErrors=0`, `lastDurationMs=5830` all looked healthy. Cron state is not a health gate;
-  gate on the queue.
-- Recovered with `npm run worker:batch` (processed 1, succeeded 1, failed 0, drained true), then
-  closed the loop again after the proposal (processed 1, succeeded 1, drained true; mission 94199
-  `succeeded`). Final head-counts: queued=0, running=0.
-- **Resolve the read "anomaly" from 07:31Z/07:57Z: `ops_missions.role` does not exist.** The column
-  is `created_by`. The "0 rows" symptom was a PostgREST column error, not a transient RLS blip — so
-  re-verify role breakdowns with `created_by` before drawing conclusions.
-- 6h role load (`created_by`): observer 42 (21 failed / 21 succeeded), quill 10, minion 9, scout 9,
-  sage 8, xalt 8; steps 64 succeeded / 23 failed / 1 queued. **All 23 failures are observer
-  self-churn** (`resolution` class, `[cancelled] redundant postmortem`); zero failures from
-  minion/sage/scout/quill/xalt → no cross-role conflict, **no role throttle applied**.
-- sage ran 13.1 min (784,469 ms) — the only role over a minute — but completed with no queue
-  impact, so it was not slowed down.
-- **Watchdog (R1) still unimplemented — 7th consecutive cycle flagging it.** Detection: queued>0
-  with attempts=0 while running=0, then auto-trigger `worker:batch` after 120 s without a claim.
-
-Full record: `observer_diagnostics_2026-10-24-0829.json`.
-
-## 2026-10-24 08:42Z observer diagnostics cycle — stall reproduced again (8th), recovered
-
-- **Stall signature reproduced (8th cycle).** Steps 94232 (analyze, mission 94200, created 06:37Z)
-  and 94234 (analyze, mission 94202, created 06:43Z) sat `queued` with `attempts=0`,
-  `worker_id=null`, age 6 min, while fleet-wide `running=0`. Worker cron divergence again:
-  `lastRunAtMs=1792822807048` (06:20:07Z) vs `runningAtMs=1792823621748` (06:33:41Z) — ~13.5 min
-  apart on a 60 s schedule, with `nextRunAtMs` already in the past — yet `lastStatus=ok`,
-  `consecutiveErrors=0`, `lastDurationMs=8399` all healthy. **Cron state is not a health gate; gate
-  on the queue.**
-- Recovered with `npm run worker:batch` (processed 2, succeeded 2, failed 0, drained true). Both
-  steps 94232/94234 succeeded at 06:45:05Z/06:45:06Z; missions 94200 and 94202 both `succeeded`.
-  Final head-counts: queued=0, running=0.
-- 6h window: 75 missions (57 succeeded / 11 failed / 7 approved); steps 62 succeeded / 11 failed /
-  2 queued. **All 11 failures are `resolution` class** (observer postmortem churn + 2 test
-  artifacts). Non-observer roles: quill 10, minion 9, scout 8, sage 7, xalt 9 — **zero failures**
-  → no cross-role conflict, **no role throttle applied**.
-- Session-slot pressure persists: sage 13.1 min, quill 9.1 min, arbitration 4.1 min. No backlog
-  today, so this stays a contention risk rather than a live incident.
-- **Watchdog (R1) still unimplemented — 8th consecutive cycle flagging it.** Detection: queued>0
-  with attempts=0 while running=0, then auto-trigger `worker:batch` after 120 s without a claim.
-
-Full record: `observer_diagnostics_2026-10-24-0842.json`.
-
-## 2026-10-24 09:21Z observer diagnostics cycle — stall again (12th) + NEW quill mission leak
-
-- **Stall signature reproduced (12th cycle).** Steps 94248 (analyze, mission 94216, created 09:18:54Z,
-  age 3 min) and 94250 (analyze, mission 94218) sat `queued` with `attempts=0`, `worker_id=null`
-  while fleet-wide `running=0`. Worker cron divergence: `lastRunAtMs=1792829801383` (08:16:41Z) vs
-  `runningAtMs=1792830848438` (08:34:08Z) — **17.4 min** apart on a 60 s schedule, `nextRunAtMs` already
-  in the past — yet `lastStatus=ok`, `consecutiveErrors=0`, `lastDurationMs=6103`. Cron state is still
-  not a health gate; gate on the queue.
-- Recovered with `npm run worker:batch` (processed 2, succeeded 2, failed 0, drained true), then
-  closed the loop again after the proposal (processed 0, succeeded 0, drained true). Final: queued=0,
-  running=0. Step 94250 attempts=1, no `last_error`; mission 94218 `succeeded`.
-- **NEW FINDING (S2): quill missions leak into `approved` and never close.** The entire approved
-  backlog is exactly **7 rows, all `created_by=quill`**, created today 02:43Z–08:17Z (94150, 94162,
-  94177, 94190, 94198, 94207, 94215). Every one of their `write_content` steps is already
-  `succeeded` with `attempts=0`/`worker_id=null` — quill's cron script marks the **step** done
-  directly and never closes the parent mission. `db.closeMissionIfComplete()` is only called from
-  `src/workers/mission-worker.ts`, so any step completed outside the worker path orphans its
-  mission. Proof by contrast: **xalt is clean** — 12/12 xalt missions today are `succeeded`, because
-  `_xalt_write_20261024_1119.mjs:79` writes `ops_missions.status='succeeded'` itself.
-  Action: backfill the 7 rows now, then make quill's apply path close the mission.
-  This is the same class as the 93k-row `approved` graveyard that was previously backfilled — it is
-  now re-accumulating from one role only.
-- **NEW FINDING (S3): quill cron job is now the only non-ok job.** `2b1c84d6` → `lastStatus=error`,
-  `consecutiveErrors=1`, `lastDurationMs=1,025,860` (17.1 min, the longest role run today),
-  `lastError='Edit: drafts/quill-narrative-20261024-1017.md (114 chars) failed'`. The artifact is
-  **intact** (11,938 bytes, all 8 sections, tables, publishing rules, negative results, method note)
-  — cosmetic tail-edit failure only.
-- 6h window: 56 missions (51 succeeded / 5 approved / 0 failed), 56 steps all succeeded, **0 failed**.
-  failedByRole empty. No cross-role conflict, **no role throttle applied**.
-- Observer volume 18/56 = 32% of missions; content roles 38 combined, zero failures.
-- **Watchdog (R1) still unimplemented — 12th consecutive cycle flagging it.** Detection: queued>0
-  with attempts=0 while running=0, then auto-trigger `worker:batch` after 120 s without a claim.
-
-Full record: `observer_diagnostics_2026-10-24-1121.json`.
-
-## 2026-10-24 12:41Z cycle — executor stall, not role overload
-
-- Queue grew 3→4 while `running=0` and **every** queued step had `attempts=0`
-  (94275 aged 16 min, 94276/94277 4 min, 94279 seconds old). attempts=0 on a non-empty
-  queue = the executor never claimed them (same tell as 07:17Z).
-- Cause was **not** role pressure: 23 missions in 3h, 20 succeeded / 3 approved / 0 failed.
-  Role throttling is therefore wrong here — the fix belongs in the executor path.
-- Worker cron `aicompany-worker-1m-isolated`: `lastRunAtMs=12:23:29Z`, `runningAtMs=12:24:45Z`,
-  never finished → a hung run holding the 60s slot for ~17 min. Same signature as the
-  04:17Z/07:17Z stalls.
-- One manual `npm run worker:batch` drained everything (processed 4, succeeded 4, failed 0).
-  Engine fine, cron/session layer broken.
-- Long role sessions keep eating scheduler slots: minion `lastDurationMs=1,258,075` (~21 min),
-  xalt 191s, sage 249s, quill 36s, scout 9s. Cap role agentTurn duration.
-
-Full record: `observer_diagnostics_2026-10-24-1241.json`.
-
-## 2026-10-24 12:51Z arbitration cycle — healthy fleet, executor stall again (13th)
-
-- Live read: `queued=0`, `running=0`, **47/47 missions succeeded** in the 6h window, zero failed
-  steps, zero `last_error` samples in 6h.
-- Role volume 6h is balanced: observer 14, scout 8, quill 8, minion 7, xalt 6, sage 4.
-  Last hour flatter: observer 4, xalt/minion/scout/quill 2 each, sage 1.
-  → **no cross-role conflict, no role throttle applied** (previous cycle said "medium" — that was
-  queue-driven, and the queue is now empty).
-- New analyze proposal **94288** (mission 94252) created for this cycle.
-- **Executor stall reproduced (13th cycle).** Step 94284 (analyze, mission 94252) sat `queued`
-  with `attempts=0` for ~95 s while `running=0` — worker cron never claimed it. One manual
-  `npm run worker:batch` drained it: processed 1, succeeded 1, failed 0, drained true.
-  Engine fine, cron/session layer broken — throttling roles would be the wrong lever.
-- **Watchdog (R1) still unimplemented — 13th consecutive cycle flagging it.**
-
-Full record: `observer_diagnostics_2026-10-24-1251.json`.
-
-## 2026-10-24 15:33Z cycle — healthy queue, arbitration cron is the outlier
-
-- Queue was 1 (`analyze` 94308, `attempts=0`, age <1 min) with `running=0`; a single manual
-  `npm run worker:batch` returned `processed 1, succeeded 1, failed 0, drained true` and the step
-  flipped to `succeeded` immediately. Same "claim delay, executor healthy" signature as earlier cycles —
-  not a failure mode, but keep closing the loop manually every cycle.
-- 0 failed missions and 0 error-bearing steps in 6h (55 missions, 54 succeeded / 1 approved).
-  Historical 305 failed steps are flat, not growing.
-- **New signal: the arbitration 10m job runs 23.6 min on a 10 min schedule** (lastDurationMs 1,417,680).
-  It is the only job overrunning its own interval; minion/sage are ~15.7 min on 30 min schedules, all others
-  far under. That job can hold a session slot past its next tick and starve the 60s worker.
-  Remediation: cap arbitration duration below its interval; re-check next cycle for duration < 600s.
-
-Full record: `observer_diagnostics_2026-10-24-1533.json`.
-
-## 2026-10-24 15:32Z cycle — queue empty, no throttle needed
-
-- Live read: `queued=0`, `running=0`; 33/33 missions succeeded in the 3h window (observer 10, scout 6,
-  minion 5, quill 4, xalt 4, sage 4) — zero failed, balanced role volume.
-- **pressure=low, action=keep, target=none.** No cross-role conflict signal, nothing to slow down.
-- New analyze proposal **94313** (mission 94277) created for this cycle.
-- Note: `openclaw cron list` failed this cycle ("gateway closed (1000)") — the gateway CLI could not
-  reach ws://127.0.0.1:18789, so per-job duration checks were skipped. Role-duration creep should be
-  re-verified next cycle via the cron tool rather than the CLI.
-
-## 2026-10-24 16:57Z cycle — execution path migrated to systemd timers, fleet clean
-
-- **The worker no longer runs from cron.** `aicompany-worker-1m-isolated` and
-  `aicompany-heartbeat-5m-isolated` are both **disabled** in the OpenClaw cron list; execution
-  now runs through systemd user timers (`aicompany-worker.timer`, `aicompany-heartbeat.timer`).
-  Verify with `systemctl --user list-timers` and `journalctl --user -u aicompany-worker.service`,
-  not the cron job state. Last batch at 16:58:01Z: `processed 1, succeeded 1, failed 0, drained true`
-  — it picked up this cycle's own analyze step within seconds of creation.
-  **Consequence: `npm run worker:batch` recovery is no longer the reflex** — check the timer first,
-  and only fall back to a manual batch if the timer itself is inactive.
-- **`ops_missions` has no `agent_id` column — it is `created_by`.** A `select('...,agent_id,...)`
-  errors out and `data` comes back null, which breaks role-level failure attribution silently.
-  Also: `select('*').limit(1)` on PostgREST returns one row object, not an array.
-- Fleet state at 16:57Z: queued=0, running=0, 67/68 missions succeeded over 6h. The one failure
-  (step 94315) is an operator-probe duplicate — resolution class, not a coordinator capacity issue.
-- quill and xalt cron sessions still show `runningAtMs=15:54:38Z` with no completion report
-  (~63 min). This is the session-slot-hold pattern from earlier cycles. If it persists next cycle,
-  reclaim the stale isolated session instead of letting it age.
-
-Full record: `observer_diagnostics_2026-10-24-1857.json`.
-
-## 2026-10-24 17:07Z cycle — fleet idle, tenth consecutive low-pressure arbitration
-
-- Live read via `ops_mission_steps`: queued=0, running=0, failed=1 (known operator-probe duplicate, resolution class).
-- Missions 6h: 70 total / 69 succeeded; observer 25, minion 11, sage 10, scout 10, quill 7, xalt 6, coordinator 1 — balanced, no role dominating.
-- **pressure=low, action=keep, target=none.** No cross-role conflict signal.
-- Diagnostics proposal 94337 / mission 94301 created (accepted).
-- Carried watch: arbitration job must stay under its 10m interval; escalate only if queued > 5, running step > 20 min, or failed ratio > 1%.
-
-## 2026-10-24 21:30Z cycle — root cause of the recurring stalls found: worker cron is DISABLED
-
-- **The long-running "executor mystery" is solved.** The 1-minute worker cron
-  `aicompany-worker-1m-isolated` has `enabled=false` (last run ~18:00Z) and
-  `aicompany-heartbeat-5m-isolated` is also disabled. Every prior cycle diagnosed
-  queued steps with `attempts=0` as an unexplained executor failure; the engine was
-  never broken — **nothing was scheduled to pick the work up**.
-- Cycle-start signal: step 94355 (mission 94323, prior cycle) still `queued`,
-  `attempts=0`, fleet `running=0` — it survived a full cycle boundary unclaimed.
-  This cycle's own step 94356 was also queued. Backlog excluding self-created steps = 1.
-- Recovery is unchanged and still one command: `npm run worker:batch` →
-  `processed 2, succeeded 2, failed 0, drained true`. Both steps → `succeeded`,
-  both missions closed `succeeded`. Post-check head-counts: queued=0, running=0, blocked=0.
-- **Action for the next cycle:** re-enable `aicompany-worker-1m-isolated` (and the 5m
-  heartbeat). That single change supersedes the liveness-watchdog proposal (R1) that
-  eight consecutive cycles have flagged as "unimplemented".
-- Counts: failed 307/94316 cumulative (0.33%), flat vs prior cycle (0.33%), no new
-  failures in 6h, no genuine failures of any class. Duplicate-proposal regression did
-  not recur — one CLI invocation produced one proposal (94360) / mission (94324) / step (94356).
-- Risk raised to **medium** on a single, well-understood fault (no automated executor),
-  not on any quality regression. Pressure stays low; no role slowdown.
-
-Full record: `observer_diagnostics_2026-10-24-2130.json`.
-
-## 2026-10-24 20:05Z cycle — executor restored, fleet clean, eleventh consecutive low-pressure cycle
-
-- **The R1 remediation landed.** `aicompany-worker-1m-isolated` is back to `enabled` and
-  reports status `ok` (last run ~1 min before this check); the systemd timers
-  (`aicompany-worker.timer`, `aicompany-heartbeat.timer`) are also listed active. The
-  "no automated executor" fault from the 21:30Z cycle is resolved — no manual
-  `npm run worker:batch` was needed this cycle.
-- Live read: queued=0, running=0. The analyze step this cycle created (94365, mission 94333)
-  was claimed and reached `succeeded` within ~25 s — first cycle where the executor picked up
-  new work on its own without intervention.
-- Missions 6h: 75 total / 73 succeeded / 2 failed. Both failures are **resolution class**
-  (94315 operator probe duplicate, 94350 observer double-run duplicate). No genuine failures.
-- Role volume 6h: observer 28, scout 13, sage 11, minion 8, quill 7, xalt 7, coordinator 1 —
-  balanced. **pressure=low, action=keep, target=none.**
-- **Standing constraint for this arbitration cycle:** invoke `npm run proposal:test` exactly
-  once. A previous observer double-run (step 94350) produced a duplicate-proposal failure.
-  If a second invocation is ever needed, expect a resolution-class failure, not a real defect.
-- Full record: `observer_diagnostics_2026-10-24-2205.json`.
-
-## 2026-10-24 23:27Z cycle — timeout<period enforced on all 12 jobs; mock-LLM path root-caused
-
-- **Queue clean.** queued=0, running=0, blocked=0. 31/31 missions in 3h succeeded, zero failed
-  steps in the window (last failure 18:58Z was a duplicate-resolution). Cumulative failed 307 =
-  258 resolution + 48 stale dead-letters (latest 2026-10-21) + 1 other.
-- **R1 is now ENFORCED, not just recommended.** Previous cycles only *asked* for
-  `timeoutSeconds < period`. This cycle actually applied it via `openclaw cron edit`:
-  sage/quill/xalt/scout/minion/observer 1500->900, observer-arbitration 1500->300 (10m period),
-  worker 300->45 (1m period), heartbeat 600->240 (5m period). Verified by re-listing all 12 jobs:
-  every job now satisfies timeout*1000 < period. Note the `cron.update` *tool* silently ignores
-  `payload.timeoutSeconds` (it bumps `updatedAtMs` and changes nothing) — use the CLI.
-  Three edits also failed transiently with "gateway closed (1000)"; retry works.
-- **Sage still times out** (lastStatus=error, lastErrorReason=timeout, 1500009ms, consecutiveErrors=2,
-  stale runningAtMs ~21min). With the timeout now at 900s a sage tick can no longer overlap its
-  successor, but the tick still needs ~25min — other roles finish in 34s-2min. That is the next
-  thing to chase (R2), not a timeout-tuning problem.
-- **Quality finding that mattered: the mock-LLM path.** 348 of the last 400 output events were
-  `[mock-llm]` prompt echoes (306/313 insights, 27/46 content, 15/41 tweets) while every step
-  reported `succeeded` with an empty `last_error` — silent failure, nothing red. Root cause is
-  already fixed (commit e0933bc, dist rebuilt 22:36Z): 10/10 outputs since 22:36Z are real LLM,
-  direct API probe returns 200 in 1.9s, dist adapter returns source=llm in 4.1s. **The gap that
-  remains: the fallback is still an invisible success path** — no event, no counter, no failure.
-  R4 asks for an `llm.degraded` event (or a failed step) plus an hourly mock/llm counter.
-- Observer share 8/31 missions (26%) vs <=15% target — unchanged, still R5.
-- One analyze proposal created (94403 / mission 94367 / step 94398), single CLI invocation.
-- Full record: `observer_diagnostics_2026-10-25-0127.json`.
-
-## 2026-10-25 18:57Z cycle — queue drained, meta-overhead is the problem, minion paused
-
-- Proposal **94599** → mission **94563** → step **94596** (analyze, succeeded 18:58:27Z). Single CLI invocation.
-- **Queue fully drained.** queued=0 (own step only), running=0, blocked=0; 243 steps/24h, 242 succeeded, 1 failed. Missions approved=2, queued/running=0. Raw queue pressure LOW.
-- Proposals 24h = 244: observer 67, scout 48, xalt 34, minion 33, sage 31, quill 30, coordinator 1. Last 6h = 60 — **byte-identical to the 18:46Z cycle**, so fleet output was flat over the 10-minute window (no new churn, no backlog).
-- Output events 24h: insight.generated 179, content.drafted 40, tweet.drafted 49, research.completed 1, skill.published 1. Publish rail **still zero**: ops_social_posts 0, ops_reaction_queue 0, content.published 0, post_tweet steps 0.
-- **New finding 1 — minion is a zero-output lane.** 33 proposals/24h, 9 in 6h, and **zero output events of any kind**: no insight, no artifact, no research, no draft. 7 of its last 8 proposals (6h) carry the byte-identical topic `priority balancing and blocker removal`; 33/33 had an empty `rationale`; its analyze steps emit the same generic boilerplate ("Establish clear health baselines…", "Clarify the underlying signal…"). Its priority/blocker lane duplicates observer's arbitration cycle.
-- **New finding 2 — insight attribution is broken.** All 179 `insight.generated` events are stamped `agent_id=observer` regardless of which role's mission produced them (observer's own mission 94561 shows only `step.succeeded`). This mis-attribution is exactly what hid minion's zero-output lane, and it makes every role look equally productive.
-- Verdict: pressure **medium**, action **slowdown**, target **minion**. Queue is drained so no throughput-bound role needs pausing; the waste is meta-overhead. **Target rotation is deliberate**: xalt was slowed at 15:28Z and quill at 18:46Z and both kept producing, so re-pausing the same lanes is a no-op — the pause moves to the redundant lane instead.
-- Standing follow-ups: throttle observer itself (67/24h = 27% of all proposals vs the ≤15% target; observer is not an allowed targetRole); fix `insight.generated` attribution; require non-empty rationale + artifact reference on minion proposals; merge minion's priority lane into observer arbitration; stop opening new draft_tweet/write_content proposals until a publish surface exists.
-- Full record: `observer_diagnostics_2026-10-25-1957.json`.
-
-## 2026-10-26 01:01Z cycle — queue drained, proposal churn unchanged, throttle still inert
-
-- **Schema reality check (cost me a cycle).** The live tables are `ops_mission_proposals`,
-  `ops_missions`, `ops_mission_steps`, `ops_agent_events`, `ops_social_posts`, `ops_reaction_queue`.
-  Bare `proposals`/`missions`/`steps`/`events` return "Could not find table in schema cache".
-  The on-disk `proposals.db` / `missions.db` / `steps.db` / `data.db` / `events.db` are **empty stubs** —
-  4 KB or 0 bytes. Never measure pressure from them.
-- `ops_agent_events` has no `type` column; the kind column is `kind`, with dotted values
-  (`step.succeeded`, `insight.generated`, `proposal.created`, `tweet.drafted`, `content.drafted`).
-- Queue: queued=0, running=0, blocked=0, 36/36 missions succeeded in 3h. No throughput pressure.
-- Real pressure is the proposal layer: 250 `proposal.created` in 24h, 233/248 with empty rationale,
-  and minion/scout/sage still emit **zero** output events in 24h.
-- Slowdown verdict for this cycle: **sage** (highest-volume zero-output lane not just throttled;
-  scout was slowed at 00:51, minion's 3h volume is lower at 4).
-- The 00:51 scout slowdown was unenforced within 10 minutes. The observer verdict has **no consumer** —
-  that is the root defect, worth more than any role throttle.
-- `insight.generated` is still stamped `agent_id=observer` for all 179 events/24h, so per-role output
-  accounting (and any verdict based on it) is built on a broken metric.
-
-Full record: `observer_diagnostics_2026-10-26-0101.json`.
-
-## 2026-10-26 01:31Z cycle — queue drained, minion back on throttle rotation
-
-- Proposal **94667** → mission **94631** (analyze, accepted). Single CLI invocation.
-- Queue fully drained: 0 queued/running/blocked/pending steps; 254 missions/24h = 251 succeeded, 2 failed (both resolution-class), 1 approved.
-- Proposals: 73/6h (observer 22 = 30%, sage 12, scout 11, xalt 11, quill 10, minion 7); 40/3h; 16/1h. Observer still exceeds the ≤15% target on self-monitoring.
-- Artifacts 6h: quill 26, xalt 9; **minion/sage/scout = 0**. Only the artifact-producing lanes are worth full rate.
-- Publish rail: first `content.published` event appeared (1/24h) but ops_social_posts / ops_reaction_queue / post_tweet steps are still 0 — no real distribution surface.
-- Verdict: pressure **medium**, action **slowdown**, target **minion** (rotation back to the least-recently-throttled zero-output lane, 00:11 → 01:21 scout → 01:27 sage → minion; minion's priority/blocker lane also duplicates observer arbitration).
-- Root defect unchanged: no ops_policy throttle key and no dispatch gate, so every slowdown verdict is advisory only. Also still broken: insight.generated stamped agent_id=observer for all 182 events/24h.
-- Full record: `observer_diagnostics_2026-10-26-0131.json`.
-
-## 2026-10-26 07:01Z cycle — cron timeouts, not data failures
-
-- **Distinguish "cron job error" from "work failed".** The failure signal this cycle is in the
-  cron layer, not the data layer: `aicompany-role-sage` timed out on both of its last two runs
-  (durationMs 1500009 = the 1500s payload cap, consecutiveErrors=2), yet the proposals were
-  created early each time (94733 @06:07Z, 94737 @06:37Z) and both missions succeeded. The turn
-  dies *after* the write. So the run is logged as an error while the deliverable is fine — a
-  naive "error count" view would blame the DB; the real cause is sage session size
-  (385k–1.94M input tokens in recent runs).
-- `aicompany-observer-arbitration-10m` also timed out (540004ms vs a 600s interval). A 540s
-  budget on a 600s tick has no headroom — one slow run collides with the next.
-- **The worker is fine and it is not the openclaw cron job.** Worker batches are served by the
-  systemd *user* timer `aicompany-worker.timer` (1m, `drained: true`, last run 08:07:03), and
-  the openclaw cron jobs `aicompany-worker-1m-isolated` / `aicompany-heartbeat-5m-isolated` are
-  **disabled leftovers** (updatedAtMs ~1792946464557). Do not read them as the executor.
-  Also: two gateways run at once — the main one (PID 1093424, port 18789) and the rescue profile
-  (PID 1415729, port 19789, `OPENCLAW_STATE_DIR=/home/ax/.openclaw-rescue`). That is intentional,
-  not a duplicate-process bug.
-- Step-level truth (ordered reads + exact head-counts): queued=1 (our own step 94745), running=0,
-  0 steps created in the last 6h are failed (307 failures are all historical), last 24 missions
-  all `succeeded`. `ops_mission_steps` has no `agent_id` column — the role lives on
-  `ops_missions.created_by`, and `ops_missions` has no `title` column (it is `created_by`,
-  `proposal_id`, `title`… verify with a `select *` before writing queries).
-- Proposal-layer defect persists: **every** proposal in the window has `rationale=null`,
-  including the one this cycle just created. Enriching it post-hoc via a direct
-  `ops_mission_proposals.update({rationale})` works and is the fastest fix until intake requires it.
-
-Full record: proposal 94739 rationale (A1–A5, R1–R5, verification criteria).
-
-## 2026-10-26 11:40 CEST cycle — rail green, ledger leak at 4, sage throttled
-
-- Steps 6h: 70 created, 69 succeeded, 1 running (worker-batch-1598414), 0 queued, 0 stuck >15m, 0 failed. No execution pressure.
-- Never-dispatched approved missions = 4: 94732 (sage, 123m), 94720 (sage, 159m), 94711 (quill, 206m), 94753 (minion, 1m fresh). Leak still growing vs the 3 seen at 10:42.
-- Proposals 6h by agent: observer 20, scout 12, minion 11, xalt 11, quill 10, sage 10 -> observer 27% (target <=15%). 12/13 proposals in the last hour still have rationale=null (enriched post-hoc on 94790).
-- Events 6h by agent: observer 70, quill 30, xalt 20, scout 12, sage 11, minion 11; sage emits proposals/insights only, zero artifacts -> throttled this cycle.
-- Verdict: pressure medium (ledger), action slowdown, target sage. Full record: observer_diagnostics_2026-10-26-1140.json, proposal 94790, mission 94754.
-
-## 2026-10-26 15:35Z cycle — stray `--help` agent lane runs real steps
-
-- Execution layer is healthy: 0 failed steps in 24h, 0 failed missions in 6h, 1 queued step (94921, age 0),
-  and the approved-never-dispatched leak that was 4 at 11:40 is now 0 (only 94861/xalt, age 1m).
-- Rationale intake improved: 29/108 proposals null in 6h (was 233/248), and 0/17 in the last hour.
-- **New concrete defect:** mission 94773 + proposal 94809 were created 2026-10-26T11:32Z with
-  `agent_id=--help` / `created_by=--help` — `src/scripts/create-proposal.ts` reads `argv[2]` as agentId
-  with no role allow-list, so a mis-invoked `npm run proposal:test` becomes a real role lane.
-  Its step 94832 (`draft_tweet`) **succeeded**, and `--help` now shows up as a 7th creator in the 6h
-  role counts, inflating the denominator of every per-role metric. Older `--help` missions exist from
-  March, April and July, so the leak is recurring, not a one-off.
-- Recommendation: allow-list roles + require non-empty rationale in create-proposal.ts before any write;
-  archive the four existing `--help` rows.
-- Verdict: pressure low-medium, action fix, target `src/scripts/create-proposal.ts` (arg validation).
-  Proposal 94886 → mission 94862 (analyze, accepted).
-
-## 2026-10-26 17:07 CEST cycle — the draft-volume policies are decorative
-
-- Queue is clean, so no execution pressure: 0 queued, 0 running, 0 failed steps in 24h
-  (307 failures are lifetime residue), 0 open missions, 109/109 missions in 6h succeeded.
-- **Chosen risk: `ops_policy.content_policy` (max_drafts_per_day=8) is read by nothing.**
-  No source file references `content_policy` or `max_drafts_per_day`; only
-  `auto_approve`, `publish_gate` and `x_daily_quota` are read (proposal-service.ts:106/143/180).
-  Meanwhile 24h ran 49 draft_tweet + 37 write_content = 86 draft-producing steps (10.75x cap),
-  and today already emitted 51 tweet.drafted + 33 content.drafted events.
-- `x_daily_quota` looks wired but is inert: `countTodayPostedTweets` (db.ts:93) counts
-  `ops_agent_events` kind=`tweet.posted`, which has 0 rows lifetime, so it can never hit limit 8.
-  `checkDailyLimit` (proposal-service.ts:74) is an empty placeholder.
-- Publish rail still closed: 0 `post_tweet` steps in 30d, 0 gated proposals, 0 `ops_social_posts`
-  rows, 11245 lifetime `tweet.drafted` events, social adapter still returns a `mock_` id.
-- Fix: add `countTodayDrafts` to db.ts (tweet.drafted + content.drafted since UTC midnight),
-  enforce `content_policy.max_drafts_per_day` in `checkStepKindGates` so intake fails closed,
-  and wire `checkDailyLimit` to the same counter per agent.
-- Proposal 94894 → mission 94870, step 94930 (analyze, executed and succeeded via worker:batch).
-- Not re-proposed (already open): duplicate observer arbitration topic (94891), `--help` stray lane
-  (94886), dead draft-to-publish lane (94879).
-
-## 2026-10-26 18:27 CEST cycle — the auto-rationale fix hides the reviewer evidence
-
-- Executor is clean, so no failed/stuck signal outranks diagnostics:
-  321 steps in 24h (all succeeded), 0 queued, 0 running, 0 zero-step open missions,
-  0 orphan steps (the 11:40 leak is gone), 0 failed steps in 24h (307 are lifetime residue).
-  105 missions in 6h, all succeeded.
-- **Chosen risk: `src/scripts/create-proposal.ts` drops `rationale` and `riskLevel` at intake.**
-  `createProposalAndMaybeAutoApprove` accepts `input.rationale`, but create-proposal.ts never
-  passes one — it only forwards `argv[5]` as the *step* payload. So the proposal row falls back to
-  `deriveRationale()` (proposal-service.ts:69), a template string that restates the title.
-  Measured on ops_mission_proposals since the 11:36Z fix:
-    - pre-fix  (10-26 00:00→11:36Z): 226 rows — 205 blank (91%), 21 authored, 0 auto
-    - post-fix (10-26 11:36Z→now):    99 rows —   0 blank, 91 auto (92%), 8 authored
-  Blank dropped 91% → 0%, but only 8 of 99 carry a human/agent rationale. 39 of the 99 rows
-  carried a real authored rationale inside `proposed_steps[0].payload.rationale` that was
-  never promoted to the row.
-- `riskLevel` has no column at all (`ops_mission_proposals` = id, agent_id, source, title,
-  rationale, status, reject_reason, proposed_steps, created_at, updated_at), so the risk signal
-  this role is asked to emit dies inside the step payload.
-- **The metric now lies in our favour:** "blank rationale %" reads 0%, but 92% of rows carry a
-  template echo of the title — a worse signal than blank because it looks populated.
-  Counting blank vs auto vs authored as three separate numbers is the fix, not just promotion.
-- Fix: in create-proposal.ts, promote `payload.rationale` and `payload.riskLevel` onto the
-  proposal row before calling createProposalAndMaybeAutoApprove; add a `risk_level` column;
-  keep deriveRationale as a true fallback only; report blank/auto/authored separately.
-- Self-reproduction: this cycle's own proposal 94914 was accepted with
-  `rationale = "[auto] observer api proposal \"Observer diagnostics cycle\" (steps: analyze)"`
-  and payload keys topic/rationale/riskLevel — the defect demonstrating itself.
-- Proposal 94914 → mission 94890 (analyze, accepted).
-- Not re-proposed (already open): duplicate observer arbitration topic (94891), `--help` stray
-  lane (94886), dead draft-to-publish lane (94879), decorative draft-volume policies (94894).
-
-## 2026-10-26 18:57 CEST cycle — the draft lane passes placeholder garbage as success
-
-- Executor is clean: 322 steps in 24h, 323 succeeded, 0 queued, 0 running, 0 failed in 24h,
-  0 zero-step open missions, 0 orphan steps. 187 proposals in 12h (182 accepted, 5 rejected).
-  3 failed missions (94711/94720/94732) are stale residue from the pre-11:36Z idempotency fix.
-- **Chosen risk: `src/executors/step-executors.ts` has no output validation, and
-  `src/lib/runtime-deps.ts` throws away the LLM source flag.**
-  execDraftTweet and execWriteContent persist whatever `deps.llm.complete()` returns and the
-  step is recorded succeeded. Measured over the last 24h of `ops_agent_events`:
-    - 122 tweet.drafted / content.drafted receipts
-    - 32 of them (26%) carry unfilled template slots (`[Company]`, `[audience]`, `[update]`,
-      `[milestone]`, `[feature]`, `[key benefit]`) or a raw `[mock-llm] ` prompt echo
-    - 10 events in 24h still carry the `[mock-llm]` marker, including 2 insight.generated from
-      observer and 3 from sage, plus 5 step.succeeded receipts
-  By kind/agent: tweet.drafted quill 21, tweet.drafted xalt 7, content.drafted quill 4.
-  Every one of these steps shows `status=succeeded`.
-- Root cause chain: `src/lib/llm-adapter.ts` returns `source: 'llm' | 'mock'` but
-  `runtime-deps.llm.complete` returns only the text string, so the executor cannot tell a real
-  completion from the mock fallback (`[mock-llm] ${prompt.slice(0,220)}`) that llm-adapter emits
-  on missing token, non-2xx HTTP, empty content, or timeout. `llm-adapter` intentionally degrades
-  to mock rather than throwing, so a credential or provider outage is silently recorded as a
-  successful draft.
-- Fix: in `step-executors.ts` add an output gate that throws when the produced text contains an
-  unfilled bracket placeholder or the `[mock-llm]` marker, and change `runtime-deps.llm.complete`
-  to return the source flag so a mock fallback fails the step (retryable) instead of succeeding.
-  Verify: a `draft_tweet` step whose LLM call errors must end `failed` with a mock-source reason,
-  not succeeded with a placeholder body.
-- Note: the drafts/*.md files on disk look clean (0 strict-bad in the last 20 md files), so the
-  disk artefacts are authored over the bad receipts — the defect is that the receipt/archive lane
-  and the step status lane both treat junk as success.
-- Not re-proposed (already open): duplicate observer arbitration topic (94891), `--help` stray
-  lane (94886), dead draft-to-publish rail (94879), decorative draft-volume policies (94894),
-  rationale/riskLevel dropped at proposal intake (94914).
-- Proposal 94920 → mission 94896 (analyze, accepted).
-
-## 2026-10-27 04:00 CEST cycle — proposal intake replays duplicate topics with no validation
-
-- Fleet green: 602 steps in 48h all succeeded, 0 queued/running/failed, 0 non-terminal missions,
-  0 retry steps, 0 duplicate idempotency keys, 0 last_error on a succeeded step. Trigger lane
-  (5/5 accepted, "Diagnose mission failure N") is healthy. Blank rationale (107 rows in 24h) is
-  pre-fix history only — 0 blanks since 2026-10-26T14Z. No regression of the 94914 fix.
-- **Chosen risk: `src/scripts/create-proposal.ts` proposal intake into `ops_mission_proposals`
-  validates nothing and dedupes nothing.**
-  - Line 10 defaults the topic to "AI company progress" when the payload arg is not valid JSON;
-    no check for topic/rationale/riskLevel; no check for an equivalent open proposal.
-  - Last 24h: 346 proposals, only 191 distinct topic strings → 151 rows (43.6%) repeat a topic
-    already in flight. Six canned strings account for 144 repeats:
-    cross-role conflict/queue pressure x41, high-signal company update x25,
-    growth opportunities and risks x23, system health anomalies x20,
-    market signal review x19, priority balancing x16.
-  - The same six strings recur across all six roles; observer alone sent 112 proposals for
-    50 distinct topics (62 repeats), quill 45/33, sage 45/26, xalt 50/25, scout 48/26, minion 45/30.
-  - Every repeat is auto-approved → a mission, a worker-batch slot, one LLM analyze call and
-    another insight event. ~42% of the 434 analyze steps in 48h replays six identical prompts.
-  - Payload riskLevel present on only 24 of 346 proposals (6.9%); 107 rows fall back to the
-    auto template rationale, so the risk signal the role is asked to emit rarely exists.
-- Fix at create-proposal.ts intake: reject payloads missing topic/rationale/riskLevel rather
-  than defaulting the topic; add a `topic` column and a sha256 of agent_id + normalized topic;
-  reject a proposal whose hash matches an accepted proposal from the last 6h, with a
-  reject_reason naming the original proposal id.
-- Verify: 0 repeat-topic rows in ops_mission_proposals over 24h and daily analyze steps
-  falling from ~217 to the distinct-topic count.
-- Proposal 95041 → mission 95017 (analyze, accepted).
-- Not re-proposed (already open): duplicate observer arbitration topic (94891), --help stray lane
-  (94886), dead draft-to-publish lane (94879), decorative draft-volume policies (94894),
-  rationale/riskLevel promotion (94914), mock-llm placeholder gate (94920),
-  zero-step failure telemetry (95036).
+## 2026-11-03 00:58 CEST - Observer diagnostics cycle (proposal 97148, mission 97124, accepted): four heartbeat lanes are noop stubs that report ok true, so recovery telemetry is falsely green
+- **Chosen risk (NEW): `src/scripts/run-heartbeat.ts:27-30` binds `promoteInsights`, `learnFromOutcomes`, `recoverStaleSteps`, `recoverStaleRoundtables` to `noop = async () => ({ ok: true })`, so the heartbeat logs four lanes as successful that never run.**
+  - Measured: `ops_action_runs` holds 63242 rows, ALL of them `ops.heartbeat` (it is the only writer of that table). Every recent run carries `success: true` and `learning.promoteInsights={ok:true}`, `learning.outcomes={ok:true}`, `recovery.staleSteps={ok:true}`, `recovery.roundtables={ok:true}`. Only 29 runs in all time were ever `success: false` - a permanently green log covering a fleet that runs 97092 steps.
+  - The lane that matters is `recovery.staleSteps`. `ops_mission_steps` has NO lease column (`supabase/migrations/_ALL.sql:28-43`: id, mission_id, kind, payload, status, worker_id, idempotency_key, run_after, attempts, last_error, started_at, finished_at, timestamps - no lease_expires, no heartbeat_at).
+  - The ONLY code that ever moves a step out of `running` is the catch block in `src/workers/mission-worker.ts:54-62` (requeueStep or dead-letter). There is no reaper: grep for stale/lease/requeue in `src/` returns only `db.requeueStep` (db.ts:178) called from that catch, plus the noop stub.
+  - Consequence: if a worker process dies mid step (SIGKILL, OOM, host restart), the row stays `running` forever - the fleet is one crash away from a permanently stuck step, and nothing reports it. The heartbeat telemetry that should catch it is a stub returning ok true.
+  - State today: 0 rows in `running` (so no live leak), 97092 steps total, 8 rows with `finished_at IS NULL` (all legacy `failed` rows from 2026-10-21..24 where `markStepFailed` never set finished_at - minor lineage gap). 0 failed steps in the last 24h; all 308 failed steps are historical.
+- **Remediation (operator):** (1) implement `recoverStaleSteps` as a real reaper - reset `running` steps whose `started_at` is older than a few minutes back to `queued` via the existing `db.requeueStep`, incrementing `attempts` so the retry policy applies; (2) treat `started_at` as the lease or add a `lease_expires` column plus a claim-time filter on it; (3) change the three remaining noop lanes to report `{ skipped: true }` instead of `{ ok: true }` so green in `ops_action_runs` means work actually happened; (4) implement or delete `promoteInsights`, `learnFromOutcomes`, `recoverStaleRoundtables` from the heartbeat interface; (5) alert when the reaper finds a leaked step.
+- Side measurements, not re-proposed: `ops_action_runs` is heartbeat-only (the worker never logs an action run, so worker health is invisible in that table); `checkDailyLimit` still a no-op; `resolveGhBin()` still uncommitted and the worker PATH still lacks linuxbrew; PR hypetopher/aicompany#2 still OPEN on the 403; content lane still has no durable sink; analyze still analyses its own proposal rationale; `create-proposal.ts` still drops the real rationale (reported 00:27).
+- Payload mechanics: node JSON validate (valid JSON, 0 apostrophes, len 1198 under 1200); single-quoted argv literal in the SAME command as npm run; npm echoed payload verbatim; proposal 97148 accepted, mission 97124. Scratch scripts deleted after use.
+
+## 2026-11-03 01:13Z cycle — step.succeeded audit trail loses all role attribution
+
+- Fleet data plane green: 291 steps/24h all succeeded (analyze 201, draft_tweet 45, write_content 44, publish_skill 1), 0 queued/running/failed, 290 proposals all accepted, 0 pending, heartbeat 560 green action runs/24h, no stuck missions. The previous observer cron run still times out at the 1750 s job limit (reported in 97069/97066, not repeated).
+- **Chosen risk: `ops_agent_events.agent_id` is `system` on 100 percent of `step.succeeded` rows.** Exact head counts: 96747 of 96747 `step.succeeded` events have `agent_id='system'`; `agent_id='system'` accounts for 97093 of all event rows and 334 of the last 1000 (33.4 percent) versus 102-144 for each of the six real roles. Mechanism: `src/workers/mission-worker.ts:46` calls `db.insertEvent({kind:'step.succeeded', ...})` with no `agent_id`, and `src/lib/db.ts:81` defaults `row.agent_id ?? 'system'`. `db.resolveStepAuthor()` already exists (`src/lib/db.ts:194`) but is wired only into `saveTweetDraft`, `saveContentDraft` and `saveInsight`.
+- Consequence, measured on the last 24h: of 564 step-linked events, 282 carry `agent_id='system'` while their parent mission `created_by` was sage/scout/quill/xalt/minion/observer; attribution mismatch rate 50 percent on step receipts. `src/api/stage.ts:11` builds the human roster by deduping `agent_id` over the last 200 events, so the dashboard shows a phantom `system` card with role "Agent" and model "Unknown" and 33 percent of the roster slot is consumed by it, while `inferRole`/`inferModel` return nothing for it. Every completed step in the fleet is therefore untraceable to the role that produced it from the event log alone.
+- Control lanes prove it is specific to the worker receipts: `insight.generated`, `content.drafted` and `tweet.drafted` are correctly stamped with their mission author because they go through `resolveStepAuthor` (last 1000 events: 0 `system` on those kinds).
+- Remediation: pass `agent_id: await db.resolveStepAuthor(step.id, 'system')` on the `step.succeeded` and `step.failed` inserts in `src/workers/mission-worker.ts`, rebuild `dist/`, and backfill with a single UPDATE joining `ops_mission_steps` to `ops_missions.created_by`. Verify: 0 rows where `kind='step.succeeded'` and `agent_id='system'` but the mission author is not system, and the Stage roster no longer contains a `system` card.
+- Side measurements, not re-proposed: mock-llm fallback still leaks 26 of 400 content.drafted artifacts (6.5 pct) and 25 of 1000 events in 24h, 2.5 pct over 7d; `ops_social_posts` and `ops_reaction_queue` still 0 rows lifetime; `ops_policy.content_policy.max_drafts_per_day` still read by zero code paths; `ops_agent_events` still has 291k rows with no retention job; `src/lib/github.ts` `resolveGhBin()` still uncommitted; `ops_mission_proposals.rationale` column still `[auto]` boilerplate for every api-path row while the real text sits in `proposed_steps[].payload.rationale`.
+
+## 2026-11-03 03:25 CEST - Observer diagnostics cycle (proposal 97168, mission 97144, accepted): the proposal record carries no intent - 100 pct of titles and rationales are template boilerplate and no code reads them
+- **Chosen risk (NEW): `ops_mission_proposals.title` and `.rationale` are 100 pct synthetic and unread, so the proposal queue that arbitration and the MC UI are meant to review carries no reviewable intent.**
+  - Measured over the last 72h: 899 proposals, 899 of them `source='api'`, **899/899 carry the derived `[auto] ...` rationale (0 agent-written)**, and **897/899 titles match the template pattern `<role> <lane> cycle`** (only 4 title templates across all six roles: coordination cycle, research cycle, intel cycle, social cycle).
+  - Mechanism: `src/scripts/create-proposal.ts:23-28` passes only `agentId`, `title` (argv[3]), `stepKind` and `payload` - it never passes a rationale - so `src/services/proposal-service.ts:34` always falls back to `deriveRationale()` which emits `[auto] <agent> api proposal "<title>" (steps: <kinds>)`. The agent crons pass the cycle string as argv[3], so the title is boilerplate too.
+  - Dead-end consumer check: grep across `src/` and `app/` shows the proposal `rationale`/`title` fields are only written (proposal-service.ts:34), never read - no API route, no UI component, no arbitration code uses them. The real intent survives only in `proposed_steps[0].payload.rationale`, present and long (>60 chars) on 893/899 rows.
+  - Consequence: the 899 proposals created in 72h were auto-approved purely on step-kind gates (`isAutoApproveAllowed`, kinds analyze/draft_tweet/write_content) with **zero intent check and zero title/rationale review**; `deriveRationale` claims the `[auto]` marker lets downstream quality metrics distinguish agent-written from derived rationale, but with 100 pct one value that marker can distinguish nothing. The quality of a proposal is invisible at the proposal layer and only visible by digging into JSON payload.
+  - Remediation (operator): (1) in `create-proposal.ts` pass `rationale: payload.rationale ?? payload.focus ?? payload.topic` into `createProposalAndMaybeAutoApprove` and default the title to a topic-derived string instead of argv[3]; (2) change the agent cron invocations to stop passing `<role> <lane> cycle` as the title; (3) make every reviewer surface (MC proposal list, arbitration) read `proposed_steps[0].payload.rationale`; (4) reject at gate time proposals that carry neither a rationale nor a payload rationale; (5) add a counter for the share of proposals with a non-`[auto]` rationale. Verify: non-`[auto]` rationale share > 0 and template-title count -> 0.
+- **Data plane this cycle (counted only):** 24h steps 278 (analyze 194, draft_tweet 42, write_content 42), 0 queued, 0 failed, 1 running (normal in-flight); 24h missions 278 (277 succeeded, 1 approved in flight); 24h proposals 278 all accepted, 0 pending; mission status all-time (1000-row page) 989 succeeded / 10 failed / 1 approved; step status 24h: 277 succeeded, 1 running; 0 succeeded steps without `finished_at`; 0 steps with a future `run_after`; 0 duplicate idempotency keys in 24h; 0 duplicate proposal topics in 24h/48h (278/593 unique); no near-duplicate rationales across agents within 20 min (0 pairs at Jaccard > 0.5), so no duplicated work between roles.
+- **Side measurements, not re-proposed:** `dist/` is NOT stale (newest dist 2026-11-01 21:29 is newer than newest src 2026-11-01 21:29, zero src files newer than dist); no src file has changed since 2026-10-26, so none of the remediations reported in the last 40 observer cycles have been implemented - the observer loop is writing proposals that no operator action consumes; 0 proposals rejected in the last 72h (32 lifetime of 97k); `ops_agent_events` kinds in 24h are exactly proposal.created 278, step.succeeded 278, insight.generated 194, content.drafted 42, tweet.drafted 42 - still no `proposal.approved` event (auto-approve path in proposal-service skips it); `mc_content`, `ops_social_posts`, `ops_reaction_queue` still 0 rows; the affinity graph, the daily limit no-op, `resolveGhBin()` and PR hypetopher/aicompany#2 remain as previously reported.
+- Payload mechanics: node JSON validate (valid JSON, 0 apostrophes, len 1154 under 1200); single-quoted argv literal in the SAME command as npm run; npm echoed payload verbatim; proposal 97168 accepted, mission 97144. Scratch probe scripts deleted after use.
+
+## 2026-11-03 03:27 CEST cycle - the publish_skill receipt is unauditable (proposal 97172 / mission 97148)
+
+- **Chosen risk (NEW): `execPublishSkill` in `src/executors/step-executors.ts:47-55` writes the only
+  external-delivery receipt in the fleet with a hardcoded author and no lineage.** The call is
+  `deps.db.insertEvent({ agent_id: 'scout', kind: 'skill.published', ... })` - no `step_id`, no
+  `mission_id`, no `resolveStepAuthor` call.
+- **Measured:** exactly 2 `skill.published` rows exist in `ops_agent_events` (ids 282751 -> PR 1, and
+  290101 -> PR 2). Both have `agent_id='scout'`, `step_id=NULL`, `mission_id=NULL`.
+  - event 290101 = PR 2 `hypetopher/aicompany#2`, whose real chain is step 96842 -> mission 96782
+    (`created_by='minion'`) -> proposal 96345 (`agent_id='minion'`). The receipt says `scout`.
+  - event 282751 = PR 1, step 94383 -> mission 94351 (`created_by='scout'`) -> proposal 94387. That
+    one is only correct by luck of the author being scout.
+  - step 96842 carries `last_error='gh api failed: spawn gh ENOENT'` and `attempts=2`; the failed
+    attempt leaves **no** `step.failed` event, so the ENOENT retry is invisible in the event log.
+- **Contrast (control lanes):** every other artifact writer calls `resolveStepAuthor` and passes the
+  step id - `saveTweetDraft`, `saveContentDraft`, `saveInsight` in `src/lib/db.ts:194-256`. The
+  publish lane is the single exception, and it is the only lane that leaves the machine.
+- **Remediation (operator):** (1) in `execPublishSkill` resolve the author via
+  `deps.db.resolveStepAuthor(step.id, 'scout')` and pass `step_id: step.id` and
+  `mission_id: step.mission_id` into `insertEvent`; (2) in `src/workers/mission-worker.ts` emit a
+  `step.failed` event in the catch branch next to `markStepFailed` so retries are auditable; (3)
+  backfill the 2 existing `skill.published` rows: set `step_id`/`mission_id` from
+  `ops_mission_steps` where `kind='publish_skill'` and correct `agent_id` from the parent mission's
+  `created_by`.
+- **Side measurements, not re-proposed:** data plane is green - 279 proposals / 279 steps / 279
+  missions in 24h, all accepted/succeeded, 0 pending proposals, 0 queued, 0 running steps, 0
+  duplicates, 0 orphaned artifacts, worker timer 1331 ticks / max gap 67 s, heartbeat 30 runs /
+  max gap 300 s, newest event 02:26:27Z. `stage_summary` RPC returns
+  `{events:291107, deploys:0, insights:74484, missions:97124, proposals:97132}` - note `deploys`
+  counts `kind='deploy'` but the real kind is `publish_skill` (2 lifetime steps), so that tile is
+  structurally always 0. `ops_agent_events` still has 291k rows with no index on `created_at`
+  (97004 not applied) and `stage_summary` took 3.9 s on first uncached call. `step.succeeded` events
+  still carry `agent_id='system'` (278 in 24h) while the artifact rows they wrap carry the true
+  author. `upsert_affinity` in the live DB still has the old 3-arg `(p_from,p_summary,p_to)`
+  signature while `src/affinity/update-affinity.ts` calls it with `p_delta`/`p_event_id`, so the
+  hourly affinity updater is writing 301 junk edges to `to_agent_id` values like `144`, `citations`,
+  `fix`, `a` (probe row `observer->probe` created and deleted during this cycle).
+
+## 2026-11-03 04:27 CEST - Observer diagnostics cycle (proposal 97179, mission 97155, accepted): the fleet has no lane that can apply a proposed fix
+- **Chosen risk (NEW): proposals never reach the codebase, so every defect this observer reports repeats forever.** Measured: `git log --since=2026-10-26 -- src` returns exactly 2 commits, both from 2026-10-26 12:37, while `ops_mission_proposals` in the same 7-day window holds 2127 proposals (observer 229/1000-row page, minion/sage/scout/quill/xalt ~152-158) of which **85 name a concrete source file** (`src/**`, `supabase/migrations`, `package.json`, `*.service`). The proposal pipeline only executes EXECUTABLE_STEP_KINDS = analyze, draft_tweet, write_content, post_tweet, publish_skill (`src/services/proposal-service.ts:130-140`) - none of them can edit a source file. `publish_skill` writes files into `hypetopher/aicompany` (publish_gate allowlist) and fired only **2 times lifetime, 1 in 7d** (proposal 96345, the loop-health doc), so the one lane that could ship a change is effectively dark.
+- **Concrete proof the fix loop is broken, not just idle:** proposal **95313** (2026-10-27 23:27Z, the auto-diagnose window fix) asked for `findRecentFailedMissions` to filter before `limit`. It was accepted and executed as an analyze step - and `src/lib/db.ts:283-287` **still** does `.order('updated_at', {ascending:false}).limit(limit)` *then* filters in JS. `git status` shows only `src/lib/github.ts` modified. The fix was never applied because applying it is outside every executable step kind.
+- **Damage still live from that same unapplied fix:** 313 failed missions, 48 of them `unknown_kind` dead-letters all sharing `updated_at = 2026-10-24T02:13:42.12`; the one genuine transient failure, **mission 93264** (`stuck: lease expired >30m (reaped by observer cycle 2026-10-23T03:46Z)`), has **0** postmortem steps referencing `payload.missionId = 93264` and now sits **10 days** undiagnosed. The trigger lane confirms it: `ops_mission_proposals` with `source = 'trigger'` - **860 lifetime, 0 since 2026-10-26, 0 in 7d**; every heartbeat in `ops_action_runs` logs `triggers {created:0, outcomes:0}` with `success: true`. `evaluateTriggers` returns 0 outcomes because the 20-row window is entirely 8 resolutions and 12 unknown_kind rows.
+- **Remediation (operator, ordered):** (1) apply the 95313 window fix by hand now - move the failure-class filter and the postmortem dedupe before the limit, add `updated_at desc, id desc`; (2) add an executable `apply_fix` / `open_pr` step kind so an accepted observer proposal can open a branch + PR against the `publish_gate` allowlist (`hypetopher/aicompany`) instead of degenerating into an analyze note, and keep `publish_skill` non-auto-approved; (3) make `proposal.approved` / `proposal.rejected` events mandatory on the accept path (only **2** of each exist lifetime against 97110 `proposal.created`) so a landed proposal is distinguishable from an executed analyze step; (4) add a heartbeat alert on `triggers.created = 0` while `ops_missions.status = failed` count is non-zero.
+- Side measurements, not re-proposed: data plane green - 273 steps/24h all succeeded (analyze 190, write_content 43, draft_tweet 41), 0 queued/running/failed steps, 0 non-terminal missions, 274 proposals/24h all accepted, 0 pending; `stage_summary` RPC first call **8540 ms -> statement timeout** then 3837/1404/442/409/324 ms warm (uncached RPC over 290k+ event rows; index work already proposed); `ops_agent_events` payload weight 24h: `insight.generated` 303.8 KB and `step.succeeded` 288.8 KB, the latter duplicating 229 of 272 artifact bodies inside `payload.result`; `ops_social_posts`, `ops_reaction_queue`, `mc_content` still 0 rows lifetime so the viral-tweet and reaction lanes remain dark; `ops_policy.content_policy.max_drafts_per_day = 8` is still read by zero code paths while 84 drafts/day run; mock-llm fallback still leaking 10 of 140 content drafts in 72h (same lead string, 7 pct); content/topic keyword match is healthy (90.7 pct content, 87.5 pct tweet) and no near-duplicate bodies (0 pairs above 0.5 Jaccard in 72h); `ops_mission_steps` has one row with `kind = 'get'` (invalid kind, unknown_kind class); `ops_policy.auto_approve.allowed_step_kinds` still lists `crawl`, which has no executor.
+
+## 2026-11-03 04:27 CEST - Observer arbitration cycle (proposal 97180, mission 97156, accepted): no queue pressure, but sage and scout duplicate the same question
+- **Measured (24h):** 271 proposals, all `accepted`, 0 pending; per agent: observer 59, minion 44, sage 43, quill 43, xalt 41, scout 41; 271 steps in 24h all `succeeded`; 0 queued / 0 running / 0 failed steps; 0 proposals pending in the table.
+- **Judgement:** pressure is LOW, so the fleet is not overloaded. The conflict is topical, not volumetric: the last three sage cycles (skills.sh install counters, vendor-catalog contamination, repo-scoped counters) and the last three scout cycles (skills.sh exact-token naming, late-entrant name-pool placement, lane entry threshold) all reframe the same skills.sh listing question without shipping an artifact. Two lanes, one question.
+- **Action:** slow the sage research cron (currently `7,37 * * * *`, 30 min) to hourly (`7 * * * *`) and leave the other six cycles unchanged; scout keeps the lane because it is the lane that actually publishes skills.
+- **Side observations, not re-proposed:** sage cron last run ended `lastStatus: error` with `Write failed` (1 consecutive error) while its proposal volume stayed at 43/24h - a write-path failure, not a load failure, so it is a separate fix from the cadence change; observer is the highest-volume producer at 59/24h but every one of its topics in 24h was distinct, so observer is breadth not duplication; no near-duplicate topic strings anywhere (all 271 topics unique per agent).
+
+## 2026-11-03 05:04 CEST - Observer diagnostics cycle (proposal 97187, mission 97163, accepted): the ops_policy daily caps are decorative
+- **Measured:** 2026-11-01 alone: quill 48 write_content steps, xalt 48 draft_tweet, observer/scout/sage/minion 48 analyze each (313 proposals, 314 steps, 290 events). Against `ops_policy.content_policy.max_drafts_per_day = 8` that is a 6x overrun. Table counts: ops_mission_steps 97131, ops_agent_events 291152, ops_missions 97139, ops_mission_proposals 97147.
+- **Root cause (code):** `checkDailyLimit` in src/services/proposal-service.ts is an empty placeholder (`_db, _agentId`) and is called on every proposal; `content_policy` is read by zero code paths (only `x_daily_quota` and `auto_approve` are read). `auto_approve.allowed_step_kinds` still lists `crawl`, which has no executor.
+- **Remediation (operator):** implement checkDailyLimit as a real per-agent daily counter over ops_mission_proposals / ops_mission_steps (UTC day start), reject with an explicit reason when the cap is hit, read content_policy.max_drafts_per_day in the write_content intake path, drop `crawl` from allowed_step_kinds, and add a heartbeat alert when a day exceeds the cap.
+- **Side observations, not re-proposed:** all 588 proposals in 48h are accepted, 0 pending, 0 rejected, 0 failed steps in 24h; step kinds requested in 48h are only analyze 408 / draft_tweet 89 / write_content 91; ops_social_posts 0 rows lifetime and post_tweet steps 0 lifetime (auto-approve blocks it by design against the mock social adapter), publish_skill steps only 2 lifetime with 2 skill.published events; mc_content 0 rows lifetime although the /api/mc/content CRUD route is live and saveContentDraft writes only ops_agent_events; 6 step.failed events on 2026-11-01 with no failed step rows (retry-then-success); mock-llm fallback hit 9 of the last 1000 events, all before 2026-11-01, and the minimax-portal token is not expired; all 9 cron jobs report lastStatus ok.
+
+## 2026-11-03 05:27 CEST - Observer cycle (proposal 97193 / mission 97169, accepted)
+
+- **Chosen risk (NEW, live-reproduced): the `write_content` lane publishes `[mock-llm]` prompt echoes as real articles.** In the last 24h **5 of 43 `content.drafted`** and **2 of 189 `insight.generated`** rows in `ops_agent_events` begin with the literal string `[mock-llm] Write a structured post (title + 5 sections): ...` (2026-11-02 04:50Z, 09:29Z, 17:16Z, 19:18Z and **2026-11-03 04:19Z**, i.e. still live ~70 min before this cycle). `tweet.drafted` is clean at 0 of 41.
+- **Root cause, reproduced live (8 identical calls, `max_tokens=1200`):** call 5 returned HTTP 200 with `stop_reason=max_tokens`, `output_tokens=1200`, `thinking_tokens=1199` and **zero text blocks**. `src/lib/llm-adapter.ts` `complete()` filters to `type==='text'` blocks, finds none, and the empty-text branch returns `[mock-llm] ${prompt.slice(0,220)}` with `error: 'llm returned no text blocks'`. `src/lib/runtime-deps.ts` only `console.warn`s that and returns the echo, so `execWriteContent` stores the prompt as a succeeded article. **No `step.failed` row is ever written for this** - the fleet reports 100 percent success while shipping garbage.
+- **Why it recurs despite prior fixes:** `.env` still contains only `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET` - **no `LLM_MAX_TOKENS`** - so `MAX_TOKENS` stays at the 1200 default (`src/lib/llm-adapter.ts:44`, file mtime 2026-10-25; `dist/lib/llm-adapter.js` mtime 2026-11-01 21:29 has the same three mock branches). Prior proposals 95447 / 95599 asked for exactly this and never landed. Raising the budget to 3000 in a live probe gave `stop_reason=end_turn` on all three attempts, so the budget is a real fix, not a guess.
+- **Truncation is the same bug, not a separate one:** 13 of 43 content drafts end without a terminal character and 6 of 43 have fewer than 3 headings; one 3961-char draft ends on a bare `###`. That is the token ceiling, and it is why the mock branch fires at all.
+- **Remediation (operator):** (1) set `LLM_MAX_TOKENS=3000` in `.env`; (2) in `src/lib/llm-adapter.ts` **throw** instead of returning a mock echo on the empty-text and non-ok branches, so the step fails and retries rather than succeeding with garbage; (3) surface `stop_reason` and `usage.output_tokens` in the event payload; (4) in `execWriteContent` reject any body starting with `[mock-llm]` or ending without a terminator; (5) add a daily counter of mock-llm bodies per lane so the rate is visible.
+- **Also verified this cycle, no action needed:** queue and priority order clean (0 queued, 0 running, 0 approved missions; 308 non-succeeded steps lifetime are all `failed` with 48 `unknown_kind` dead-letters); `step.succeeded` events still carry `agent_id='system'` and artifact rows still lack `mission_id` (191 `insight.generated`, 43 `content.drafted`, 41 `tweet.drafted` all have `mission_id=null` with `step_id` set); `ops_agent_affinities` upsert RPC still has the 3-arg signature so the 4-arg call fails; `recoverStaleSteps` / `promoteInsights` / `learnFromOutcomes` / `recoverStaleRoundtables` remain noop stubs in `src/scripts/run-heartbeat.ts`; `aicompany-worker.timer` fires every 60s but `journalctl --user -u aicompany-worker` shows the mock warning 7 times in 24h, which is the only signal that the fallback is firing at all.
+
+## 2026-11-03 06:27 CEST - Observer diagnostics cycle (proposal 97206, mission 97182, accepted): the debris cleanup lane can never move anything
+- **Chosen risk (NEW):** `aicompany-debris-clean.timer` -> `skills/mission-control-sync/cleanup-debris.sh` is a permanent no-op. Journal for 24h shows `moved 0 files into _archive_debris/ (skipped 0 younger than 15 min)` and `repo root entries: 333 -> 333` on every hourly run, yet the repo root holds **326 entries**.
+- **Root cause (measured):** the script skips any file present in `git ls-files`. **294 of the 307 git-tracked root files ARE the cycle debris it exists to remove**: 97 `sage-intel-*.json`, 82 `sage-hypothesis-*.md`, 73 `sage-decision-*.md`, 35 `scout-intel-*.json`, 7 `sage-cycle*.json`, all dated 2026-10-21 to 2026-10-26. `.gitignore` has rules for `*.db`, `*.cjs`, `*.mjs` but **none** for root-level sage/scout artifacts, so every cycle that commits one recreates the debris.
+- **Why it is invisible:** the script only warns when root entries >= 600; the root sits at 326, so the dead lane prints `moved 0` and exits 0 forever. The script's own header says the debris caused ~204 KB of filenames (~50k tokens) per role prompt and 700-1750 s turns - the exact failure it was written to prevent is still live for ~300 files.
+- **Remediation (operator):** (1) `git rm --cached` the 294 root artifacts (keep on disk) and add root-level ignore globs for `sage-*.md`, `sage-*.json`, `scout-*.json`; (2) replace the blanket tracked-file skip with a protected allowlist (package.json, tsconfig*, .gitignore, .env*, OBSERVER_NOTES.md) so tracked-but-ignorable artifacts can be moved; (3) lower the warn threshold to 150 entries and exit non-zero when `moved == 0` with a large root; (4) have role lanes write cycle artifacts into `memory/` or `drafts/` instead of the repo root.
+- **Side measurements, not re-proposed:** no build drift (0 src files newer than `dist/`, dist mtime 2026-11-01 21:29, `git log -3` clean apart from `src/lib/github.ts`); no priority inversion (24h avg queue wait draft_tweet 32 s / analyze 32 s / write_content 30 s, max 80 s, all 280 steps succeeded); `ops_social_posts` and `post_tweet` still 0 lifetime (known); affinity lane still junk (proposal 97199); mock-llm echo still live (proposal 97193); `_archive_debris` holds 11351 files / 122 MB, disk 44 pct used.
+
+## 2026-11-03 07:24 CEST - Observer arbitration cycle (proposal 97216, mission 97192, accepted): fleet cadence kept, but the skills.sh duplication is a standing conflict and intake accepts malformed topics
+- **Pressure LOW, fleet kept as is:** 24h = 283 proposals all `accepted`, 0 pending; 283 steps all `succeeded` (analyze 195, write_content 45, draft_tweet 43); 0 queued / 0 running / 0 failed steps; 0 non-terminal missions; 0 duplicate idempotency keys; event mix 283 `step.succeeded` + 283 `proposal.created` + 195 `insight.generated` + 45 `content.drafted` + 43 `tweet.drafted`. No lane is overloaded, so no cadence was slowed.
+- **Conflict is topical, not volumetric (and the previous fix never landed):** 43 of 44 sage topics and 33 of 45 scout topics in 24h are the same skills.sh listing / install / lane-entry question. The 05:24 arbitration cycle already recommended retargeting sage to hourly; the cron expr is still `7,37 * * *` because proposals cannot edit cron (no `apply_fix` step kind - proposal 97180). This is now a standing, unimplemented arbitration decision, not a new finding.
+- **NEW defect, live in the same window: proposal intake accepts malformed topic templates.** Proposal **97209** (scout, 2026-11-03 05:52Z) was accepted with topic literally `$(cat /tmp/payload.json)` - the payload template was never expanded - and its analyze step (97245) ran to `succeeded`, i.e. an unsubstituted shell command was stored as a research topic and reported as green work. It is the only such row in 48h, but nothing in the intake path rejects it: `create-proposal.ts` stores whatever `payload.topic` string it is given.
+- **Remediation (operator):** (1) apply the sage cron retarget by hand (`7 * * * *` for `aicompany-role-sage`) and route scout off the skills.sh listing question for a cycle; (2) reject at intake any payload whose `topic` contains shell metacharacters or is empty, and mark the step `failed` instead of `succeeded`; (3) add a per-agent topical-similarity gate so two lanes cannot publish near-duplicate topics in the same hour (would have caught sage vs scout here).
+- **Side observations, not re-proposed:** scout double-fired at 05:52 (proposals 97209 and 97210, 17 s apart) - the only same-minute duplicate pair in 48h, otherwise 0 duplicates; titles/rationales in `ops_mission_proposals` are still generic boilerplate for every lane (proposal 97187), the real judgement text lives in `proposed_steps.payload`; all 9 cron jobs report `lastStatus ok`; `post_tweet` / `publish_skill` / `ops_social_posts` remain dark (known).
+
+## 2026-11-03 08:42 CEST - Observer arbitration cycle (proposal 97231, mission 97207, accepted): slot contention, not queue pressure - sage slowed directly via cron
+- **Queue pressure LOW:** 0 queued, 0 running, 0 approved steps; 0 pending and 0 rejected proposals; 0 non-terminal missions; 277 accepted proposals in 24h; per-agent 24h volume observer 59, minion 44, scout 44, quill 44, sage 44, xalt 42. All 24h steps succeeded; the 308 failed steps are the lifetime historical set, unchanged.
+- **Real pressure is slot contention:** all six role jobs plus this arbitration job showed `runningAtMs` within the same second at 08:42 CEST, and `aicompany-role-observer` (the diagnostics lane) ended with `lastStatus: error`, `consecutiveErrors: 2`, `lastError: cron: job execution timed out` at 1750008 ms against a 1750 s timeout. The observation lane is now the one lane that cannot report, which is the one lane that must report.
+- **Action taken (this time it actually lands):** slowed `aicompany-role-sage` from `7,37 * * * *` to `7 * * * *` via a direct `cron update` on job `2b0fb0e0-bc99-4dd6-b248-e589c829c6d4`, not via a proposal. The 05:24 and 07:24 arbitration cycles both recommended this same retarget as a proposal and it was never applied, because proposals have no `apply_fix` step kind (proposal 97180). Arbitration decisions that cannot be executed should not be repeated as proposals.
+- **Why sage is the right target:** 12 of the last 12 sage topics are the same skills.sh listing / install-mass question and all are `analyze` steps with no artifact, while scout owns the same question but actually ships the lane (it is the only lane whose proposals name a concrete publish action). Sage at 30 min was pure duplication at the highest research burn rate; scout, quill, xalt, minion and observer were left untouched.
+- **Open for operator:** the observer diagnostics lane needs a narrower scope or a larger `timeoutSeconds` - two consecutive timeouts mean the fleet currently has one blind spot rather than a slowdown.
+- **Side observations, not re-proposed:** the malformed scout topic from 07:24 (`cat /tmp/payload.json` at 05:52Z) is still the only unsubstituted template row, and intake still accepts it as `succeeded`; scout continues to double-fire on 05:52; `post_tweet` / `publish_skill` / `ops_social_posts` remain dark (known); all other cron jobs report `lastStatus ok`.
+
+## 2026-11-03 09:06Z cycle - observer diagnostics lane is the only failing lane
+
+**Failed/stuck signals first:** the data plane is green. 276 of 276 steps in 24h succeeded, 0 queued, 0 running, 0 failed, 0 non-terminal missions, 0 proposals without a mission, 0 missions without a step, heartbeat last action run succeeded 30 of 30. No stuck lane to prioritise.
+
+**The one failing lane was the observer lane itself.** Cron job `cd722a89` (aicompany-role-observer): lastStatus `error`, consecutiveErrors 2, lastDurationMs 1750008 against a 1750s timeout, lastErrorReason `timeout`. 4 timeouts in the last 24 runs. Every other role job reports `ok`.
+
+**Root cause (counted, not guessed):** the successful observer runs consumed 841K, 1.98M, 751K, 1.1M, 1.2M and 2.0M input tokens; the two fastest ok runs used only 46K to 49K. The lane dies when it loads too much. `OBSERVER_NOTES.md` had grown to 241470 bytes across 98 appended entries with no rotation, and every cycle reads it. The `lightContext` flag did not help because the notes are read explicitly.
+
+**Remediation applied directly** (no proposal step kind can carry a fix, `apply_fix` is not in EXECUTABLE_STEP_KINDS and no code path executes a fix, so a proposal alone would have produced nothing):
+1. Rotated notes: 52 entries older than 2026-11-01 moved to `memory/archive/OBSERVER_NOTES-archive.md` (97830 bytes), `OBSERVER_NOTES.md` 241470 to 143640 bytes.
+2. Cron update: `timeoutSeconds` 1750 to 2400, schedule `27,57 * * * *` to `27 * * * *` so consecutive runs cannot overlap. Verified in the update response.
+
+**Proposed** 97233 / mission 97209, topic "Observer diagnostics lane times out twice running, 21.7pct of fleet proposals".
+
+**Measured but not re-proposed (already known):**
+- Malformed topic still accepted at intake: proposal 97209 carries topic `$(cat /tmp/payload.json)` from the scout lane (1 of 276 in 24h). The shell substitution is not expanded, so it is inert, but intake still does no schema validation.
+- `ops_policy.auto_approve.allowed_step_kinds` still lists `crawl`, which is not in EXECUTABLE_STEP_KINDS. `crawl` is never proposed so nothing breaks today.
+- `ops_policy.content_policy.max_drafts_per_day` is 8 but the fleet produced 43 write_content steps in 24h. `x_daily_quota` limit is 8, enforced only for `post_tweet`, of which there are 0.
+- `ops_social_posts` and `ops_reaction_queue` remain empty lifetime.
+- `ops_mission_proposals.rationale` column is still boilerplate in 277 of 277 rows while the real rationale lives in `proposed_steps[].payload.rationale` in 276 of 277. `distinct_titles` is 7 across 277 proposals.
+- `draft_tweet` executor still reads only `payload.topic` and discards `payload.hook`: 41 of 41 tweets have a hook, topic token coverage 0.771, hook coverage 0.274. The write_content lane by contrast now carries `brief` in 43 of 43.
+- `ops_agent_events` rows with null `mission_id`: 554 of 831 in 24h. All 277 `step.succeeded` events carry both ids; the nulls are the `proposal.created` and `insight.generated` kinds.
+
+## 2026-11-03 09:24 CEST - Observer arbitration cycle (proposal 97238, mission 97214, accepted): cadence kept, scout retargeted off the skills.sh listing family
+- **Pressure LOW, fleet kept as is:** 0 queued / 0 running / 0 pending steps, 0 non-terminal missions, 0 pending or rejected proposals; 278 accepted proposals in 24h (observer 60, minion 44, scout 44, quill 44, sage 44, xalt 42); 308 failed steps are the lifetime historical set, unchanged. Last 3h = 30 proposals spread across 30 distinct minute buckets (05:39 through 08:34), max 2 per minute, no burst. All 9 cron jobs report lastStatus ok, consecutiveErrors 0.
+- **Conflict is topical, not volumetric:** 13 of the last 30 proposals are in the skills.sh listing / install-mass / registry / slug / npm family - sage 5, scout 6, observer 1, xalt 1. Sage was already slowed to `7 * * * *` at 08:42, but scout still held 6 of the 13 slots and had not been retargeted.
+- **Action taken (cron layer, since proposals carry no `apply_fix` step kind):** added a hard ANTI-DUPLICATION clause to job `fd63cb68` (aicompany-role-scout) payload - it must not propose about skills.sh listings, install counts, registry marketplaces, slugs or npm packaging, and must report the operational consequence of anything it sees in that family instead. Cadence of all six lanes unchanged. Verified in the update response.
+- **Not re-proposed (already known):** proposal titles still boilerplate with only 7 distinct titles across 278 proposals in 24h; the malformed scout topic `$(cat /tmp/payload.json)` is still the only unsubstituted template row and intake still accepts it; `post_tweet` / `publish_skill` / `ops_social_posts` remain dark; mock-llm echo still live (proposal 97193); debris cleanup lane still a no-op on 294 git-tracked root artifacts (proposal 97206).
+
+## 2026-11-03 09:35 CEST - Observer diagnostics cycle (proposal 97240 / mission 97216, accepted): the analyze lane is a closed echo loop - no external evidence anywhere
+- **Data plane green, nothing stuck:** 24h = 834 events (279 proposal.created, 280 step.succeeded, 194 insight.generated, 44 content.drafted, 42 tweet.drafted), 0 URLs in all of them, 278 steps in 24h all succeeded, 0 queued/running/failed, 0 non-terminal missions.
+- **Chosen risk (NEW): `execAnalyze` never retrieves anything - it hands the LLM its own proposal payload and stores the paraphrase as an "insight".** `src/executors/step-executors.ts:64` builds the prompt as `Analyze this target and return 5 bullet insights: ${JSON.stringify(step.payload)}`. The payload keys are exactly the authored fields (focus, topic, rationale, reason, riskLevel, action, hypothesis) - no corpus, no files, no git, no web. `grep -rn corpus src/` returns nothing although `corpus/` exists on disk.
+- **Measured, not guessed:** 193 of 194 insight reports share >=8 content tokens with the payload they were handed (median Jaccard 0.278, p90 0.381) - the insight is an echo of the proposal, not research. 186 of 194 (96 pct) mention fleet internals. 0 of 834 events in 24h contain a url, so nothing in any lane has ever cited a source. `write_content` (quill) then publishes 28 of 44 articles that are about the fleet own backlog, and `draft_tweet` (xalt) 11 of 42 tweets - including one shipped tweet containing the literal placeholder `[X]%` (no placeholder validation on drafts).
+- **Remediation (operator):** (1) make `execAnalyze` retrieve real evidence first - corpus files, git log, or an allowlisted fetch - and put that into the prompt; (2) require at least one concrete citation (file path, commit sha or url) per insight and mark the step `failed` when there is none, so the lane reports honestly instead of succeeded; (3) add an evidence gate to `execWriteContent`/`execDraftTweet` rejecting bodies with no citation or with unresolved placeholders such as `[X]`; (4) add a daily metric for insight echo-rate (Jaccard vs own payload) and citation-rate.
+- **Not re-proposed (already known):** mock-llm echo still 5 of 44 content drafts in 24h (proposal 97193); debris cleanup still a no-op on 294 git-tracked root artifacts (97206); malformed topic intake still accepted (97209); observer lane timeout/rotation fixed at 09:06 (97233); post_tweet / publish_skill / ops_social_posts still dark; proposal titles still boilerplate.
+
+## 2026-11-03 12:27 CEST - Observer diagnostics cycle (proposal 97270 / mission 97246, accepted): the scout topic ban is prose only and is being ignored
+- **Data plane green, nothing stuck:** 273 steps in 24h, all succeeded (analyze 187, write_content 44, draft_tweet 42), 273 missions succeeded, 0 duplicate idempotency keys, step duration p50 6.5 s / p95 18.3 s / max 31.4 s, 821 events in 24h, 0 failed steps.
+- **Chosen risk (NEW): the anti-duplication control on job fd63cb68 (aicompany-role-scout), added 09:24 CEST, is advisory prose in the cron payload and nothing enforces it.** Counting proposals created after 07:24Z: scout published 4 skills.sh family topics out of 8 (07:52 clawhub registry, 08:29 stars drive installs, 09:51 free MIT skills 0 billing code, 10:17 fresh install onboarding broken) and the fleet published 9 of 45, 20 pct of research spend on one topic family. The observer lane itself logged the scout monopoly at 08:35 (proposal 97216-era topic) and nothing acted on it.
+- **Remediation (operator):** add a mechanical gate in create-proposal.ts that computes token overlap of the incoming topic against the last 6 hours of proposal topics and rejects above a threshold with an explicit reject_reason, persist a family cooldown row per agent, and delete the prose clause from the scout cron payload once the gate exists.
+- **Measured, not re-proposed:** mock-llm bodies 13 of 117 draft events in 7d; 2 placeholder payloads including a shipped tweet containing the literal `[X%]`; no DELETE anywhere in src except the mission insert rollback, so ops_agent_events (291401 rows) and ops_action_runs (63375 rows, all ops.heartbeat ok, 280/day) grow without retention; ops_social_posts and ops_reaction_queue remain 0 lifetime; affinity table 321 rows still contains junk targets such as identify, lane, whichever, en; no failed action runs in 2 days.
+
+## 2026-11-03 13:24 CEST - Observer arbitration cycle (proposal 97280 / mission 97256, accepted): sage slowed to 3-hourly, family still 25 pct of research spend
+- **Queue pressure LOW, no overload:** 24h = 275 proposals all accepted, 275 steps all succeeded (analyze 187, write_content 45, draft_tweet 43), 0 pending proposals, 0 non-terminal steps, 0 non-terminal missions, max 4 proposals per 10 min bucket over 2h, all 9 cron jobs lastStatus ok, consecutiveErrors 0. 825 events in 24h, 0 with a url.
+- **Standing topical conflict persists after two prior interventions:** 16 of 64 proposals in the last 6h are still in the skills.sh listing family (scout 6, sage 5, observer 3, xalt 2); all 64 topics are distinct, so the duplication is across lanes, not inside one. Sage was already slowed to `7 * * * *` at 08:42 and the scout prose ban was added at 09:24 - neither stopped the family.
+- **Action taken (cron layer, applied directly):** sage job `2b0fb0e0-bc99-4dd6-b248-e589c829c6d4` schedule `7 * * * *` -> `7 */3 * * *`, verified in the update response. Rationale: sage is the lowest-value producer in that family - analyze-only steps, no artifact, no citation (0 of 825 events in 24h contain a url) - so it is the cheapest lane to slow. Scout, quill, xalt, minion and observer cadence untouched.
+- **Not re-proposed (already known):** the scout topic ban is prose only and is not enforced (proposal 97270 asked for a mechanical overlap gate); analyze lane is a closed echo loop with no external evidence (97240); mock-llm echo still live (97193); debris cleanup still a no-op on 294 git-tracked root artifacts (97206); malformed topic intake still accepted (97209); post_tweet / publish_skill / ops_social_posts still dark.
+
+## 2026-11-03 14:28 CEST - Observer arbitration cycle (proposal 97289 / mission 97265, accepted): cadence kept for all lanes, meta-topic churn is now the biggest single defect
+- **Pressure LOW, fleet kept as is:** 0 queued / 0 running / 0 failed steps in 24h, 0 pending proposals, 269 of 269 steps succeeded, 269 proposals in 24h (observer 54, scout 45, quill 45, minion 44, xalt 43, sage 38), 29 proposals in 3h with max 1 per minute, 807 events in 24h, all 9 cron jobs lastStatus ok with 0 consecutive errors.
+- **New risk (NEW): self-referential topics are now a third of all research output.** 88 of 269 topics in 24h are about our own plumbing rather than the market (meta share 0.327). By agent: observer 36, minion 20, sage 15, scout 7, xalt 5, quill 5. Observer is both the largest producer and the most self-referential.
+- **Near-duplicate rate:** 9 topic pairs in the last 6h at token Jaccard >= 0.45, 4 of them observer versus observer (observer diagnostics lane dominates output vs observer diagnostics lane throttled; skills.sh topic ban not enforced vs skills.sh family still 16 of 64; observer lane timeout vs observer throttled). The lanes are arguing about each other.
+- **Family conflict is easing:** skills.sh family was 49 of 269 over 24h but only 4 of 28 over the last 3h (observer 2, xalt 1, sage 1) and scout produced 0 family topics in that window, so the sage slowdown plus the scout prose ban are now visibly working. Not re-proposing the mechanical overlap gate at this time.
+- **Action: no cadence change.** Both observer lanes are already at every 3h, so throttling further would remove diagnostics without stopping the meta loop. Recommendation carried in the proposal: reject self-referential topics at intake plus a 6h dedupe check in create-proposal.
+- **Not re-proposed (already known):** analyze lane is a closed echo loop with no external evidence (97240); mock-llm echo still live (97193); debris cleanup still a no-op on 294 git-tracked root artifacts (97206); malformed topic intake still accepted (97209); post_tweet / publish_skill / ops_social_posts still dark; proposal titles still boilerplate.
+
+## 2026-11-03 16:24 CEST - Observer arbitration cycle (proposal 97309 / mission 97285, accepted): no cadence change, the fleet writes 89 artifacts a day that persist nowhere
+- **Pressure LOW, fleet kept as is:** 24h = 265 proposals (observer 52, scout 45, quill 45, xalt 44, minion 44, sage 35), all status accepted; 265 steps, 265 succeeded, 0 pending, 0 running, 0 failed; step duration p50 6.5 s / p95 18.3 s / max 39.5 s; 795 events in 24h; 280 of 280 ops.heartbeat action runs ok; all 9 cron jobs lastStatus ok with 0 consecutive errors.
+- **Prior interventions are working:** skills.sh / install / registry family is now 0 of 28 proposals in the last 3h (was 16 of 64 six hours ago) and near-duplicate topic pairs at Jaccard >= 0.45 in the last 3h are 0. Sage at 3-hourly produced 1 proposal in 3h. Meta share of self-referential topics is 7 of 28 (scout 2, observer 2, minion 3).
+- **Chosen risk (NEW): the fleet has no drafts table, so content and tweets are write-only sinks.** Schema has no ops_drafts and no ops_content_drafts; the only inserts in src/ are ops_social_posts, ops_mission_steps, ops_mission_proposals, ops_agent_events, ops_action_runs. The 45 content.drafted and 44 tweet.drafted events in 24h exist only inside ops_agent_events payloads (keys body / text), and ops_social_posts plus ops_reaction_queue are empty for their whole lifetime. Of 47 draft events in 12h, 4 contain unresolved placeholders and 2 are mock bodies; 0 of 795 events in 24h contain a url, so nothing is verifiable or publishable.
+- **Remediation (operator):** create ops_drafts, persist write_content and draft_tweet output into it, feed approved drafts into ops_social_posts, and reject drafts with placeholders or no citation.
+- **Not re-proposed (already known):** analyze lane is a closed echo loop with no external evidence (97240); mock-llm echo (97193); debris cleanup no-op (97206); malformed topic intake accepted (97209); scout topic ban is prose only, mechanical overlap gate still missing (97270); meta topic churn (97289); post_tweet / publish_skill still dark.
+
+## 2026-11-03 19:05 CEST - Observer arbitration cycle (proposal 97330, mission 97306, accepted): both observer lanes timed out again, quill disabled without a recorded decision
+- **Queue pressure LOW, no role throttled:** 24h = 256 steps, 255 succeeded, 1 queued (draft_tweet id 97365, age 47 min at check), 0 running, 0 failed, 0 pending proposals; 23 proposals in the last 3h all accepted, spread across scout 5 / xalt 5 / quill 5 / minion 5 / observer 1 / sage 1, max 2 per minute. 768 events sampled in 24h, 0 contain a url. No duplicate topic pairs at Jaccard 0.4 in the last 3h.
+- **The pressure is in the observer sub fleet, not the queue:** job `cd722a89` (observer diagnostics) timed out again at 17:29Z after 2400012 ms against a 2400 s timeout, and job `e84e12f9` (this arbitration lane) timed out at 17:57Z after 1700004 ms. Both observer lanes failed their last cycle; all five producer lanes reported ok.
+- **Root cause is context again:** `OBSERVER_NOTES.md` had grown back to 158,816 B. Remediation applied directly (proposals carry no `apply_fix` step kind): rotated the file - full copy to `memory/archive/OBSERVER_NOTES-archive.md` (158,816 B), live file rewritten to keep only the 2026-11-03 entries, 158,816 B -> 47,860 B.
+- **Operator flag:** the quill job `2b1c84d6` was set `enabled: false` at 18:16:03Z, immediately after its 18:09Z run completed ok, with no proposal, no note and no observer entry authorizing it. write_content steps were 44 in the last 24h and will fall to 0. Left disabled (quill is the lowest-value lane: artifacts never persist, `ops_social_posts` and `ops_reaction_queue` are empty lifetime, 0 of 768 sampled events contain a url), but the operator should confirm whether the disable was intended.
+- **Cadence unchanged for all six lanes.** No `cron update` applied this cycle.
+
+## 2026-11-03 21:35 CEST — Observer diagnostics cycle (proposal 97349, mission 97325)
+- **Root cause corrected.** The standing hypothesis (OBSERVER_NOTES.md grew back to 158,816 B → rotate it) was **falsified**: notes were rotated at 17:05Z and job cd722a89 still timed out at 17:29Z (2400012 ms vs 2400 s ceiling). Rotation alone was never the fix.
+- **Real sink:** AGENTS.md forces every session to read MEMORY.md (28,925 B) + today's daily note (78,116 B) + yesterday's (89,291 B) = **196,332 B injected floor**. That matches the 68,666 input tokens of the run that *did* finish; the run that timed out had 74,081 input tokens.
+- Quill alone wrote ~57,000 B of the 78,116 B shared note (21 of 30 entries). The shared note was the majority of the injected context, and it was being written by a lane with no reason to read it back.
+- **Fix applied:** split both daily notes into `memory/lanes/<lane>-<date>.md` (per lane per day), shared note reduced to an index stub. Injected floor **196,332 B → 30,413 B** (-84%). Originals preserved in `memory/archive/<date>-full.md`. AGENTS.md now caps the shared note at 20 KB and routes role lanes to per-lane files so it cannot re-inflate.
+- **Data plane green this cycle:** 246 proposals / 246 missions / 246 steps in 24h, **246/246 succeeded, 0 failed, 0 stuck**; duration p50 6.3 s, p95 18.3 s, max 39.5 s. No retries, no stuck rows, no error events in 24h.
+- **Still open (not fixed here, needs an operator):** `ops_agent_events` = 291,638 rows with no retention path (738 rows/day, oldest 2026-02-09) — every observer cycle re-counts it. `publish_skill` has never been proposed despite existing in the executor. The `analyze` echo loop (159/160 insights echo their own step payload, 0 URLs in 738 events) is still the top content defect.
+- **Lesson:** when a lane times out, measure what is *injected* (the floor every session pays) rather than the file you last blamed. Rotating one file leaves the other 196 KB in place.
+
+## 2026-11-04 00:27 CEST - Observer diagnostics cycle (proposal 97373 / mission 97349, accepted): two memory trees, the 21:35 fix rotated the wrong one
+- **Data plane green:** 231 proposals in 24h, all accepted (scout 45, xalt 43, observer 35, minion 44, quill 41, sage 23); 231 steps, all succeeded (analyze 147, write_content 41, draft_tweet 43); 0 queued/running/pending; 0 non-terminal missions; 9 cron jobs ok with 0 consecutive errors; ops_social_posts still 0 lifetime; distinct titles still 7.
+- **Chosen risk (NEW):** the workspace memory tree was split at 21:46, but the aicompany repo has a second tree at `aicompany/memory/` that role lanes actually write to, since their cwd is the repo. `aicompany/memory/2026-11-02.md` was 150,308 B and `2026-11-03.md` was 111,155 B, and both kept growing after the fix (appends at 21:5x, 22:22, 23:0x). That is a 261,463 B daily-note floor for any repo-cwd lane, above the ~250 KB request ceiling that returns a 400 - the same sink class that caused the 17:29 and 17:57 observer lane timeouts.
+- **Fix applied:** split both repo notes into `aicompany/memory/lanes/<lane>-<date>.md` (observer, minion, sage, scout, quill, xalt), originals kept in `aicompany/memory/archive/<date>-full.md`, shared notes now 434 B index stubs. Added `aicompany/AGENTS.md` documenting the second tree, the lane-file routing rule and the 20 KB cap. Workspace `memory/2026-11-04.md` created as index stub, 11-04 sage and xalt lane files mirrored into the workspace tree. Observer entry written to `aicompany/memory/lanes/observer-2026-11-04.md`.
+- **Residual:** no mechanical enforcement; a size assertion on append is still needed.
+- **Not re-proposed (already known):** analyze echo loop with no external evidence (97240); mock-llm echo (97193); debris cleanup no-op (97206); malformed topic intake accepted (97209); scout topic ban prose only (97270); no drafts table (97309); ops_agent_events 291,710 rows without retention.
