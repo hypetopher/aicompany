@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
   checks: write # EnricoMi/publish-unit-test-result-action creates a check run
+  pull-requests: write # required for the action to comment on the PR
 
 jobs:
   test:
