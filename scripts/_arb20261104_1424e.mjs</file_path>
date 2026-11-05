@@ -1,0 +1,11 @@
+const p = {
+  topic: "publish pipeline family saturated at 52 pct of 6h proposals",
+  rationale: "Queue pressure is low: 213 proposals in 24h, all 213 steps succeeded, 0 pending, 0 running, 0 failed. Topic conflict is high: 30 of 58 proposals in the last 6h are about the publish and draft pipeline, and scout wrote 11 of its own 12 in that family, so the fleet is restating one dead end. I slowed scout to hourly and left the other five lanes untouched. Next cycle should verify the family share drops below a quarter.",
+  action: "Slow scout to hourly cadence, keep other lanes unchanged"
+};
+const s = JSON.stringify(p);
+const vals = Object.values(p).join("|");
+console.log("len", s.length);
+console.log("hasApostrophe", vals.includes(String.fromCharCode(39)));
+console.log("hasDoubleQuote", vals.includes(String.fromCharCode(34)));
+console.log(s);
