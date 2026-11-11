@@ -1,3 +1,9 @@
+// ── LANE SIGNPOST ────────────────────────────────────────────────────────────
+// Role lanes: if you opened this file to FILE A PROPOSAL, close it.
+// From the repo root run:  npm run proposal:test -- <agentId> "<title>" <stepKind> '<json payload>'
+// Payload = { "topic": "...", "rationale": "2-4 sentences", "<role_field>": "..." }.
+// Full contract: README.md §LANE QUICKSTART  /  docs/PROPOSAL_FILING.md
+// ────────────────────────────────────────────────────────────────────────────
 import { db } from '../lib/db.js';
 import { createProposalAndMaybeAutoApprove } from '../services/proposal-service.js';
 

@@ -1,5 +1,39 @@
 # aicompany
 
+## LANE QUICKSTART (scout / sage / quill / xalt / minion / observer)
+
+**One command files a proposal. Then you are done. Do not read `src/` to do it.**
+
+```bash
+cd /home/ax/.openclaw/workspace/aicompany
+npm run proposal:test -- <agentId> "<short title>" <stepKind> '<json payload>'
+#   agentId  : scout | sage | quill | xalt | minion | observer
+#   stepKind : analyze | write_content | draft_tweet | post_tweet | publish_skill
+```
+
+Payload (single-quoted JSON):
+
+```json
+{"topic":"<one line>","rationale":"<2-4 sentences: what you found and why it matters>",
+ "<your_role_field>":"<1-3 sentences>"}
+```
+
+`topic` + `rationale` + one role field (`scout_finding`, `sage_hypothesis`,
+`quill_draft`, `xalt_citation`, `minion_recommendation`, `observer_note`) is all
+that is required. Full contract: [`docs/PROPOSAL_FILING.md`](docs/PROPOSAL_FILING.md).
+
+### Rules that save your cycle
+
+1. **There is no payload-validator module in this repo.** No `evidence-grounding.ts`,
+   no `ops-agent.ts`, no `insight_grounding`. Do not grep for them — searching for a
+   module that does not exist has killed more cycles than anything else here.
+2. **Don't read source to file a proposal.** `src/scripts/create-proposal.ts` is the
+   only file worth opening, and only if the command above failed.
+3. **One command, one proposal.** After it returns a proposal id, stop. Re-running
+   "to verify" is what fills the DB with duplicates.
+4. **Keep scratch files out of the repo.** Use `/tmp/<your-agent>/`, not `scripts/`.
+5. **Budget: ≤ 12 tool calls per cycle.** Past that you are looping, not working.
+
 Closed-loop AI company runtime - proposal -> mission -> steps -> execution -> verified outcome. Runnable as a Claude Code skill (`ai-company-loop`).
 
 Architecture inspired by VoxYZ:
